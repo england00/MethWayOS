@@ -16,9 +16,10 @@ def myprint(dictionary):
         print(i, element)
         i += 1
 
-def check_duplicates_case_ids(dictionary, json):
+
+def check_duplicates_case_ids(dictionary, json_file):
     case_ids = []
-    for element in data[json]:
+    for element in data[json_file]:
         case_ids.append(element['case_id'])
 
     from collections import Counter
@@ -29,9 +30,10 @@ def check_duplicates_case_ids(dictionary, json):
     print("Duplicates case IDs:", duplicates)
     print(len(duplicates))
 
-def check_singles_case_ids(dictionary, json):
+
+def check_singles_case_ids(dictionary, json_file):
     case_ids = []
-    for element in data[json]:
+    for element in data[json_file]:
         case_ids.append(element['case_id'])
 
     singles = []
