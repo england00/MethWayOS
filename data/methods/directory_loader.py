@@ -3,21 +3,20 @@ import logging
 from error.general_error import GeneralError
 
 
-def yaml_loader(path):
+def directory_loader(path):
     """
         :param path: YAML file path to load
         :return config: dictionary with data stored from YAML file
     """
     try:
-        file_nella_cartella = os.listdir(path)
-
-            # Stampa i file
-            for file in file_nella_cartella:
-                percorso_file = os.path.join(percorso_cartella, file)
-
-                # Verifica che sia un file e non una folder
-                if os.path.isfile(percorso_file):
-                    print(f"Trovato file: {file}")
-    except Exception as e:
+        file_paths = []
+        folders = [file for file in os.listdir(path) if os.path.isdir(os.path.join(path, file))]
+        for folder in folders:
+            folder_path = os.path.join(path, folder)
+            file_in_folder = os.listdir(folder_path)  # assuming the presence of only one file per folder
+            if file_in_folder:
+                file_paths.append(os.path.join(folder_path, file_in_folder[0]))
+        return file_paths
+    except FileNotFoundError as e:
         logging.error(str(e))
-        raise GeneralError(f"a problem occurred while trying reading {path} file") from None
+        raise GeneralError(f"{path} file doesn't exist") from None
