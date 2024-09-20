@@ -15,7 +15,7 @@ def yaml_loader(path):
             for file in file_nella_cartella:
                 percorso_file = os.path.join(percorso_cartella, file)
 
-                # Verifica che sia un file e non una sottocartella
+                # Verifica che sia un file e non una folder
                 if os.path.isfile(percorso_file):
                     print(f"Trovato file: {file}")
     except Exception as e:
