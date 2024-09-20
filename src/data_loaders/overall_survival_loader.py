@@ -3,7 +3,8 @@ from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 
 ### CONFIGURATION
-JSON_PATH_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 OVERALL_SURVIVAL = 'overall_survival'
 
 
@@ -19,8 +20,8 @@ def myprint(dictionary):
 if __name__ == "__main__":
 
     # Loading YAML files
-    json_path = yaml_loader(JSON_PATH_YAML)
-    #directories_path = yaml_loader(OVERALL_SURVIVAL)
+    json_path = yaml_loader(JSON_PATHS_YAML)
+    directories_path = yaml_loader(DIRECTORIES_PATHS_YAML)
 
     # Storing data from JSON file
     data = json_loader(json_path[OVERALL_SURVIVAL])

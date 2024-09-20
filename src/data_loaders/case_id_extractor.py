@@ -3,7 +3,7 @@ from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 
 ### CONFIGURATION
-JSON_PATH_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
@@ -48,7 +48,7 @@ def check_singles_case_ids(dictionary, json_file):
 if __name__ == "__main__":
 
     # Loading YAML file
-    json_paths = yaml_loader(JSON_PATH_YAML)
+    json_paths = yaml_loader(JSON_PATHS_YAML)
 
     # Storing data from JSON file
     data = {GENE_EXPRESSION: json_loader(json_paths[GENE_EXPRESSION]),
