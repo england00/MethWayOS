@@ -3,10 +3,10 @@ from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 
 ### CONFIGURATION
-JSON_PATH_YAML = '../../config/files/json_path.yaml'
-GENE_ESPRESSION_JSON = 'gene_expression_json'
-METHYLATION_JSON = 'methylation_json'
-OVERALL_SURVIVAL_JSON = 'overall_survival_json'
+JSON_PATH_YAML = '../../config/files/json_paths.yaml'
+GENE_EXPRESSION = 'gene_expression'
+METHYLATION = 'methylation'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS
@@ -48,12 +48,12 @@ def check_singles_case_ids(dictionary, json_file):
 if __name__ == "__main__":
 
     # Loading YAML file
-    file_path = yaml_loader(JSON_PATH_YAML)
+    json_paths = yaml_loader(JSON_PATH_YAML)
 
     # Storing data from JSON file
-    data = {GENE_ESPRESSION_JSON: json_loader(file_path[GENE_ESPRESSION_JSON]),
-            METHYLATION_JSON: json_loader(file_path[METHYLATION_JSON]),
-            OVERALL_SURVIVAL_JSON: json_loader(file_path[OVERALL_SURVIVAL_JSON])}
+    data = {GENE_EXPRESSION: json_loader(json_paths[GENE_EXPRESSION]),
+            METHYLATION: json_loader(json_paths[METHYLATION]),
+            OVERALL_SURVIVAL: json_loader(json_paths[OVERALL_SURVIVAL])}
 
     # Storing only information about 'case_id', 'file_name' and 'file_id' for each JSON file
     for file in data:
