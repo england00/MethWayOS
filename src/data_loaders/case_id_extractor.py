@@ -1,6 +1,6 @@
 from collections import Counter
 from config.methods.configuration_loader import *
-from config.methods.json_loader import *
+from json_dir.methods.json_loader import *
 
 ### CONFIGURATION
 JSON_PATH_YAML = '../../config/files/json_path.yaml'
