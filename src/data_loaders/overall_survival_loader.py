@@ -1,42 +1,24 @@
-from collections import Counter
 from config.methods.configuration_loader import *
-from json_dir.methods.json_loader import *
+from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
 from data.methods.xml_loader import *
 
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
 OVERALL_SURVIVAL = 'overall_survival'
-
-
-## FUNCTIONS
-def myprint(dictionary):
-    i = 1
-    for element in dictionary:
-        print(i, element)
-        i += 1
-
 
 ## MAIN
 if __name__ == "__main__":
 
     # Loading YAML files
-    json_path = yaml_loader(JSON_PATHS_YAML)
-    directories_path = yaml_loader(DIRECTORIES_PATHS_YAML)
-
-    # Storing data from JSON file
-    data = json_loader(json_path[OVERALL_SURVIVAL])
-
-    # Storing only information about 'case_id', 'file_name' and 'file_id' for the JSON file
-    buffer = []
-    for item in data:
-        buffer.append(
-            {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
-    data = buffer
+    json_paths = yaml_loader(JSON_PATHS_YAML)
+    directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
+    dataset_paths = yaml_loader(DATASET_PATHS_YAML)
 
     # Loading XML files
-    file_paths = directory_loader(directories_path[OVERALL_SURVIVAL])
+    file_paths = directory_loader(directories_paths[OVERALL_SURVIVAL])
     overall_survival_list = []
     for path in file_paths:
         if xml_loader(path) is not None:
@@ -44,9 +26,8 @@ if __name__ == "__main__":
 
     # Selecting only DEAD cases
     buffer = []
-    for dict in overall_survival_list:
-        if dict['last_check']['vital_status'] == 'Dead':
-            buffer.append(dict)
+    for dictionary in overall_survival_list:
+        if dictionary['last_check']['vital_status'] == 'Dead':
+            buffer.append(dictionary)
     overall_survival_list = buffer
-
-    print(len(overall_survival_list))
+    json_storer(dataset_paths[OVERALL_SURVIVAL], overall_survival_list)
