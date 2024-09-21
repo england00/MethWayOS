@@ -63,6 +63,8 @@ if __name__ == "__main__":
                 {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
         data[file] = buffer
 
+    myprint(data[OVERALL_SURVIVAL])
+
     '''
     # FIRST CASE: Overall Survival based only on Gene Expression
     overall_survival_ids = {record['case_id'] for record in data['overall_survival_json']}

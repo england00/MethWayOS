@@ -2,6 +2,7 @@ from collections import Counter
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from data.methods.directory_loader import *
+from data.methods.xml_loader import *
 
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
@@ -34,10 +35,18 @@ if __name__ == "__main__":
             {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
     data = buffer
 
-    # myprint(data)
-
-    # Loading XML file paths
+    # Loading XML files
     file_paths = directory_loader(directories_path[OVERALL_SURVIVAL])
+    overall_survival_list = []
+    for path in file_paths:
+        if xml_loader(path) is not None:
+            overall_survival_list.append(xml_loader(path))
 
-    print(file_paths[0])
+    # Selecting only DEAD cases
+    buffer = []
+    for dict in overall_survival_list:
+        if dict['last_check']['vital_status'] == 'Dead':
+            buffer.append(dict)
+    overall_survival_list = buffer
 
+print(len(overall_survival_list))

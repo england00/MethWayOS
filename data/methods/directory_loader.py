@@ -5,8 +5,8 @@ from error.general_error import GeneralError
 
 def directory_loader(path):
     """
-        :param path: YAML file path to load
-        :return config: dictionary with data stored from YAML file
+        :param path: main DIRECTORY file path to load
+        :return file_paths: list of the file paths stored from the DIRECTORY
     """
     try:
         file_paths = []
