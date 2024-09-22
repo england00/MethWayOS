@@ -49,8 +49,16 @@ def check_singles_case_ids(dictionary, json_file):
 ## MAIN
 if __name__ == "__main__":
 
-    # Loading YAML file
+    # Loading YAML files
     json_paths = yaml_loader(JSON_PATHS_YAML)
+    directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
+    dataset_paths = yaml_loader(DATASET_PATHS_YAML)
+
+
+
+    print(json_paths)
+
+    '''
 
     # Storing data from JSON file
     data = {GENE_EXPRESSION: json_loader(json_paths[GENE_EXPRESSION]),
@@ -66,3 +74,4 @@ if __name__ == "__main__":
         data[file] = buffer
 
     myprint(data[OVERALL_SURVIVAL])
+    '''
