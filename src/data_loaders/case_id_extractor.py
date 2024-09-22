@@ -4,6 +4,8 @@ from json_dir.methods.json_loader import *
 
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
