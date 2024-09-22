@@ -54,9 +54,19 @@ if __name__ == "__main__":
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     dataset_paths = yaml_loader(DATASET_PATHS_YAML)
 
+    # Storing GENE EXPRESSION data from JSON file (only 'case_id', 'file_name' and 'file_id')
+    gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
+    buffer = []
+    for item in gene_expression_list:
+        buffer.append(
+            {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
+    gene_expression_list = buffer
+
+    # Storing OVERALL SURVIVAL data from JSON file
+    overall_survival_list = json_loader(dataset_paths[OVERALL_SURVIVAL])
+    print(overall_survival_list)
 
 
-    print(json_paths)
 
     '''
 

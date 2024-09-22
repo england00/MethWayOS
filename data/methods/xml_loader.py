@@ -54,7 +54,7 @@ def data_store(path, root):
                                                                      namespaces()).text,
                        'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces()).text}
 
-    return {'path': path, 'last_check': last_check}
+    return {'info': path, 'last_check': last_check}
 
 
 def xml_loader(path):
