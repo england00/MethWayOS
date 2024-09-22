@@ -39,7 +39,7 @@ if __name__ == "__main__":
         if dictionary['last_check']['vital_status'] == 'Dead':
             buffer.append(dictionary)
             # Adding for each dictionary 'case_id', 'file_name' and 'file_id'
-            file_name = dictionary['info'].split('\\')[len(dictionary['info'].split('\\')) - 1]
+            file_name = dictionary['info'].split('/')[len(dictionary['info'].split('/')) - 1]
             for item in overall_survival_list:
                 if item['file_name'] == file_name:
                     dictionary['info'] = item

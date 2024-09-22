@@ -12,10 +12,10 @@ def directory_loader(path):
         file_paths = []
         folders = [file for file in os.listdir(path) if os.path.isdir(os.path.join(path, file))]
         for folder in folders:
-            folder_path = os.path.join(path, folder)
+            folder_path = str(path + '/' + folder)
             file_in_folder = os.listdir(folder_path)  # assuming the presence of only one file per folder
             if file_in_folder:
-                file_paths.append(os.path.join(folder_path, file_in_folder[0]))
+                file_paths.append(str(folder_path + '/' + file_in_folder[0]))
         return file_paths
     except FileNotFoundError as e:
         logging.error(str(e))
