@@ -38,12 +38,6 @@ def data_store(path, root):
     else:
         patient_element = root.find('brca:patient', namespaces())
 
-    # Managing data storing
-    first_check = {'vital_status': patient_element.find('clin_shared:vital_status', namespaces()).text,
-                   'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup',
-                                                                 namespaces()).text,
-                   'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces()).text}
-
     # Checking the last followup version
     if followup_versions(namespaces(), patient_element) is not None:
         version = followup_versions(namespaces(), patient_element)
@@ -55,9 +49,12 @@ def data_store(path, root):
             'days_to_death': patient_element.find(f'brca:follow_ups/{version}:follow_up/clin_shared:days_to_death',
                                                   namespaces()).text}
     else:
-        last_check = first_check
+        last_check = {'vital_status': patient_element.find('clin_shared:vital_status', namespaces()).text,
+                       'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup',
+                                                                     namespaces()).text,
+                       'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces()).text}
 
-    return {'path': path, 'first_check': first_check, 'last_check': last_check}
+    return {'path': path, 'last_check': last_check}
 
 
 def xml_loader(path):
