@@ -1,7 +1,10 @@
+from datetime import datetime
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
+from data.methods.tsv_loader import *
+
 
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
@@ -10,14 +13,6 @@ DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
-
-
-## FUNCTIONS
-def myprint(dictionary):
-    i = 1
-    for element in dictionary:
-        print(i, element)
-        i += 1
 
 
 ## MAIN
@@ -34,7 +29,7 @@ if __name__ == "__main__":
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
 
-    # Storing GENE EXPRESSION data from JSON file (only 'case_id', 'file_name' and 'file_id')
+    # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for death people
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
     buffer = []
     for dictionary in gene_expression_list:
@@ -45,15 +40,27 @@ if __name__ == "__main__":
     # Removing duplicates, taking only one case_id for each-one
     buffer = []
     case_ids = []
+    file_names = []
     for dictionary in gene_expression_list:
-        case_id = dictionary["case_id"]
-        if case_id not in case_ids:
-            case_ids.append(case_id)
+        if dictionary["case_id"] not in case_ids:
             buffer.append(dictionary)
+            case_ids.append(dictionary["case_id"])
+            file_names.append(dictionary['file_name'])
     gene_expression_list = buffer
 
-    myprint(gene_expression_list)
+    # Searching only TSV files with the right 'case_id'
+    i = 1
+    gene_expression_dataset = []
+    for path in directory_loader(directories_paths[GENE_EXPRESSION]):
+        name = path.split('/')[len(path.split('/')) - 1]
+        if name in file_names:
+            for dictionary in gene_expression_list:
+                if name == dictionary['file_name']:
+                    gene_expression_dataset.append(tsv_loader(path, dictionary))
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    print(f"{timestamp} - Loaded file n°{i}: {name}")
+                    i += 1
+                    break
 
-    file_paths = directory_loader(directories_paths[GENE_EXPRESSION])
-    print(file_paths)
-
+    # Storing the dataset inside a JSON file
+    json_storer(dataset_paths[GENE_EXPRESSION], gene_expression_dataset)

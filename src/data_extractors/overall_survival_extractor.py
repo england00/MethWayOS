@@ -1,14 +1,19 @@
+from datetime import datetime
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
 from data.methods.xml_loader import *
 
+
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
+GENE_EXPRESSION = 'gene_expression'
+METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
+
 
 ## MAIN
 if __name__ == "__main__":
@@ -28,9 +33,13 @@ if __name__ == "__main__":
 
     # Loading all the XML files
     file_paths = directory_loader(directories_paths[OVERALL_SURVIVAL])
+    i = 1
     overall_survival_dataset = []
     for path in file_paths:
         if xml_loader(path) is not None:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"{timestamp} - Loaded file n°{i}: {path}")
+            i += 1
             overall_survival_dataset.append(xml_loader(path))
 
     # Selecting only DEAD cases
