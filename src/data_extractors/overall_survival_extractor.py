@@ -9,7 +9,7 @@ from data.methods.xml_loader import *
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
-DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Loading YAML files
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
-    dataset_paths = yaml_loader(DATASET_PATHS_YAML)
+    datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
 
     # Storing OVERALL SURVIVAL data from JSON file (only 'case_id', 'file_name' and 'file_id')
     overall_survival_list = json_loader(json_paths[OVERALL_SURVIVAL])
@@ -34,17 +34,17 @@ if __name__ == "__main__":
     # Loading all the XML files
     file_paths = directory_loader(directories_paths[OVERALL_SURVIVAL])
     i = 1
-    overall_survival_dataset = []
+    overall_survival_datastore = []
     for path in file_paths:
         if xml_loader(path) is not None:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print(f"{timestamp} - Loaded file n°{i}: {path}")
             i += 1
-            overall_survival_dataset.append(xml_loader(path))
+            overall_survival_datastore.append(xml_loader(path))
 
     # Selecting only DEAD cases
     buffer = []
-    for dictionary in overall_survival_dataset:
+    for dictionary in overall_survival_datastore:
         if dictionary['last_check']['vital_status'] == 'Dead':
             buffer.append(dictionary)
             # Adding for each dictionary 'case_id', 'file_name' and 'file_id'
@@ -53,7 +53,7 @@ if __name__ == "__main__":
                 if item['file_name'] == file_name:
                     dictionary['info'] = item
                     break
-    overall_survival_dataset = buffer
+    overall_survival_datastore = buffer
 
-    # Storing the dataset inside a JSON file
-    json_storer(dataset_paths[OVERALL_SURVIVAL], overall_survival_dataset)
+    # Storing the datastore inside a JSON file
+    json_storer(datastore_paths[OVERALL_SURVIVAL], overall_survival_datastore)

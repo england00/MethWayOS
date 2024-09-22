@@ -9,22 +9,21 @@ from data.methods.tsv_loader import *
 ### CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
-DATASET_PATHS_YAML = '../../config/files/dataset_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
-METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## MAIN
 if __name__ == "__main__":
-
+    
     # Loading YAML files
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
-    dataset_paths = yaml_loader(DATASET_PATHS_YAML)
+    datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
 
     # Storing OVERALL SURVIVAL data from JSON file
-    overall_survival_list = json_loader(dataset_paths[OVERALL_SURVIVAL])
+    overall_survival_list = json_loader(datastore_paths[OVERALL_SURVIVAL])
     case_ids = []
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
@@ -50,17 +49,17 @@ if __name__ == "__main__":
 
     # Searching only TSV files with the right 'case_id'
     i = 1
-    gene_expression_dataset = []
+    gene_expression_datastore = []
     for path in directory_loader(directories_paths[GENE_EXPRESSION]):
         name = path.split('/')[len(path.split('/')) - 1]
         if name in file_names:
             for dictionary in gene_expression_list:
                 if name == dictionary['file_name']:
-                    gene_expression_dataset.append(tsv_loader(path, dictionary))
+                    gene_expression_datastore.append(tsv_loader(path, dictionary))
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     print(f"{timestamp} - Loaded file n°{i}: {name}")
                     i += 1
                     break
 
-    # Storing the dataset inside a JSON file
-    json_storer(dataset_paths[GENE_EXPRESSION], gene_expression_dataset)
+    # Storing the datastore inside a JSON file
+    json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)
