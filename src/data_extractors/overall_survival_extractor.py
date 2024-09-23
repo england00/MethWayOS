@@ -6,7 +6,7 @@ from data.methods.directory_loader import *
 from data.methods.xml_loader import *
 
 
-### CONFIGURATION
+## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'

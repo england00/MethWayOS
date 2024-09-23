@@ -3,7 +3,7 @@ from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 
 
-### CONFIGURATION
+## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
