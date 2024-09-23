@@ -55,9 +55,12 @@ def loading_dataset(path):
     correlation_df = pd.concat([X, y], axis=1, sort=False)
     correlation_matrix = correlation_df.corr()
     correlation_with_y = correlation_matrix['y'].drop('y')
-    selected_features = correlation_with_y[abs(correlation_with_y) > 0.3]
+    print(correlation_with_y)
 
-    print(selected_features)
+    #selected_features = correlation_with_y[abs(correlation_with_y) > 0.3]
+
+
+    #print(selected_features)
     # X_selected = X[selected_features]
 
     # splitting the dataset in training and testing
