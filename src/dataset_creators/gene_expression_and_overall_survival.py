@@ -37,7 +37,11 @@ if __name__ == "__main__":
                 buffer = []
                 for key in gene_expression_keys:
                     buffer.append(patient[key][2])  # Adding each feature
-                buffer.append(case['last_check']['days_to_death'])  # Adding label
+                if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
+                    buffer.append(case['last_check']['days_to_death'])  # Adding label
+                else:  # ALIVE cases
+                    buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
+
                 dataset.append(buffer)
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 print(f"{timestamp} - Loaded row n°{i} of patient {case['info']['case_id']}")

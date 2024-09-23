@@ -9,7 +9,7 @@ def csv_storer(path, data):
         :param data: information to store inside the new CSV file
     """
     try:
-        with open(path, mode="w", newline="\n") as file:
+        with open(path, mode="w", newline="") as file:
             writer = csv.writer(file, delimiter=';')
             writer.writerows(data)
             print(f"Data has been correctly saved inside {path} file")

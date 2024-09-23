@@ -45,7 +45,8 @@ if __name__ == "__main__":
     # Selecting only DEAD cases
     buffer = []
     for dictionary in overall_survival_datastore:
-        if dictionary['last_check']['vital_status'] == 'Dead':
+        if (dictionary['last_check']['vital_status'] == 'Dead'                        # DEAD
+                or int(dictionary['last_check']['days_to_last_followup']) >= 1825):   # ALIVE after 5 years (1825 days)
             buffer.append(dictionary)
             # Adding for each dictionary 'case_id', 'file_name' and 'file_id'
             file_name = dictionary['info'].split('/')[len(dictionary['info'].split('/')) - 1]
@@ -54,6 +55,21 @@ if __name__ == "__main__":
                     dictionary['info'] = item
                     break
     overall_survival_datastore = buffer
+
+    # Removing duplicates, taking only one case_id for each-one
+    buffer = []
+    case_ids = []
+    for dictionary in overall_survival_datastore:
+        if dictionary['info']['case_id'] not in case_ids:
+            buffer.append(dictionary)
+            case_ids.append(dictionary['info']['case_id'])
+        elif dictionary['info']['case_id'] in case_ids and dictionary['last_check']['vital_status'] == 'Dead':
+            for element in buffer:
+                if element['info']['case_id'] == dictionary['info']['case_id']:
+                    if element['last_check']["vital_status"] == 'Alive':
+                        element = dictionary
+                    break
+    gene_expression_list = buffer
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[OVERALL_SURVIVAL], overall_survival_datastore)
