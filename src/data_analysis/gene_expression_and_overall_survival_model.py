@@ -61,46 +61,6 @@ if __name__ == "__main__":
 
 
 
-    '''
-    X_train = training_set.drop('y', axis=1)
-    y_train = training_set['y']
-    X_test = testing_set.drop('y', axis=1)
-    y_test = testing_set['y']
-    
-    
-
-    # Data Processing
-    title('DATA PROCESSING')
-    k = 1
-    mean = np.mean(y_train)
-    dev_standard = np.std(y_train)
-    min_threshold = mean - k * dev_standard
-    max_threshold = mean + k * dev_standard
-    print("Min Threshold:", min_threshold, "\nMax Threshold:", max_threshold)
-    # sns.distplot(y_train, color='green')
-    # plt.show()
-
-    for item in y_train:
-        print(item)
-
-    for item in y_train:  # categorizing TRAINING SET
-        if item < min_threshold:
-            item = 0
-        elif item < max_threshold:
-            item = 1
-        else:
-            item = 2
-    for item in y_test:  # categorizing TEST SET
-        if item < min_threshold:
-            item = 0
-        elif item < max_threshold:
-            item = 1
-        else:
-            item = 2
-            '''
-
-
-
     scaler = StandardScaler()  # Oppure MinMaxScaler()
 
     variance_threshold = VarianceThreshold(threshold=0.01)  # Soglia da regolare
