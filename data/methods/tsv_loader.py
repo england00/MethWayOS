@@ -37,6 +37,7 @@ def tsv_loader(path, dictionary):
                                str(data[1][7]): element[7],  # fpkm_unstranded
                                str(data[1][8]): element[8]})  # fpkm_uq_unstranded
                 '''
+            print(f"Data has been correctly loaded from {path} file")
             return buffer
     except FileNotFoundError as e:
         logging.error(str(e))

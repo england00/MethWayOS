@@ -1,4 +1,3 @@
-from datetime import datetime
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
@@ -29,7 +28,7 @@ if __name__ == "__main__":
     # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
     gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
     gene_expression_keys = gene_expression_keys[1:]
-    i = 1
+    i = 0
     dataset = []
     for patient in gene_expression_datastore:
         for case in overall_survival_datastore:
@@ -41,12 +40,10 @@ if __name__ == "__main__":
                     buffer.append(case['last_check']['days_to_death'])  # Adding label
                 else:  # ALIVE cases
                     buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
-
                 dataset.append(buffer)
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                print(f"{timestamp} - Loaded row n°{i} of patient {case['info']['case_id']}")
                 i += 1
                 break
+    print(f"Loaded {i} files")
 
     # Storing dataset inside a CSV file
     csv_storer(dataset_paths[GENE_EXPRESSION], dataset)

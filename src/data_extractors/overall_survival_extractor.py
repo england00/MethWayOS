@@ -1,4 +1,3 @@
-from datetime import datetime
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
@@ -33,14 +32,13 @@ if __name__ == "__main__":
 
     # Loading all the XML files
     file_paths = directory_loader(directories_paths[OVERALL_SURVIVAL])
-    i = 1
+    i = 0
     overall_survival_datastore = []
     for path in file_paths:
         if xml_loader(path) is not None:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            print(f"{timestamp} - Loaded file n°{i}: {path}")
             i += 1
             overall_survival_datastore.append(xml_loader(path))
+    print(f"Loaded {i} files")
 
     # Selecting only DEAD cases
     buffer = []

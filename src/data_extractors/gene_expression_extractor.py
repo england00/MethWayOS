@@ -1,4 +1,3 @@
-from datetime import datetime
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
@@ -28,7 +27,7 @@ if __name__ == "__main__":
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
 
-    # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for death people
+    # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
     buffer = []
     for dictionary in gene_expression_list:
@@ -48,18 +47,17 @@ if __name__ == "__main__":
     gene_expression_list = buffer
 
     # Searching only TSV files with the right 'case_id'
-    i = 1
+    i = 0
     gene_expression_datastore = []
     for path in directory_loader(directories_paths[GENE_EXPRESSION]):
         name = path.split('/')[len(path.split('/')) - 1]
         if name in file_names:
             for dictionary in gene_expression_list:
                 if name == dictionary['file_name']:
-                    gene_expression_datastore.append(tsv_loader(path, dictionary))
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    print(f"{timestamp} - Loaded file n°{i}: {name}")
                     i += 1
+                    gene_expression_datastore.append(tsv_loader(path, dictionary))
                     break
+    print(f"Loaded {i} files")
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)

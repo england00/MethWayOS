@@ -11,6 +11,7 @@ def json_loader(path):
     try:
         with open(path, 'r') as file:
             data = json.load(file)
+            print(f"Data has been correctly loaded from {path} file")
         return data
     except FileNotFoundError as e:
         logging.error(str(e))

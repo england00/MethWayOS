@@ -65,6 +65,7 @@ def xml_loader(path):
     try:
         tree = ET.parse(path)
         root = tree.getroot()
+        print(f"Data has been correctly loaded from {path} file")
         return data_store(path, root)
     except FileNotFoundError as e:
         logging.error(str(e))

@@ -19,6 +19,8 @@ from scikitplot.metrics import plot_roc_curve, plot_confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
 
+from lifelines.utils import concordance_index
+
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 
@@ -47,19 +49,6 @@ def loading_dataset(path):
 
     return df_training, df_testing, names
 
-'''
-## MOST CORRELATED FEATURES WITH LABELS
-def correlated_features(df):
-
-    X = df.drop(columns='y')
-    y = df['y']
-
-    # Calculating correlation values between each GENE and OVERALL SURVIVAL
-    correlation_df = pd.concat([X, y], axis=1, sort=False)
-    correlation_matrix = correlation_df.corr()
-    correlation_with_y = correlation_matrix['y'].drop('y')
-
-'''
 
 
 
@@ -71,24 +60,59 @@ if __name__ == "__main__":
     training_set, testing_set, features_names = loading_dataset(dataset_paths[GENE_EXPRESSION])
 
 
-    # Definisci la scalatura da utilizzare
-    # Puoi scegliere tra StandardScaler o MinMaxScaler a seconda delle tue esigenze
+
+    '''
+    X_train = training_set.drop('y', axis=1)
+    y_train = training_set['y']
+    X_test = testing_set.drop('y', axis=1)
+    y_test = testing_set['y']
+    
+    
+
+    # Data Processing
+    title('DATA PROCESSING')
+    k = 1
+    mean = np.mean(y_train)
+    dev_standard = np.std(y_train)
+    min_threshold = mean - k * dev_standard
+    max_threshold = mean + k * dev_standard
+    print("Min Threshold:", min_threshold, "\nMax Threshold:", max_threshold)
+    # sns.distplot(y_train, color='green')
+    # plt.show()
+
+    for item in y_train:
+        print(item)
+
+    for item in y_train:  # categorizing TRAINING SET
+        if item < min_threshold:
+            item = 0
+        elif item < max_threshold:
+            item = 1
+        else:
+            item = 2
+    for item in y_test:  # categorizing TEST SET
+        if item < min_threshold:
+            item = 0
+        elif item < max_threshold:
+            item = 1
+        else:
+            item = 2
+            '''
+
+
+
     scaler = StandardScaler()  # Oppure MinMaxScaler()
 
-    # 1. Rimuovere feature a bassa varianza
     variance_threshold = VarianceThreshold(threshold=0.01)  # Soglia da regolare
 
-    # 2. Selezione delle migliori feature usando SelectKBest
     k_best = 500  # Numero di feature da mantenere, da regolare
     select_kbest = SelectKBest(score_func=f_regression, k=k_best)
 
-    # 3. Utilizzare SelectFromModel con Lasso per ulteriori selezioni
     lasso = SelectFromModel(Lasso(alpha=0.001, max_iter=10000))
 
-    # 4. Applicare PCA
-    pca = PCA(n_components=100, random_state=42)  # Numero di componenti da regolare
+    pca = PCA(n_components=70, random_state=42)  # Numero di componenti da regolare
 
-    # 5. Costruire la pipeline
+
     pipeline = Pipeline([
         ('scaling', scaler),
         ('variance_threshold', variance_threshold),
@@ -97,34 +121,26 @@ if __name__ == "__main__":
         ('pca', pca)
     ])
 
-
     X_train = training_set.drop('y', axis=1)
     y_train = training_set['y']
     X_test = testing_set.drop('y', axis=1)
     y_test = testing_set['y']
 
-
-    # 7. Addestrare la pipeline sul training set
     pipeline.fit(X_train, y_train)
 
-    # 8. Trasformare sia il training che il test set
     X_train_transformed = pipeline.transform(X_train)
     X_test_transformed = pipeline.transform(X_test)
 
     title('TRAINING')
-    # Addestrare il modello di regressione lineare
     model = LinearRegression()
     model.fit(X_train_transformed, y_train)
 
     title('TEST')
-    # Fare predizioni
     y_pred = model.predict(X_test_transformed)
 
     title('C-INDEX')
-    # Calcolare il C-index
-    # Nota: Scikit-learn non fornisce direttamente il C-index, quindi possiamo utilizzare la libreria 'lifelines'
 
-    from lifelines.utils import concordance_index
+
     c_index = concordance_index(y_test, y_pred)
     print(f"C-index: {c_index:.4f}")
 
