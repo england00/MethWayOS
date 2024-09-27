@@ -23,9 +23,9 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 800  # 730 (2 years)
-UPPER_THRESHOLD = 3000  # 2920 (8 years)
-FEATURES_NUMBER = 40
+LOWER_THRESHOLD = 1800  # 730 (2 years)
+UPPER_THRESHOLD = 2000  # 2920 (8 years)
+FEATURES_NUMBER = 36
 PLOT = False
 
 
