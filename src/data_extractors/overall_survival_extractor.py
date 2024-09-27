@@ -3,6 +3,7 @@ from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
 from data.methods.xml_loader import *
+from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
@@ -12,10 +13,15 @@ DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
+LOG_PATH = '../../logs/files/1 - OVERALL SURVIVAL Extractor.txt'
 
 
 ## MAIN
 if __name__ == "__main__":
+
+    # Open LOG file
+    logfile = open(LOG_PATH, 'w')
+    sys.stdout = DualOutput(sys.stdout, logfile)
 
     # Loading YAML files
     json_paths = yaml_loader(JSON_PATHS_YAML)
@@ -71,3 +77,7 @@ if __name__ == "__main__":
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[OVERALL_SURVIVAL], overall_survival_datastore)
+
+    # Close LOG file
+    sys.stdout = sys.__stdout__
+    logfile.close()

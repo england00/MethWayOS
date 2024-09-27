@@ -2,31 +2,33 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import warnings
 import time
 from colorama import Fore
-from sklearn.ensemble import StackingClassifier, BaggingClassifier
+from scikitplot.metrics import plot_confusion_matrix, plot_roc
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import BaggingClassifier
 from config.methods.configuration_loader import yaml_loader
 from data.methods.csv_loader import csv_loader
+from logs.methods.log_storer import *
 
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
+LOG_PATH = '../../logs/files/2.3 - GENE EXPRESSION & OS - Binary Classification.txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1800  # 730 (2 years)
-UPPER_THRESHOLD = 2000  # 2920 (8 years)
-FEATURES_NUMBER = 36
-PLOT = False
+LOWER_THRESHOLD = 1000  # 730 (2 years)
+UPPER_THRESHOLD = 3000  # 2920 (8 years)
+FEATURES_NUMBER = 10
+VERBOSE = False
+PLOT = True
 
 
 ## FUNCTIONS
@@ -34,21 +36,22 @@ def title(text):
     print(Fore.CYAN, '\n' + f' {text} '.center(80, '#'), Fore.RESET)
 
 
-def data_acquisition(path):
+def data_acquisition(path, rand_state):
     # Loading COLUMNS
     df, df_columns = csv_loader(path, JSON_PATHS_YAML, GENE_EXPRESSION_NAMES)
 
     # Splitting dataset in TRAINING and TESTING
-    df_training, df_testing = train_test_split(df, test_size=0.2, random_state=RANDOM_STATE, shuffle=True)
+    df_training, df_testing = train_test_split(df, test_size=0.2, random_state=rand_state, shuffle=True)
 
     return df_training, df_testing, df_columns
 
 
-def exploratory_data_analysis(dataframe, plot=True):
+def exploratory_data_analysis(dataframe, verbose=True, plot=True):
     # Showing some details about the dataset
-    print('INFORMATION ABOUT THE TRAINING SET:')
-    dataframe.info()
-    print('\nDATA PREVIEW:\n', dataframe.head(3))
+    if verbose:
+        print('INFORMATION ABOUT THE TRAINING SET:')
+        dataframe.info()
+        print('\nDATA PREVIEW:\n', dataframe.head(3))
 
     # Plotting LABEL DISTRIBUTION
     if plot:
@@ -56,26 +59,24 @@ def exploratory_data_analysis(dataframe, plot=True):
         plt.show()
 
 
-def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, test=False, column_names=None):
-    # Operations to do ONLY with TRAINING SET
-    if not test:
-
+def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, verbose=True, column_names=None):
+    if verbose:
         # Checking possible values problems
         print('NAN VALUES:\n', dataframe.isnull().any())
         print('\nMISSING VALUES:\n', (dataframe == ' ').any())
         print('\nDUPLICATED VALUES:\n', dataframe.duplicated(keep='first'))
 
-        # Managing imposed thresholds
-        if lower_threshold != 0 and upper_threshold != 0:
-            i = j = 0
-            for item in dataframe['y']:
-                if item <= lower_threshold:
-                    i += 1
-                if item >= upper_threshold:
-                    j += 1
-            print('\nADMITTED SAMPLES VALUES:')
-            print(f'- {i} with the label lower than {lower_threshold}')
-            print(f'- {j} with the label bigger than {upper_threshold}')
+    # Managing imposed thresholds
+    if lower_threshold != 0 and upper_threshold != 0:
+        i = j = 0
+        for item in dataframe['y']:
+            if item <= lower_threshold:
+                i += 1
+            if item >= upper_threshold:
+                j += 1
+        print('ADMITTED SAMPLES VALUES:')
+        print(f'\t--> {i} samples with a label lower than {lower_threshold}')
+        print(f'\t--> {j} samples with a label bigger than {upper_threshold}')
 
     # Operations to do with BOTH TRAINING SET & TEST SET
     dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 1  # changing lower values with '1'
@@ -96,21 +97,37 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, test
     return pd.concat([X, y], axis=1, sort=False)
 
 
-def models():
+def feature_selection(dataframe, rand_state, quantity):
+    # Splitting dataset in FEATURE VECTORS and LABELS
+    X_train = dataframe.drop('y', axis=1)
+    y_train = dataframe['y']
+
+    # Principal Component Analysis
+    print('PRINCIPAL COMPONENT ANALYSIS:')
+    pca = PCA(n_components=quantity, random_state=rand_state)
+    X_pca = pca.fit_transform(X_train)
+    df_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(quantity)])
+    df_pca['y'] = y_train.values
+    print(f"\t--> New Feature Space Dimension: {quantity}")
+
+    return df_pca, pca
+
+
+def models(rand_state):
     catalogue = [DecisionTreeClassifier(class_weight='balanced'),
-                 MLPClassifier(max_iter=10000, random_state=RANDOM_STATE),
+                 MLPClassifier(max_iter=10000, random_state=rand_state),
                  SVC(class_weight='balanced')]
     names = ['Decision Tree',
              'Multi-Layer Perceptron',
              'Support Vector Classifier']
-    hyperparameters = [{'criterion': ['gini', 'entropy', 'log_loss'],                   # Decision Tree
+    hyperparameters = [{'criterion': ['gini', 'entropy', 'log_loss'],  # Decision Tree
                         'max_depth': [i for i in range(1, 30)],
                         'max_features': [None, 'sqrt', 'log2'],
                         'splitter': ['best', 'random']},
                        {'hidden_layer_sizes': [(5,), (10,), (10, 5), (20,), (20, 10)],  # Multi-Layer Perceptron
                         'activation': ['logistic', 'tanh', 'relu'],
                         'learning_rate_init': [0.0001, 0.001, 0.01, 0.01]},
-                       {'C': [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 40, 50, 60, 70, 1e2],     # Support Vector Classifier
+                       {'C': [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 40, 50, 60, 70, 1e2],  # Support Vector Classifier
                         'gamma': ['scale', 'auto', 0.005, 0.004, 0.003, 0.002, 0.001, 0.0005],
                         'kernel': ['linear', 'rbf', 'poly', 'sigmoid']}]
 
@@ -123,7 +140,7 @@ def grid_search(dataframe, catalogue, names, hyperparameters):
 
     # Searching the best hyperparameters set for each model
     for model, model_name, hyperparameter_set in zip(catalogue, names, hyperparameters):
-        print('\n' + model_name.upper() + ':')
+        print(model_name.upper() + ':')
         clf = GridSearchCV(estimator=model,
                            param_grid=hyperparameter_set,
                            scoring='accuracy',
@@ -139,29 +156,33 @@ def grid_search(dataframe, catalogue, names, hyperparameters):
         for hparam in hyperparameter_set:
             print(f'\t--> best value for hyperparameter "{hparam}": ',
                   Fore.YELLOW, clf.best_params_.get(hparam), Fore.RESET)
+        print('\n')
 
     return chosen_hyperparameters, trials
 
 
-def cross_validation_model_assessment(dataframe, hyperparameters, trials):
+def cross_validation_model_assessment(dataframe, hyperparameters, trials, rand_state):
     # Splitting FEATURES and LABELS
     X = dataframe.drop('y', axis=1)
     y = dataframe['y']
 
     # Decision Tree
+    set_t0 = time.time()
     decision_tree_model = DecisionTreeClassifier(class_weight='balanced',
                                                  criterion=hyperparameters[0]['criterion'],
                                                  max_depth=hyperparameters[0]['max_depth'],
                                                  max_features=hyperparameters[0]['max_features'],
                                                  splitter=hyperparameters[0]['splitter'])
     scores = cross_validate(decision_tree_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
-    print('\nDECISION TREE:')
+    print('DECISION TREE:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
+    print(f'\t--> Validation took {time.time() - set_t0} sec')
 
     # Multi-Layer Perceptron
+    set_t0 = time.time()
     mlp_model = MLPClassifier(max_iter=10000,
-                              random_state=RANDOM_STATE,
+                              random_state=rand_state,
                               hidden_layer_sizes=hyperparameters[1]['hidden_layer_sizes'],
                               activation=hyperparameters[1]['activation'],
                               learning_rate_init=hyperparameters[1]['learning_rate_init'])
@@ -169,8 +190,10 @@ def cross_validation_model_assessment(dataframe, hyperparameters, trials):
     print('\nMULTI-LAYER PERCEPTRON:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
+    print(f'\t--> Validation took {time.time() - set_t0} sec')
 
     # Support Vector Classifier
+    set_t0 = time.time()
     svc_model = SVC(class_weight='balanced',
                     C=hyperparameters[2]['C'],
                     gamma=hyperparameters[2]['gamma'],
@@ -179,32 +202,104 @@ def cross_validation_model_assessment(dataframe, hyperparameters, trials):
     print('\nSUPPORT VECTOR CLASSIFIER:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
+    print(f'\t--> Validation took {time.time() - set_t0} sec')
 
     # BAGGING CLASSIFIER with Decision Tree
     set_t0 = time.time()
-    clf_bagging2 = BaggingClassifier(estimator=DecisionTreeClassifier(class_weight='balanced',
-                                                                      criterion='gini'),
-                                     n_estimators=11)
-    scores = cross_validate(clf_bagging2, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
+    ramdom_forest = BaggingClassifier(estimator=DecisionTreeClassifier(class_weight='balanced',
+                                                                       criterion='gini'),
+                                      n_estimators=11)
+    scores = cross_validate(ramdom_forest, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('\nRANDOM FOREST CLASSIFIER:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-    print(f'\nValidation took {time.time() - set_t0} sec')
+    print(f'\t--> Validation took {time.time() - set_t0} sec')
 
-    # final model
-    # return clf_bagging2
+    return {'Decision Tree': decision_tree_model,
+            'Multi-Layer Perceptron': mlp_model,
+            'Support Vector Classifier': svc_model,
+            'Ramdom Forest': ramdom_forest}
+
+
+def training(dataframe, model, name):
+    # Splitting FEATURES and LABELS
+    X = dataframe.drop('y', axis=1)
+    y = dataframe['y']
+
+    # Training the model
+    set_t0 = time.time()
+    model.fit(X, y)
+    print(f'{name.upper()}\' training took {time.time() - set_t0} sec')
+
+    return model
+
+
+def testing(dataframe, columns, pca, quantity, models):
+    # Exploratory Data Analysis for Testing Set
+    title('EXPLORATORY DATA ANALYSIS for Testing Set')
+    exploratory_data_analysis(dataframe=dataframe, verbose=VERBOSE, plot=PLOT)
+
+    # Feature Preprocessing for Testing Set
+    title('FEATURES PREPROCESSING for Testing Set')
+    dataframe = features_preprocessing(dataframe=dataframe,
+                                       lower_threshold=LOWER_THRESHOLD,
+                                       upper_threshold=UPPER_THRESHOLD,
+                                       verbose=VERBOSE,
+                                       column_names=columns)
+
+    # Feature Selection for Testing Set
+    title('FEATURE SELECTION for Testing Set')
+    print('PRINCIPAL COMPONENT ANALYSIS:')
+    X_test = dataframe.drop('y', axis=1)
+    y_test = dataframe['y']
+    X_test_pca = pca.fit_transform(X_test)
+    X_test = pd.DataFrame(X_test_pca, columns=[f'PC{i + 1}' for i in range(quantity)])
+    print(f"\t--> New Feature Space Dimension: {quantity}")
+
+    # Testing each model with Testing Set
+    y_pred = {}
+    for item in models:
+        set_t0 = time.time()
+        y_pred[item] = models[item].predict(X_test)
+        print(f'{item.upper()}\' testing took {time.time() - set_t0} sec')
+
+    return X_test, y_test, y_pred
+
+
+def results(model, X_test, y_test, y_pred, name, plot):
+    # metrics
+    print(f'{name.upper()}:')
+    print('\t--> Accuracy: ', accuracy_score(y_test, y_pred))
+    print('\t--> Precision: ', precision_score(y_test, y_pred, average='weighted'))
+    print('\t--> Recall: ', recall_score(y_test, y_pred, average='weighted'))
+    print('\t--> F1-Score: ', f1_score(y_test, y_pred, average='weighted'))
+
+    # performance plots
+    if plot:
+        # ROC curve
+        plot_roc(model, X_test.values, y_test.values)
+        plt.show()
+        # confusion matrix
+        plot_confusion_matrix(model, X_test.values, y_test.values)
+        plt.show()
 
 
 ## MAIN
 if __name__ == "__main__":
+
+    # Open LOG file
+    logfile = open(LOG_PATH, 'w')
+    sys.stdout = DualOutput(sys.stdout, logfile)
+
     # Data Acquisition
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
-    training_set, testing_set, set_columns = data_acquisition(path=dataset_paths[GENE_EXPRESSION])
+    training_set, testing_set, set_columns = data_acquisition(path=dataset_paths[GENE_EXPRESSION],
+                                                              rand_state=RANDOM_STATE)
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')
-    exploratory_data_analysis(dataframe=training_set, plot=PLOT)
+    exploratory_data_analysis(dataframe=training_set, verbose=VERBOSE, plot=PLOT)
 
     # Feature Preprocessing
     title('FEATURES PREPROCESSING')
@@ -212,30 +307,59 @@ if __name__ == "__main__":
     training_set = features_preprocessing(dataframe=training_set,
                                           lower_threshold=LOWER_THRESHOLD,
                                           upper_threshold=UPPER_THRESHOLD,
+                                          verbose=VERBOSE,
                                           column_names=set_columns)
 
-    # Reducing Features
-    title('FEATURES PREPROCESSING')
-    X_train = training_set.drop('y', axis=1)
-    y_train = training_set['y']
-    pca = PCA(n_components=FEATURES_NUMBER, random_state=RANDOM_STATE)
-    X_pca = pca.fit_transform(X_train)
-    df_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(FEATURES_NUMBER)])
-    df_pca['y'] = y_train.values
+    # Feature Selection
+    title('FEATURE SELECTION')
+    training_set, pca_model = feature_selection(dataframe=training_set,
+                                                rand_state=RANDOM_STATE,
+                                                quantity=FEATURES_NUMBER)
 
     # Model Selection
     title('MODELS SELECTION')
-    models_list, models_names, models_hyperparameters = models()
+    models_list, models_names, models_hyperparameters = models(rand_state=RANDOM_STATE)
 
     # Grid Search
     title('GRID SEARCH')
-    best_parameters, estimators = grid_search(dataframe=df_pca,
+    best_parameters, estimators = grid_search(dataframe=training_set,
                                               catalogue=models_list,
                                               names=models_names,
                                               hyperparameters=models_hyperparameters)
 
-    # CROSS-VALIDATION
-    title('CROSS-VALIDATION')
-    cross_validation_model_assessment(dataframe=df_pca,
-                                      hyperparameters=best_parameters,
-                                      trials=estimators)
+    # Cross Validation
+    title('CROSS VALIDATION')
+    models_dictionary = cross_validation_model_assessment(dataframe=training_set,
+                                                          hyperparameters=best_parameters,
+                                                          trials=estimators,
+                                                          rand_state=RANDOM_STATE)
+
+    # Training
+    title('TRAINING')
+    final_models_dictionary = {}
+    for item in models_dictionary:
+        final_models_dictionary[item] = training(dataframe=training_set,
+                                                 model=models_dictionary[item],
+                                                 name=item)
+
+    # Testing & Prediction
+    title('TESTING AND PREDICTION')
+    X_testing, y_testing, y_prediction = testing(dataframe=testing_set,
+                                                 columns=set_columns,
+                                                 pca=pca_model,
+                                                 quantity=FEATURES_NUMBER,
+                                                 models=final_models_dictionary)
+
+    # Final Testing Results
+    title('FINAL TESTING RESULTS')
+    for item in final_models_dictionary:
+        results(model=final_models_dictionary[item],
+                X_test=X_testing,
+                y_test=y_testing,
+                y_pred=y_prediction[item],
+                name=item,
+                plot=PLOT)
+
+    # Close LOG file
+    sys.stdout = sys.__stdout__
+    logfile.close()
