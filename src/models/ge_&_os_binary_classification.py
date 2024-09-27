@@ -8,6 +8,7 @@ from colorama import Fore
 from sklearn.ensemble import StackingClassifier, BaggingClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.tree import DecisionTreeClassifier
@@ -22,7 +23,9 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-FEATURE_NUMBER = 36
+LOWER_THRESHOLD = 800  # 730 (2 years)
+UPPER_THRESHOLD = 3000  # 2920 (8 years)
+FEATURES_NUMBER = 40
 PLOT = False
 
 
@@ -63,7 +66,7 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, test
         print('\nDUPLICATED VALUES:\n', dataframe.duplicated(keep='first'))
 
         # Managing imposed thresholds
-        if lower_threshold != 0 and upper_threshold != 0:  # originally between 730 (2 years) and 2920 (8 years)
+        if lower_threshold != 0 and upper_threshold != 0:
             i = j = 0
             for item in dataframe['y']:
                 if item <= lower_threshold:
@@ -94,25 +97,19 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, test
 
 
 def models():
-    catalogue = [LogisticRegression(solver='saga', class_weight='balanced'),
-                 KNeighborsClassifier(weights='distance'),
-                 DecisionTreeClassifier(class_weight='balanced'),
+    catalogue = [DecisionTreeClassifier(class_weight='balanced'),
+                 MLPClassifier(max_iter=10000, random_state=RANDOM_STATE),
                  SVC(class_weight='balanced')]
-    names = ['Logistic Regression',
-             'K-Nearest Neighbors',
-             'Decision Tree',
+    names = ['Decision Tree',
+             'Multi-Layer Perceptron',
              'Support Vector Classifier']
-    hyperparameters = [{'penalty': ['l1', 'l2', 'elasticnet'],                          # Logistic Regression
-                        'C': [1e-5,  1e-4, 1e-3, 1e-2, 0.01, 0.05, 0.07, 0.08, 0.09, 0.1, 0.5, 1],
-                        'max_iter': [100, 300, 500]},
-                       {'n_neighbors': list(range(1, 20, 2)),                           # K-Nearest Neighbors
-                        'metric': ['euclidean', 'manhattan', 'minkowski'],
-                        'p': [1, 2],  # valido solo per 'minkowski'
-                        'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']},
-                       {'criterion': ['gini', 'entropy', 'log_loss'],                   # Decision Tree
+    hyperparameters = [{'criterion': ['gini', 'entropy', 'log_loss'],                   # Decision Tree
                         'max_depth': [i for i in range(1, 30)],
                         'max_features': [None, 'sqrt', 'log2'],
                         'splitter': ['best', 'random']},
+                       {'hidden_layer_sizes': [(5,), (10,), (10, 5), (20,), (20, 10)],  # Multi-Layer Perceptron
+                        'activation': ['logistic', 'tanh', 'relu'],
+                        'learning_rate_init': [0.0001, 0.001, 0.01, 0.01]},
                        {'C': [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 40, 50, 60, 70, 1e2],     # Support Vector Classifier
                         'gamma': ['scale', 'auto', 0.005, 0.004, 0.003, 0.002, 0.001, 0.0005],
                         'kernel': ['linear', 'rbf', 'poly', 'sigmoid']}]
@@ -151,72 +148,37 @@ def cross_validation_model_assessment(dataframe, hyperparameters, trials):
     X = dataframe.drop('y', axis=1)
     y = dataframe['y']
 
-    # LOGISTIC REGRESSION
-    logistic_regression_model = LogisticRegression(solver='saga',
-                                                   class_weight='balanced',
-                                                   C=hyperparameters[0]['C'],
-                                                   max_iter=hyperparameters[0]['max_iter'],
-                                                   penalty=hyperparameters[0]['penalty'],)
-    scores = cross_validate(logistic_regression_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
-    print('\nLOGISTIC REGRESSION:')
-    print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
-    print(f'\t--> cross-validated We'
-          f'ighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-
-    # K-NEAREST NEIGHBORS
-    knn_model = KNeighborsClassifier(algorithm=hyperparameters[1]['algorithm'],
-                                     metric=hyperparameters[1]['metric'],
-                                     n_neighbors=hyperparameters[1]['n_neighbors'],
-                                     p=hyperparameters[1]['p'])
-    scores = cross_validate(knn_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
-    print('\nK-NEAREST NEIGHBORS:')
-    print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
-    print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-
     # Decision Tree
     decision_tree_model = DecisionTreeClassifier(class_weight='balanced',
-                                                 criterion=hyperparameters[2]['criterion'],
-                                                 max_depth=hyperparameters[2]['max_depth'],
-                                                 max_features=hyperparameters[2]['max_features'],
-                                                 splitter=hyperparameters[2]['splitter'])
+                                                 criterion=hyperparameters[0]['criterion'],
+                                                 max_depth=hyperparameters[0]['max_depth'],
+                                                 max_features=hyperparameters[0]['max_features'],
+                                                 splitter=hyperparameters[0]['splitter'])
     scores = cross_validate(decision_tree_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('\nDECISION TREE:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
 
+    # Multi-Layer Perceptron
+    mlp_model = MLPClassifier(max_iter=10000,
+                              random_state=RANDOM_STATE,
+                              hidden_layer_sizes=hyperparameters[1]['hidden_layer_sizes'],
+                              activation=hyperparameters[1]['activation'],
+                              learning_rate_init=hyperparameters[1]['learning_rate_init'])
+    scores = cross_validate(mlp_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
+    print('\nMULTI-LAYER PERCEPTRON:')
+    print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
+    print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
+
     # Support Vector Classifier
-    support_vector_classifier_model = SVC(class_weight='balanced',
-                                          C=hyperparameters[3]['C'],
-                                          gamma=hyperparameters[3]['gamma'],
-                                          kernel=hyperparameters[3]['kernel'])
-    scores = cross_validate(support_vector_classifier_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
+    svc_model = SVC(class_weight='balanced',
+                    C=hyperparameters[2]['C'],
+                    gamma=hyperparameters[2]['gamma'],
+                    kernel=hyperparameters[2]['kernel'])
+    scores = cross_validate(svc_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('\nSUPPORT VECTOR CLASSIFIER:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
     print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-
-    '''
-    # STACKING CLASSIFIER with Logistic Regression, KNN and DT
-    set_t0 = time.time()
-    sf1_estimators = trials.copy()
-    sf1_estimators.pop(3)  # removes Support Vector Classifier position from estimator list
-    clf_stack1 = StackingClassifier(estimators=sf1_estimators, final_estimator=LogisticRegression())
-    scores = cross_validate(clf_stack1, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
-    print('\nSTACKING CLASSIFIER with Logistic Regression, KNN and DT:')
-    print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
-    print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-    print(f'\nValidation took {time.time() - set_t0} sec')
-
-    # STACKING CLASSIFIER with Logistic Regression, KNN and SVC
-    set_t0 = time.time()
-    sf2_estimators = trials.copy()
-    sf2_estimators.pop(2)  # removes Decision Tree position from estimator list
-    clf_stack2 = StackingClassifier(estimators=sf2_estimators, final_estimator=LogisticRegression())
-    scores = cross_validate(clf_stack2, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
-    print('\nSTACKING CLASSIFIER with Logistic Regression, KNN and SVC:')
-    print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
-    print(f'\t--> cross-validated Weighted F1-score: ', Fore.GREEN, np.mean(scores['test_f1_weighted']), Fore.RESET)
-    print(f'\nValidation took {time.time() - set_t0} sec')
-    '''
 
     # BAGGING CLASSIFIER with Decision Tree
     set_t0 = time.time()
@@ -230,8 +192,6 @@ def cross_validation_model_assessment(dataframe, hyperparameters, trials):
     print(f'\nValidation took {time.time() - set_t0} sec')
 
     # final model
-    # return clf_stack1
-    # return clf_stack2
     # return clf_bagging2
 
 
@@ -250,17 +210,17 @@ if __name__ == "__main__":
     title('FEATURES PREPROCESSING')
     set_columns.remove('y')
     training_set = features_preprocessing(dataframe=training_set,
-                                          lower_threshold=1000,
-                                          upper_threshold=3000,
+                                          lower_threshold=LOWER_THRESHOLD,
+                                          upper_threshold=UPPER_THRESHOLD,
                                           column_names=set_columns)
 
     # Reducing Features
     title('FEATURES PREPROCESSING')
     X_train = training_set.drop('y', axis=1)
     y_train = training_set['y']
-    pca = PCA(n_components=FEATURE_NUMBER, random_state=RANDOM_STATE)
+    pca = PCA(n_components=FEATURES_NUMBER, random_state=RANDOM_STATE)
     X_pca = pca.fit_transform(X_train)
-    df_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(FEATURE_NUMBER)])
+    df_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(FEATURES_NUMBER)])
     df_pca['y'] = y_train.values
 
     # Model Selection
