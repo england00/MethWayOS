@@ -221,7 +221,7 @@ def cross_validation_model_assessment(dataframe, hyperparameters, trials):
     # BAGGING CLASSIFIER with Decision Tree
     set_t0 = time.time()
     clf_bagging2 = BaggingClassifier(estimator=DecisionTreeClassifier(class_weight='balanced',
-                                                                      criterion='entropy'),
+                                                                      criterion='gini'),
                                      n_estimators=11)
     scores = cross_validate(clf_bagging2, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('\nRANDOM FOREST CLASSIFIER:')
