@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 from colorama import Fore
-from scikitplot.metrics import plot_confusion_matrix, plot_roc
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate
 from sklearn.preprocessing import StandardScaler
@@ -24,11 +23,11 @@ GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/2.3 - GENE EXPRESSION & OS - Binary Classification.txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1000  # 730 (2 years)
+LOWER_THRESHOLD = 800  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
-FEATURES_NUMBER = 10
+FEATURES_NUMBER = 15
 VERBOSE = False
-PLOT = True
+PLOT = False
 
 
 ## FUNCTIONS
@@ -266,22 +265,13 @@ def testing(dataframe, columns, pca, quantity, models):
     return X_test, y_test, y_pred
 
 
-def results(model, X_test, y_test, y_pred, name, plot):
+def results(model, X_test, y_test, y_pred, name):
     # metrics
     print(f'{name.upper()}:')
     print('\t--> Accuracy: ', accuracy_score(y_test, y_pred))
     print('\t--> Precision: ', precision_score(y_test, y_pred, average='weighted'))
     print('\t--> Recall: ', recall_score(y_test, y_pred, average='weighted'))
     print('\t--> F1-Score: ', f1_score(y_test, y_pred, average='weighted'))
-
-    # performance plots
-    if plot:
-        # ROC curve
-        plot_roc(model, X_test.values, y_test.values)
-        plt.show()
-        # confusion matrix
-        plot_confusion_matrix(model, X_test.values, y_test.values)
-        plt.show()
 
 
 ## MAIN
@@ -357,8 +347,7 @@ if __name__ == "__main__":
                 X_test=X_testing,
                 y_test=y_testing,
                 y_pred=y_prediction[item],
-                name=item,
-                plot=PLOT)
+                name=item)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
