@@ -22,10 +22,11 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/2.3 - GENE EXPRESSION & OS - Binary Classification.txt'
-RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 800  # 730 (2 years)
+RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
+LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
-FEATURES_NUMBER = 15
+PCA_DIMENSION = 90
+FEATURES_NUMBER = 30
 VERBOSE = False
 PLOT = False
 
@@ -35,20 +36,17 @@ def title(text):
     print(Fore.CYAN, '\n' + f' {text} '.center(80, '#'), Fore.RESET)
 
 
-def data_acquisition(path, rand_state):
+def dataset_acquisition(path):
     # Loading COLUMNS
-    df, df_columns = csv_loader(path, JSON_PATHS_YAML, GENE_EXPRESSION_NAMES)
+    dataframe, dataframe_columns = csv_loader(path, JSON_PATHS_YAML, GENE_EXPRESSION_NAMES)
 
-    # Splitting dataset in TRAINING and TESTING
-    df_training, df_testing = train_test_split(df, test_size=0.2, random_state=rand_state, shuffle=True)
-
-    return df_training, df_testing, df_columns
+    return dataframe, dataframe_columns
 
 
 def exploratory_data_analysis(dataframe, verbose=True, plot=True):
     # Showing some details about the dataset
     if verbose:
-        print('INFORMATION ABOUT THE TRAINING SET:')
+        print('INFORMATION ABOUT THE DATASET:')
         dataframe.info()
         print('\nDATA PREVIEW:\n', dataframe.head(3))
 
@@ -63,7 +61,7 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, verb
         # Checking possible values problems
         print('NAN VALUES:\n', dataframe.isnull().any())
         print('\nMISSING VALUES:\n', (dataframe == ' ').any())
-        print('\nDUPLICATED VALUES:\n', dataframe.duplicated(keep='first'))
+        print('\nDUPLICATED VALUES:\n', dataframe.duplicated(keep='first'), '\n')
 
     # Managing imposed thresholds
     if lower_threshold != 0 and upper_threshold != 0:
@@ -96,20 +94,40 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, verb
     return pd.concat([X, y], axis=1, sort=False)
 
 
-def feature_selection(dataframe, rand_state, quantity):
+def feature_selection(dataframe, rand_state, pca_dimension, feature_number):
     # Splitting dataset in FEATURE VECTORS and LABELS
-    X_train = dataframe.drop('y', axis=1)
-    y_train = dataframe['y']
+    X = dataframe.drop('y', axis=1)
+    y = dataframe['y']
 
     # Principal Component Analysis
     print('PRINCIPAL COMPONENT ANALYSIS:')
-    pca = PCA(n_components=quantity, random_state=rand_state)
-    X_pca = pca.fit_transform(X_train)
-    df_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(quantity)])
-    df_pca['y'] = y_train.values
-    print(f"\t--> New Feature Space Dimension: {quantity}")
+    pca = PCA(n_components=pca_dimension, random_state=rand_state)
+    X_pca = pca.fit_transform(X)
+    dataframe_pca = pd.DataFrame(X_pca, columns=[f'PC{i + 1}' for i in range(pca_dimension)])
+    print(f"\t--> New Feature Space Dimension: {pca_dimension}")
 
-    return df_pca, pca
+    # Correlation Filter
+    print('CORRELATION FILTER:')
+    correlations = dataframe_pca.corrwith(y).abs()
+    top_features = correlations.sort_values(ascending=False).head(feature_number).index
+    selected_dataframe = dataframe_pca[top_features].copy()
+    selected_dataframe['y'] = y.values
+    print(f"\t--> New Feature Space Dimension: {feature_number}")
+
+    return selected_dataframe
+
+
+def dataset_splitting(dataframe, rand_state):
+    # Splitting dataset in TRAINING and TESTING
+    training_dataframe, testing_dataframe = train_test_split(dataframe,
+                                                             test_size=0.2,
+                                                             random_state=rand_state,
+                                                             shuffle=True)
+    print('DIMENSIONS:')
+    print(f"\t--> Training Set: {len(training_dataframe)}")
+    print(f"\t--> Testing Set: {len(testing_dataframe)}")
+
+    return training_dataframe, testing_dataframe
 
 
 def models(rand_state):
@@ -160,7 +178,7 @@ def grid_search(dataframe, catalogue, names, hyperparameters):
     return chosen_hyperparameters, trials
 
 
-def cross_validation_model_assessment(dataframe, hyperparameters, trials, rand_state):
+def cross_validation_model_assessment(dataframe, hyperparameters, rand_state):
     # Splitting FEATURES and LABELS
     X = dataframe.drop('y', axis=1)
     y = dataframe['y']
@@ -233,45 +251,28 @@ def training(dataframe, model, name):
     return model
 
 
-def testing(dataframe, columns, pca, quantity, models):
-    # Exploratory Data Analysis for Testing Set
-    title('EXPLORATORY DATA ANALYSIS for Testing Set')
-    exploratory_data_analysis(dataframe=dataframe, verbose=VERBOSE, plot=PLOT)
-
-    # Feature Preprocessing for Testing Set
-    title('FEATURES PREPROCESSING for Testing Set')
-    dataframe = features_preprocessing(dataframe=dataframe,
-                                       lower_threshold=LOWER_THRESHOLD,
-                                       upper_threshold=UPPER_THRESHOLD,
-                                       verbose=VERBOSE,
-                                       column_names=columns)
-
-    # Feature Selection for Testing Set
-    title('FEATURE SELECTION for Testing Set')
-    print('PRINCIPAL COMPONENT ANALYSIS:')
-    X_test = dataframe.drop('y', axis=1)
-    y_test = dataframe['y']
-    X_test_pca = pca.fit_transform(X_test)
-    X_test = pd.DataFrame(X_test_pca, columns=[f'PC{i + 1}' for i in range(quantity)])
-    print(f"\t--> New Feature Space Dimension: {quantity}")
+def testing(dataframe, models):
+    # Splitting FEATURES and LABELS
+    X = dataframe.drop('y', axis=1)
+    y = dataframe['y']
 
     # Testing each model with Testing Set
     y_pred = {}
     for item in models:
         set_t0 = time.time()
-        y_pred[item] = models[item].predict(X_test)
+        y_pred[item] = models[item].predict(X)
         print(f'{item.upper()}\' testing took {time.time() - set_t0} sec')
 
-    return X_test, y_test, y_pred
+    return X, y, y_pred
 
 
-def results(model, X_test, y_test, y_pred, name):
+def results(y, y_pred, name):
     # metrics
     print(f'{name.upper()}:')
-    print('\t--> Accuracy: ', accuracy_score(y_test, y_pred))
-    print('\t--> Precision: ', precision_score(y_test, y_pred, average='weighted'))
-    print('\t--> Recall: ', recall_score(y_test, y_pred, average='weighted'))
-    print('\t--> F1-Score: ', f1_score(y_test, y_pred, average='weighted'))
+    print('\t--> Accuracy: ', accuracy_score(y, y_pred))
+    print('\t--> Precision: ', precision_score(y, y_pred, average='weighted'))
+    print('\t--> Recall: ', recall_score(y, y_pred, average='weighted'))
+    print('\t--> F1-Score: ', f1_score(y, y_pred, average='weighted'))
 
 
 ## MAIN
@@ -284,27 +285,31 @@ if __name__ == "__main__":
     # Data Acquisition
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
-    training_set, testing_set, set_columns = data_acquisition(path=dataset_paths[GENE_EXPRESSION],
-                                                              rand_state=RANDOM_STATE)
+    dataset, dataset_columns = dataset_acquisition(path=dataset_paths[GENE_EXPRESSION])
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')
-    exploratory_data_analysis(dataframe=training_set, verbose=VERBOSE, plot=PLOT)
+    exploratory_data_analysis(dataframe=dataset, verbose=VERBOSE, plot=PLOT)
 
     # Feature Preprocessing
     title('FEATURES PREPROCESSING')
-    set_columns.remove('y')
-    training_set = features_preprocessing(dataframe=training_set,
-                                          lower_threshold=LOWER_THRESHOLD,
-                                          upper_threshold=UPPER_THRESHOLD,
-                                          verbose=VERBOSE,
-                                          column_names=set_columns)
+    dataset_columns.remove('y')
+    dataset = features_preprocessing(dataframe=dataset,
+                                     lower_threshold=LOWER_THRESHOLD,
+                                     upper_threshold=UPPER_THRESHOLD,
+                                     verbose=VERBOSE,
+                                     column_names=dataset_columns)
 
     # Feature Selection
     title('FEATURE SELECTION')
-    training_set, pca_model = feature_selection(dataframe=training_set,
-                                                rand_state=RANDOM_STATE,
-                                                quantity=FEATURES_NUMBER)
+    dataset = feature_selection(dataframe=dataset,
+                                rand_state=RANDOM_STATE,
+                                pca_dimension=PCA_DIMENSION,
+                                feature_number=FEATURES_NUMBER)
+
+    # Dataset Splitting
+    title('DATASET SPLITTING')
+    training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
 
     # Model Selection
     title('MODELS SELECTION')
@@ -321,7 +326,6 @@ if __name__ == "__main__":
     title('CROSS VALIDATION')
     models_dictionary = cross_validation_model_assessment(dataframe=training_set,
                                                           hyperparameters=best_parameters,
-                                                          trials=estimators,
                                                           rand_state=RANDOM_STATE)
 
     # Training
@@ -335,17 +339,12 @@ if __name__ == "__main__":
     # Testing & Prediction
     title('TESTING AND PREDICTION')
     X_testing, y_testing, y_prediction = testing(dataframe=testing_set,
-                                                 columns=set_columns,
-                                                 pca=pca_model,
-                                                 quantity=FEATURES_NUMBER,
                                                  models=final_models_dictionary)
 
     # Final Testing Results
     title('FINAL TESTING RESULTS')
     for item in final_models_dictionary:
-        results(model=final_models_dictionary[item],
-                X_test=X_testing,
-                y_test=y_testing,
+        results(y=y_testing,
                 y_pred=y_prediction[item],
                 name=item)
 
