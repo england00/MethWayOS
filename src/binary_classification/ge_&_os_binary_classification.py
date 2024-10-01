@@ -27,7 +27,7 @@ RANDOM_STATE = None  # if 'None' changes the seed to split training set and test
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 PCA_DIMENSION = 90
-FEATURES_NUMBER = 18
+FEATURES_NUMBER = 19
 VERBOSE = False
 PLOT = False
 
