@@ -16,6 +16,7 @@ from config.methods.configuration_loader import yaml_loader
 from data.methods.csv_loader import csv_loader
 from logs.methods.log_storer import *
 
+
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
