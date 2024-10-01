@@ -27,7 +27,7 @@ RANDOM_STATE = None  # if 'None' changes the seed to split training set and test
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 PCA_DIMENSION = 90
-FEATURES_NUMBER = 15
+FEATURES_NUMBER = 12
 VERBOSE = False
 PLOT = False
 
@@ -149,7 +149,7 @@ def models(rand_state):
                         'hidden_layer_sizes': [(5,), (10,), (10, 5), (20,), (20, 10)],  # Multi-Layer Perceptron
                         'learning_rate': ['constant', 'adaptive'],
                         'learning_rate_init': [0.0001, 0.001, 0.01, 0.01],
-                        'solver': ['adam', 'lbfgs']},
+                        'solver': ['adam', 'adamax']},
                        {'C': [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 40, 50, 60, 70, 1e2],  # Support Vector Classifier
                         'gamma': ['scale', 'auto', 0.01, 0.1, 1],
                         'kernel': ['linear', 'rbf', 'poly', 'sigmoid']}]

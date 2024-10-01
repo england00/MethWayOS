@@ -1,88 +1,88 @@
-[36m 
-############################### DATA ACQUISITION ############################### [39m
+
+############################### DATA ACQUISITION ###############################
 Data has been correctly loaded from ../../config/files/dataset_paths.yaml file
 Data has been correctly loaded from ../../config/files/json_paths.yaml file
 Data has been correctly loaded from ../../json_dir/indexes/gene_expression_names.json file
 Data has been correctly loaded from ../../data/datasets/gene_expression_and_overall_survival_dataset.csv file
-[36m 
-################### EXPLORATORY DATA ANALYSIS with RAW DATA #################### [39m
-[36m 
-############################ FEATURES PREPROCESSING ############################ [39m
+
+################### EXPLORATORY DATA ANALYSIS with RAW DATA ####################
+
+############################ FEATURES PREPROCESSING ############################
 ADMITTED SAMPLES VALUES:
 	--> 53 samples with a label lower than 1000
 	--> 63 samples with a label bigger than 3000
-[36m 
-############################## FEATURE SELECTION ############################### [39m
+
+############################## FEATURE SELECTION ###############################
 PRINCIPAL COMPONENT ANALYSIS:
 	--> New Feature Space Dimension: 90
 CORRELATION FILTER:
 	--> New Feature Space Dimension: 30
-[36m 
-############################## DATASET SPLITTING ############################### [39m
+
+############################## DATASET SPLITTING ###############################
 DIMENSIONS:
 	--> Training Set: 92
 	--> Testing Set: 24
-[36m 
-############################### MODELS SELECTION ############################### [39m
-[36m 
-################################# GRID SEARCH ################################## [39m
+
+############################### MODELS SELECTION ###############################
+
+################################# GRID SEARCH ##################################
 DECISION TREE:
-Accuracy:   [32m 0.6619883040935672 [39m
-	--> best value for hyperparameter "criterion":  [33m entropy [39m
-	--> best value for hyperparameter "max_depth":  [33m 16 [39m
-	--> best value for hyperparameter "max_features":  [33m sqrt [39m
-	--> best value for hyperparameter "splitter":  [33m best [39m
+Accuracy:    0.6619883040935672
+	--> best value for hyperparameter "criterion":   entropy
+	--> best value for hyperparameter "max_depth":   16
+	--> best value for hyperparameter "max_features":   sqrt
+	--> best value for hyperparameter "splitter":   best
 
 
 MULTI-LAYER PERCEPTRON:
-Accuracy:   [32m 0.676608187134503 [39m
-	--> best value for hyperparameter "hidden_layer_sizes":  [33m (10,) [39m
-	--> best value for hyperparameter "activation":  [33m tanh [39m
-	--> best value for hyperparameter "learning_rate_init":  [33m 0.001 [39m
+Accuracy:    0.676608187134503
+	--> best value for hyperparameter "hidden_layer_sizes":   (10,)
+	--> best value for hyperparameter "activation":   tanh
+	--> best value for hyperparameter "learning_rate_init":   0.001
 
 
 SUPPORT VECTOR CLASSIFIER:
-Accuracy:   [32m 0.6625730994152047 [39m
-	--> best value for hyperparameter "C":  [33m 0.1 [39m
-	--> best value for hyperparameter "gamma":  [33m auto [39m
-	--> best value for hyperparameter "kernel":  [33m sigmoid [39m
+Accuracy:    0.6625730994152047
+	--> best value for hyperparameter "C":   0.1
+	--> best value for hyperparameter "gamma":   auto
+	--> best value for hyperparameter "kernel":  sigmoid
 
 
-[36m 
-############################### CROSS VALIDATION ############################### [39m
+
+############################### CROSS VALIDATION ###############################
 DECISION TREE:
-	--> cross-validated Accuracy:  [32m 0.48888888888888893 [39m
-	--> cross-validated Weighted F1-score:  [32m 0.46401771752424603 [39m
+	--> cross-validated Accuracy:   0.48888888888888893
+	--> cross-validated Weighted F1-score:   0.46401771752424603
 	--> Validation took 0.02953815460205078 sec
 
 MULTI-LAYER PERCEPTRON:
-	--> cross-validated Accuracy:  [32m 0.5309941520467836 [39m
-	--> cross-validated Weighted F1-score:  [32m 0.5305050776985089 [39m
+	--> cross-validated Accuracy:   0.5309941520467836
+	--> cross-validated Weighted F1-score:   0.5305050776985089
 	--> Validation took 0.8385188579559326 sec
 
 SUPPORT VECTOR CLASSIFIER:
-	--> cross-validated Accuracy:  [32m 0.6625730994152047 [39m
-	--> cross-validated Weighted F1-score:  [32m 0.6585139483241516 [39m
+	--> cross-validated Accuracy:   0.6625730994152047
+	--> cross-validated Weighted F1-score:   0.6585139483241516
 	--> Validation took 0.03191184997558594 sec
 
 RANDOM FOREST CLASSIFIER:
-	--> cross-validated Accuracy:  [32m 0.5333333333333333 [39m
-	--> cross-validated Weighted F1-score:  [32m 0.5230457382314968 [39m
+	--> cross-validated Accuracy:   0.5333333333333333
+	--> cross-validated Weighted F1-score:  0.5230457382314968
 	--> Validation took 0.205366849899292 sec
-[36m 
-################################### TRAINING ################################### [39m
+
+################################### TRAINING ###################################
 DECISION TREE' training took 0.005564212799072266 sec
 MULTI-LAYER PERCEPTRON' training took 0.5051517486572266 sec
 SUPPORT VECTOR CLASSIFIER' training took 0.0050449371337890625 sec
 RAMDOM FOREST' training took 0.05999255180358887 sec
-[36m 
-############################ TESTING AND PREDICTION ############################ [39m
+
+############################ TESTING AND PREDICTION ############################
 DECISION TREE' testing took 0.0021011829376220703 sec
 MULTI-LAYER PERCEPTRON' testing took 0.0010671615600585938 sec
 SUPPORT VECTOR CLASSIFIER' testing took 0.002133607864379883 sec
 RAMDOM FOREST' testing took 0.00475001335144043 sec
-[36m 
-############################ FINAL TESTING RESULTS ############################# [39m
+
+############################ FINAL TESTING RESULTS #############################
 DECISION TREE:
 	--> Accuracy:  0.7083333333333334
 	--> Precision:  0.7097902097902097
