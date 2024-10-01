@@ -68,10 +68,6 @@ if __name__ == "__main__":
 
     print(f"Loaded {i} files")
 
-
-
-
-
     # Close LOG file
     sys.stdout = sys.__stdout__
     logfile.close()

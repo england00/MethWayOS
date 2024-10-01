@@ -1,0 +1,110 @@
+[36m 
+############################### DATA ACQUISITION ############################### [39m
+Data has been correctly loaded from ../../config/files/dataset_paths.yaml file
+Data has been correctly loaded from ../../config/files/json_paths.yaml file
+Data has been correctly loaded from ../../json_dir/indexes/gene_expression_names.json file
+Data has been correctly loaded from ../../data/datasets/gene_expression_and_overall_survival_dataset.csv file
+[36m 
+################### EXPLORATORY DATA ANALYSIS with RAW DATA #################### [39m
+[36m 
+############################ FEATURES PREPROCESSING ############################ [39m
+ADMITTED SAMPLES VALUES:
+	--> 53 samples with a label lower than 1000
+	--> 63 samples with a label bigger than 3000
+[36m 
+############################## FEATURE SELECTION ############################### [39m
+PRINCIPAL COMPONENT ANALYSIS:
+	--> New Feature Space Dimension: 90
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 17
+[36m 
+############################## DATASET SPLITTING ############################### [39m
+DIMENSIONS:
+	--> Training Set: 92
+	--> Testing Set: 24
+[36m 
+############################### MODELS SELECTION ############################### [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+DECISION TREE:
+Accuracy:   [32m 0.7263157894736841 [39m
+	--> best value for hyperparameter "criterion":  [33m log_loss [39m
+	--> best value for hyperparameter "max_depth":  [33m 11 [39m
+	--> best value for hyperparameter "max_features":  [33m None [39m
+	--> best value for hyperparameter "min_samples_split":  [33m 15 [39m
+	--> best value for hyperparameter "min_samples_leaf":  [33m 1 [39m
+	--> best value for hyperparameter "splitter":  [33m random [39m
+
+
+MULTI-LAYER PERCEPTRON:
+Accuracy:   [32m 0.7070175438596491 [39m
+	--> best value for hyperparameter "alpha":  [33m 1e-05 [39m
+	--> best value for hyperparameter "activation":  [33m relu [39m
+	--> best value for hyperparameter "hidden_layer_sizes":  [33m (10,) [39m
+	--> best value for hyperparameter "learning_rate":  [33m constant [39m
+	--> best value for hyperparameter "learning_rate_init":  [33m 0.0001 [39m
+	--> best value for hyperparameter "solver":  [33m adam [39m
+
+
+SUPPORT VECTOR CLASSIFIER:
+Accuracy:   [32m 0.6964912280701754 [39m
+	--> best value for hyperparameter "C":  [33m 0.1 [39m
+	--> best value for hyperparameter "gamma":  [33m 0.01 [39m
+	--> best value for hyperparameter "kernel":  [33m sigmoid [39m
+
+
+[36m 
+############################### CROSS VALIDATION ############################### [39m
+DECISION TREE:
+	--> cross-validated Accuracy:  [32m 0.6076023391812866 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.5905419823093803 [39m
+	--> Validation took 0.016954660415649414 sec
+
+MULTI-LAYER PERCEPTRON:
+	--> cross-validated Accuracy:  [32m 0.543859649122807 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.5352332522126572 [39m
+	--> Validation took 1.382415533065796 sec
+
+SUPPORT VECTOR CLASSIFIER:
+	--> cross-validated Accuracy:  [32m 0.6964912280701754 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.6948510164299637 [39m
+	--> Validation took 0.013958454132080078 sec
+
+RANDOM FOREST CLASSIFIER:
+	--> cross-validated Accuracy:  [32m 0.6081871345029238 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.6048720285562391 [39m
+	--> Validation took 0.07875657081604004 sec
+[36m 
+################################### TRAINING ################################### [39m
+DECISION TREE' training took 0.0030281543731689453 sec
+MULTI-LAYER PERCEPTRON' training took 0.9684078693389893 sec
+SUPPORT VECTOR CLASSIFIER' training took 0.0019686222076416016 sec
+RAMDOM FOREST' training took 0.025964736938476562 sec
+[36m 
+############################ TESTING AND PREDICTION ############################ [39m
+DECISION TREE' testing took 0.000997781753540039 sec
+MULTI-LAYER PERCEPTRON' testing took 0.0031447410583496094 sec
+SUPPORT VECTOR CLASSIFIER' testing took 0.0008451938629150391 sec
+RAMDOM FOREST' testing took 0.0019948482513427734 sec
+[36m 
+############################ FINAL TESTING RESULTS ############################# [39m
+DECISION TREE:
+	--> Accuracy:  0.5833333333333334
+	--> Precision:  0.6111111111111112
+	--> Recall:  0.5833333333333334
+	--> F1-Score:  0.5555555555555555
+MULTI-LAYER PERCEPTRON:
+	--> Accuracy:  0.5833333333333334
+	--> Precision:  0.59375
+	--> Recall:  0.5833333333333334
+	--> F1-Score:  0.5714285714285715
+SUPPORT VECTOR CLASSIFIER:
+	--> Accuracy:  0.625
+	--> Precision:  0.6258741258741259
+	--> Recall:  0.625
+	--> F1-Score:  0.6243478260869565
+RAMDOM FOREST:
+	--> Accuracy:  0.625
+	--> Precision:  0.6258741258741259
+	--> Recall:  0.625
+	--> F1-Score:  0.6243478260869565
