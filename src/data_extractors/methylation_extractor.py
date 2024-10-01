@@ -33,9 +33,7 @@ if __name__ == "__main__":
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
 
-    print(len(case_ids))
-
-    # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
+    # Storing METHYLATION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     methylation_list = json_loader(json_paths[METHYLATION])
     buffer = []
     for dictionary in methylation_list:
@@ -45,7 +43,9 @@ if __name__ == "__main__":
                            'file_id': dictionary['file_id']})
     methylation_list = buffer
 
-    print(len(methylation_list))
+
+
+
 
     # Close LOG file
     sys.stdout = sys.__stdout__

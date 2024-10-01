@@ -16,6 +16,7 @@ from config.methods.configuration_loader import yaml_loader
 from data.methods.csv_loader import csv_loader
 from logs.methods.log_storer import *
 
+
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
@@ -26,7 +27,7 @@ RANDOM_STATE = None  # if 'None' changes the seed to split training set and test
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 PCA_DIMENSION = 90
-FEATURES_NUMBER = 30
+FEATURES_NUMBER = 15
 VERBOSE = False
 PLOT = False
 
@@ -140,12 +141,17 @@ def models(rand_state):
     hyperparameters = [{'criterion': ['gini', 'entropy', 'log_loss'],  # Decision Tree
                         'max_depth': [i for i in range(1, 30)],
                         'max_features': [None, 'sqrt', 'log2'],
+                        'min_samples_split': [2, 5, 10, 15],
+                        'min_samples_leaf': [1, 2, 4, 6],
                         'splitter': ['best', 'random']},
-                       {'hidden_layer_sizes': [(5,), (10,), (10, 5), (20,), (20, 10)],  # Multi-Layer Perceptron
+                       {'alpha': [1e-6, 1e-5, 0.0001, 0.001, 0.01, 0.1],
                         'activation': ['logistic', 'tanh', 'relu'],
-                        'learning_rate_init': [0.0001, 0.001, 0.01, 0.01]},
+                        'hidden_layer_sizes': [(5,), (10,), (10, 5), (20,), (20, 10)],  # Multi-Layer Perceptron
+                        'learning_rate': ['constant', 'adaptive'],
+                        'learning_rate_init': [0.0001, 0.001, 0.01, 0.01],
+                        'solver': ['adam', 'lbfgs']},
                        {'C': [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 40, 50, 60, 70, 1e2],  # Support Vector Classifier
-                        'gamma': ['scale', 'auto', 0.005, 0.004, 0.003, 0.002, 0.001, 0.0005],
+                        'gamma': ['scale', 'auto', 0.01, 0.1, 1],
                         'kernel': ['linear', 'rbf', 'poly', 'sigmoid']}]
 
     return catalogue, names, hyperparameters
@@ -189,6 +195,8 @@ def cross_validation_model_assessment(dataframe, hyperparameters, rand_state):
                                                  criterion=hyperparameters[0]['criterion'],
                                                  max_depth=hyperparameters[0]['max_depth'],
                                                  max_features=hyperparameters[0]['max_features'],
+                                                 min_samples_split=hyperparameters[0]['min_samples_split'],
+                                                 min_samples_leaf=hyperparameters[0]['min_samples_leaf'],
                                                  splitter=hyperparameters[0]['splitter'])
     scores = cross_validate(decision_tree_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('DECISION TREE:')
@@ -200,9 +208,12 @@ def cross_validation_model_assessment(dataframe, hyperparameters, rand_state):
     set_t0 = time.time()
     mlp_model = MLPClassifier(max_iter=10000,
                               random_state=rand_state,
-                              hidden_layer_sizes=hyperparameters[1]['hidden_layer_sizes'],
+                              alpha=hyperparameters[1]['alpha'],
                               activation=hyperparameters[1]['activation'],
-                              learning_rate_init=hyperparameters[1]['learning_rate_init'])
+                              hidden_layer_sizes=hyperparameters[1]['hidden_layer_sizes'],
+                              learning_rate=hyperparameters[1]['learning_rate'],
+                              learning_rate_init=hyperparameters[1]['learning_rate_init'],
+                              solver=hyperparameters[1]['solver'])
     scores = cross_validate(mlp_model, X, y, cv=5, scoring=('f1_weighted', 'accuracy'), n_jobs=-1)
     print('\nMULTI-LAYER PERCEPTRON:')
     print(f'\t--> cross-validated Accuracy: ', Fore.GREEN, np.mean(scores['test_accuracy']), Fore.RESET)
