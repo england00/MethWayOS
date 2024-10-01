@@ -1,9 +1,8 @@
-import pandas as pd
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
-from data.methods.tsv_loader import *
+from data.methods.txt_loader import *
 from logs.methods.log_storer import *
 
 
@@ -66,9 +65,9 @@ if __name__ == "__main__":
                 if name == dictionary['file_name']:
                     i += 1
 
-                    df = pd.read_csv(path, sep='\t', header=None, names=['ID', 'Value'])
-                    print(df)
-
+                    ids, values = txt_loader(path)
+                    print(ids)
+                    print(values)
 
 
                     break
