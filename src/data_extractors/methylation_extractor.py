@@ -43,8 +43,6 @@ if __name__ == "__main__":
                            'file_id': dictionary['file_id']})
     methylation_list = buffer
 
-    print(len(methylation_list))
-
     # Removing duplicates, taking only one case_id for each-one
     buffer = []
     case_ids = []
@@ -56,22 +54,19 @@ if __name__ == "__main__":
             file_names.append(dictionary['file_name'])
     methylation_list = buffer
 
-    print(len(methylation_list))
-
-    '''
     # Searching only TXT files with the right 'case_id'
     i = 0
     methylation_datastore = []
     for path in directory_loader(directories_paths[METHYLATION]):
         name = path.split('/')[len(path.split('/')) - 1]
         if name in file_names:
-            for dictionary in gene_expression_list:
+            for dictionary in methylation_list:
                 if name == dictionary['file_name']:
                     i += 1
-                    methylation_datastore.append(tsv_loader(path, dictionary))
+                    # methylation_datastore.append(tsv_loader(path, dictionary))
                     break
+
     print(f"Loaded {i} files")
-    '''
 
 
 
