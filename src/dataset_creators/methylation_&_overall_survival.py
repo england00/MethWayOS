@@ -42,7 +42,7 @@ if __name__ == "__main__":
             if patient['info']['case_id'] == case['info']['case_id']:
                 buffer = []
                 for key in methylation_keys:
-                    buffer.append(patient[key][2])  # Adding each feature
+                    buffer.append(patient[key])  # Adding each feature
                 if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
                     buffer.append(case['last_check']['days_to_death'])  # Adding label
                 else:  # ALIVE cases
