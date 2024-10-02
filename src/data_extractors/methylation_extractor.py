@@ -17,22 +17,18 @@ LOG_PATH = '../../logs/files/3.1 - METHYLATION Extractor.txt'
 
 
 ## FUNCTIONS
-def dictionary_format(file_path, data_dictionary, run):
+def dictionary_format(file_path, data_dictionary):
     # Loading TSV file
     data = tsv_loader(file_path)
 
     # Formatting data inside a dictionary
-    methylation_keys = []
     dict_buffer = {'info': data_dictionary}
     for element in data:
-        if run == 1:
-            methylation_keys.append(str(element[0]))
-        if element[1] != 'NA':
-            dict_buffer[str(element[0])] = element[1]
-
-    # Storing feature names
-    if run == 1:
-        json_storer(json_paths[METHYLATION_NAMES], methylation_keys)
+        if str(element[0]).startswith("cg"):
+            if element[1] != 'NA':
+                dict_buffer[str(element[0])] = element[1]
+            else:
+                dict_buffer[str(element[0])] = 0.0
 
     return dict_buffer
 
@@ -85,7 +81,7 @@ if __name__ == "__main__":
             for dictionary in methylation_list:
                 if name == dictionary['file_name']:
                     i += 1
-                    methylation_datastore.append(dictionary_format(path, dictionary, i))
+                    methylation_datastore.append(dictionary_format(path, dictionary))
                     break
     print(f"Loaded {i} files")
 
