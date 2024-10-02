@@ -2,9 +2,8 @@ from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
-from data.methods.txt_loader import *
+from data.methods.tsv_loader import *
 from logs.methods.log_storer import *
-
 
 
 ## CONFIGURATION
@@ -13,7 +12,29 @@ DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
+METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = '../../logs/files/3.1 - METHYLATION Extractor.txt'
+
+
+## FUNCTIONS
+def dictionary_format(file_path, data_dictionary, run):
+    # Loading TSV file
+    data = tsv_loader(file_path)
+
+    # Formatting data inside a dictionary
+    methylation_keys = []
+    dict_buffer = {'info': data_dictionary}
+    for element in data:
+        if run == 1:
+            methylation_keys.append(str(element[0]))
+        if element[1] != 'NA':
+            dict_buffer[str(element[0])] = element[1]
+
+    # Storing feature names
+    if run == 1:
+        json_storer(json_paths[METHYLATION_NAMES], methylation_keys)
+
+    return dict_buffer
 
 
 ## MAIN
@@ -64,15 +85,12 @@ if __name__ == "__main__":
             for dictionary in methylation_list:
                 if name == dictionary['file_name']:
                     i += 1
-
-                    ids, values = txt_loader(path)
-                    print(ids)
-                    print(values)
-
-
+                    methylation_datastore.append(dictionary_format(path, dictionary, i))
                     break
-
     print(f"Loaded {i} files")
+
+    # Storing the datastore inside a JSON file
+    json_storer(datastore_paths[METHYLATION], methylation_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
