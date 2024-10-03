@@ -18,7 +18,7 @@ def myprint(dictionary):
         i += 1
 
 
-def check_duplicates_case_ids(dictionary, json_file):
+def check_duplicates_case_ids(json_file):
     case_ids = []
     for element in data[json_file]:
         case_ids.append(element['case_id'])
@@ -32,7 +32,7 @@ def check_duplicates_case_ids(dictionary, json_file):
     print(len(duplicates))
 
 
-def check_singles_case_ids(dictionary, json_file):
+def check_singles_case_ids(json_file):
     case_ids = []
     for element in data[json_file]:
         case_ids.append(element['case_id'])
@@ -64,4 +64,5 @@ if __name__ == "__main__":
                 {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
         data[file] = buffer
 
+    # Printing data
     myprint(data[OVERALL_SURVIVAL])
