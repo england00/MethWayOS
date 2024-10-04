@@ -20,10 +20,10 @@ METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = '../../logs/files/3.3 - METHYLATION & OS - Binary Classification.txt'
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1000  # 730 (2 years)
-UPPER_THRESHOLD = 3000  # 2920 (8 years)
+LOWER_THRESHOLD = 1500  # 730 (2 years)
+UPPER_THRESHOLD = 2500  # 2920 (8 years)
 PCA_DIMENSION = 80
-FEATURES_NUMBER = 8
+FEATURES_NUMBER = 20
 VERBOSE = False
 PLOT = False
 
