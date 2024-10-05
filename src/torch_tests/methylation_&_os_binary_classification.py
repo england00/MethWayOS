@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 train_loader = DataLoader(training_set, batch_size=batch_size, shuffle=True)
 
                 # Creazione e spostamento del modello su GPU
-                model = MLP(input_size=training_set.drop('y', axis=1).shape[1], hidden_size=hidden_size,
+                model = MLP(input_size=X_training_tensor.shape[1], hidden_size=hidden_size,
                             output_size=2).to(device)
 
                 # Definizione della funzione di perdita e dell'ottimizzatore

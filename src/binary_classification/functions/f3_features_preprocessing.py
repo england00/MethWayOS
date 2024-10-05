@@ -30,11 +30,11 @@ def features_preprocessing(dataframe, lower_threshold=0, upper_threshold=0, verb
         print(f'\t--> {j} samples with a label bigger than {upper_threshold}')
 
     # Operations to do with BOTH TRAINING SET & TEST SET
-    dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 1  # changing lower values with '1'
-    dataframe.loc[dataframe['y'] >= upper_threshold, 'y'] = 2  # changing higher values with '2'
+    dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 0  # changing lower values with '0'
+    dataframe.loc[dataframe['y'] >= upper_threshold, 'y'] = 1  # changing higher values with '1'
 
-    # Selecting only rows with labels '1' and '2'
-    label_values = [1, 2]
+    # Selecting only rows with labels '0' and '1'
+    label_values = [0, 1]
     dataframe = dataframe[dataframe['y'].isin(label_values)]
 
     # Feature Scaling
