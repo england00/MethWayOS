@@ -12,7 +12,6 @@ from src.binary_classification.functions.f9_training import training
 from src.binary_classification.functions.f10_testing import testing
 from logs.methods.log_storer import *
 
-
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
@@ -35,7 +34,6 @@ def title(text):
 
 ## MAIN
 if __name__ == "__main__":
-
     # Open LOG file
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
@@ -43,9 +41,10 @@ if __name__ == "__main__":
     # Data Acquisition
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
-    dataset, dataset_columns = dataset_acquisition(path=dataset_paths[GENE_EXPRESSION],
-                                                   json_paths_yaml=JSON_PATHS_YAML,
-                                                   names=GENE_EXPRESSION_NAMES)
+    dataset, dataset_columns = dataset_acquisition(
+        path=dataset_paths[GENE_EXPRESSION],
+        json_paths_yaml=JSON_PATHS_YAML,
+        names=GENE_EXPRESSION_NAMES)
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')
@@ -54,18 +53,20 @@ if __name__ == "__main__":
     # Feature Preprocessing
     title('FEATURES PREPROCESSING')
     dataset_columns.remove('y')
-    dataset = features_preprocessing(dataframe=dataset,
-                                     lower_threshold=LOWER_THRESHOLD,
-                                     upper_threshold=UPPER_THRESHOLD,
-                                     verbose=VERBOSE,
-                                     column_names=dataset_columns)
+    dataset = features_preprocessing(
+        dataframe=dataset,
+        lower_threshold=LOWER_THRESHOLD,
+        upper_threshold=UPPER_THRESHOLD,
+        verbose=VERBOSE,
+        column_names=dataset_columns)
 
     # Feature Selection
     title('FEATURE SELECTION')
-    dataset = feature_selection(dataframe=dataset,
-                                rand_state=RANDOM_STATE,
-                                pca_dimension=PCA_DIMENSION,
-                                feature_number=FEATURES_NUMBER)
+    dataset = feature_selection(
+        dataframe=dataset,
+        rand_state=RANDOM_STATE,
+        pca_dimension=PCA_DIMENSION,
+        feature_number=FEATURES_NUMBER)
 
     # Dataset Splitting
     title('DATASET SPLITTING')
@@ -77,16 +78,18 @@ if __name__ == "__main__":
 
     # Grid Search
     title('GRID SEARCH')
-    best_parameters, estimators = grid_search(dataframe=training_set,
-                                              catalogue=models_list,
-                                              names=models_names,
-                                              hyperparameters=models_hyperparameters)
+    best_parameters, estimators = grid_search(
+        dataframe=training_set,
+        catalogue=models_list,
+        names=models_names,
+        hyperparameters=models_hyperparameters)
 
     # Cross Validation
     title('CROSS VALIDATION')
-    models_dictionary = cross_validation_model_assessment(dataframe=training_set,
-                                                          hyperparameters=best_parameters,
-                                                          rand_state=RANDOM_STATE)
+    models_dictionary = cross_validation_model_assessment(
+        dataframe=training_set,
+        hyperparameters=best_parameters,
+        rand_state=RANDOM_STATE)
 
     # Training
     title('TRAINING')
