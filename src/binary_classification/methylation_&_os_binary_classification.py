@@ -62,10 +62,11 @@ if __name__ == "__main__":
 
     # Feature Selection
     title('FEATURE SELECTION')
-    dataset = feature_selection(dataframe=dataset,
-                                rand_state=RANDOM_STATE,
-                                pca_dimension=PCA_DIMENSION,
-                                feature_number=FEATURES_NUMBER)
+    dataset = feature_selection(
+        dataframe=dataset,
+        rand_state=RANDOM_STATE,
+        pca_dimension=PCA_DIMENSION,
+        feature_number=FEATURES_NUMBER)
 
     # Dataset Splitting
     title('DATASET SPLITTING')
