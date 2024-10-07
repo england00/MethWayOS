@@ -1,5 +1,4 @@
 from colorama import Fore
-import torch
 from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions.f1_dataset_acquisition import dataset_acquisition
 from src.binary_classification.functions.f2_exploratory_data_analysis import exploratory_data_analysis
@@ -24,7 +23,7 @@ RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test s
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 PCA_DIMENSION = 80
-FEATURES_NUMBER = 12
+FEATURES_NUMBER = 15
 VERBOSE = False
 PLOT = False
 
@@ -62,53 +61,57 @@ if __name__ == "__main__":
         verbose=VERBOSE,
         column_names=dataset_columns)
 
-    # Feature Selection
-    title('FEATURE SELECTION')
-    dataset = feature_selection(
-        dataframe=dataset,
-        rand_state=RANDOM_STATE,
-        pca_dimension=PCA_DIMENSION,
-        feature_number=FEATURES_NUMBER)
+    # TRIALS
+    for i in range(8, 40):
+        title(f'TRIAL: {i} features')
 
-    # Dataset Splitting
-    title('DATASET SPLITTING')
-    training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
+        # Feature Selection
+        title('FEATURE SELECTION')
+        dataset = feature_selection(
+            dataframe=dataset,
+            rand_state=RANDOM_STATE,
+            pca_dimension=PCA_DIMENSION,
+            feature_number=i)
 
-    # SKLearn to Torch
-    title('SKLEARN TO TORCH')
-    device, X_training_tensor, y_training_tensor, X_testing_tensor, y_testing_tensor = sklearn_to_torch(
-        training_dataframe=training_set,
-        testing_dataframe=testing_set)
+        # Dataset Splitting
+        title('DATASET SPLITTING')
+        training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
 
-    # Hyperparameters Lists
-    title('HYPERPARAMETERS LISTS')
-    hyperparameters = double_layer_hyperparameters()
+        # SKLearn to Torch
+        title('SKLEARN TO TORCH')
+        device, X_training_tensor, y_training_tensor, X_testing_tensor, y_testing_tensor = sklearn_to_torch(
+            training_dataframe=training_set,
+            testing_dataframe=testing_set)
 
-    # Grid Search
-    title('GRID SEARCH')
-    best_parameters = grid_search(
-        device=device,
-        X=X_training_tensor,
-        y=y_training_tensor,
-        rand_state=RANDOM_STATE,
-        hyperparameters=hyperparameters)
+        # Hyperparameters Lists
+        title('HYPERPARAMETERS LISTS')
+        hyperparameters = double_layer_hyperparameters()
 
-    # Training
-    title('TRAINING')
-    model = training(
-        device=device,
-        X=X_training_tensor,
-        y=y_training_tensor,
-        X_validation=X_testing_tensor,
-        y_validation=y_testing_tensor,
-        hyperparameters=best_parameters)
+        # Grid Search
+        title('GRID SEARCH')
+        best_parameters = grid_search(
+            device=device,
+            X=X_training_tensor,
+            y=y_training_tensor,
+            rand_state=RANDOM_STATE,
+            hyperparameters=hyperparameters)
 
-    # Testing
-    title('TESTING')
-    testing(
-        model=model,
-        X_testing=X_testing_tensor,
-        y_testing=y_testing_tensor)
+        # Training
+        title('TRAINING')
+        model = training(
+            device=device,
+            X=X_training_tensor,
+            y=y_training_tensor,
+            X_validation=X_testing_tensor,
+            y_validation=y_testing_tensor,
+            hyperparameters=best_parameters)
+
+        # Testing
+        title('TESTING')
+        testing(
+            model=model,
+            X_testing=X_testing_tensor,
+            y_testing=y_testing_tensor)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

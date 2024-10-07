@@ -118,12 +118,12 @@ def grid_search(device, X, y, rand_state, hyperparameters):
                               f'Dropout: {dropout}, '
                               f'Mean Accuracy: {mean_accuracy:.4f}')
 
-    print('\t--> Best value for each hyperparameter:\n')
+    print('\t--> Best value for each hyperparameter:')
     print(f'\t--> Hidden Size: {best_parameters["hidden_layers_configuration"]},\n'
-          f'Learning Rate: {best_parameters["learning_rate"]},\n'
-          f'Batch Size: {best_parameters["batch_size"]},\n'
-          f'Alpha: {best_parameters["alpha"]},\n'
-          f'Dropout: {best_parameters["dropout"]}\n')
+          f'\t--> Learning Rate: {best_parameters["learning_rate"]},\n'
+          f'\t--> Batch Size: {best_parameters["batch_size"]},\n'
+          f'\t--> Alpha: {best_parameters["alpha"]},\n'
+          f'\t--> Dropout: {best_parameters["dropout"]}')
     print(f'\t--> Best Mean Accuracy: {best_accuracy:.4f}')
 
     return best_parameters

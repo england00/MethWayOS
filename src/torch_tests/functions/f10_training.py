@@ -1,3 +1,4 @@
+import time
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
@@ -35,6 +36,7 @@ def training(device, X, y, X_validation, y_validation, hyperparameters):
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
     # Training Model
+    set_t0 = time.time()
     for epoch in range(hyperparameters["max_epochs_number"]):
         model.train()
         for X_batch, y_batch in training_loader:
@@ -71,4 +73,5 @@ def training(device, X, y, X_validation, y_validation, hyperparameters):
                 print("Early stopping")
                 break
 
+    print(f'\t--> Training took {time.time() - set_t0} sec')
     return model
