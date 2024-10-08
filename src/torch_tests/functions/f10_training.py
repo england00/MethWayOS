@@ -66,7 +66,7 @@ def training(device, X, y, X_validation, y_validation, hyperparameters):
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             epochs_no_improve = 0
-            torch.save(model.state_dict(), './model_weights/Methylation & OS Binary Classification.pth')
+            # torch.save(model.state_dict(), './model_weights/Methylation & OS Binary Classification.pth')
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= patience:

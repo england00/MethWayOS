@@ -16,9 +16,9 @@ from logs.methods.log_storer import *
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-METHYLATION = 'methylation'
-METHYLATION_NAMES = 'methylation_names'
-LOG_PATH = '../../logs/files/3.4 - METHYLATION & OS - Binary Classification (GPU).txt'
+GENE_EXPRESSION = 'gene_expression'
+GENE_EXPRESSION_NAMES = 'gene_expression_names'
+LOG_PATH = '../../logs/files/2.4 - GENE EXPRESSION & OS - Binary Classification (GPU).txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
@@ -42,9 +42,9 @@ if __name__ == "__main__":
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
     dataset, dataset_columns = dataset_acquisition(
-        path=dataset_paths[METHYLATION],
+        path=dataset_paths[GENE_EXPRESSION],
         json_paths_yaml=JSON_PATHS_YAML,
-        names=METHYLATION_NAMES)
+        names=GENE_EXPRESSION_NAMES)
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')
