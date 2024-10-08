@@ -12,8 +12,8 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
-GENE_EXPRESSION_NAMES = 'gene_expression_names'
-METHYLATION_NAMES = 'methylation_names'
+GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
+GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
 LOG_PATH = '../../logs/files/4.2 - GENE EXPRESSION & METHYLATION & OS - Dataset.txt'
 
 
@@ -37,26 +37,32 @@ if __name__ == "__main__":
     # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
     gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
     gene_expression_keys = gene_expression_keys[1:]
+    methylation_keys = [key for key in methylation_datastore[0].keys()]
+    methylation_keys = methylation_keys[1:]
     i = 0
     dataset = []
-    for patient in gene_expression_datastore:
-        for case in overall_survival_datastore:
-            if patient['info']['case_id'] == case['info']['case_id']:
-                buffer = []
-                for key in gene_expression_keys:
-                    buffer.append(patient[key][2])  # Adding each feature
-                if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
-                    buffer.append(case['last_check']['days_to_death'])  # Adding label
-                else:  # ALIVE cases
-                    buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
-                dataset.append(buffer)
-                i += 1
-                break
+    for ge_patient in gene_expression_datastore:
+        for meth_patient in methylation_datastore:
+            for case in overall_survival_datastore:
+                if (ge_patient['info']['case_id'] == meth_patient['info']['case_id'] and
+                        ge_patient['info']['case_id'] == case['info']['case_id']):
+                    buffer = []
+                    for key in gene_expression_keys:  # Gene Expression
+                        buffer.append(ge_patient[key][2])  # Adding each feature
+                    for key in methylation_keys:  # Methylation
+                        buffer.append(meth_patient[key])  # Adding each feature
+                    if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
+                        buffer.append(case['last_check']['days_to_death'])  # Adding label
+                    else:  # ALIVE cases
+                        buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
+                    dataset.append(buffer)
+                    i += 1
+                    break
     print(f"Loaded {i} files")
 
     # Storing dataset inside a CSV file
-    csv_storer(dataset_paths[GENE_EXPRESSION], dataset)
-    json_storer(json_paths[GENE_EXPRESSION_NAMES], gene_expression_keys)
+    csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION], dataset)
+    json_storer(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES], gene_expression_keys)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
