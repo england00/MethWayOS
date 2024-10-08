@@ -58,11 +58,12 @@ if __name__ == "__main__":
                     dataset.append(buffer)
                     i += 1
                     break
+    gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
     print(f"Loaded {i} files")
 
     # Storing dataset inside a CSV file
     csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION], dataset)
-    json_storer(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES], gene_expression_keys)
+    json_storer(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES], gene_expression_and_methylation_keys)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
