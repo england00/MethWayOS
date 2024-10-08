@@ -18,6 +18,8 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
+GENE_EXPRESSION = 'gene_expression'
+GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/3.4 - METHYLATION & OS - Binary Classification (GPU).txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
@@ -67,7 +69,7 @@ if __name__ == "__main__":
 
         # Feature Selection
         title('FEATURE SELECTION')
-        dataset = feature_selection(
+        dataset_trial = feature_selection(
             dataframe=dataset,
             rand_state=RANDOM_STATE,
             pca_dimension=PCA_DIMENSION,
@@ -75,7 +77,7 @@ if __name__ == "__main__":
 
         # Dataset Splitting
         title('DATASET SPLITTING')
-        training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
+        training_set, testing_set = dataset_splitting(dataframe=dataset_trial, rand_state=RANDOM_STATE)
 
         # SKLearn to Torch
         title('SKLEARN TO TORCH')

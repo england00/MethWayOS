@@ -1,0 +1,677 @@
+[36m 
+############################### DATA ACQUISITION ############################### [39m
+Data has been correctly loaded from ../../config/files/dataset_paths.yaml file
+Data has been correctly loaded from ../../config/files/json_paths.yaml file
+Data has been correctly loaded from ../../json_dir/indexes/methylation_names.json file
+Data has been correctly loaded from ../../data/datasets/methylation_and_overall_survival_dataset.csv file
+[36m 
+################### EXPLORATORY DATA ANALYSIS with RAW DATA #################### [39m
+[36m 
+############################ FEATURES PREPROCESSING ############################ [39m
+ADMITTED SAMPLES VALUES:
+	--> 33 samples with a label lower than 1000
+	--> 47 samples with a label bigger than 3000
+[36m 
+############################## TRIAL: 8 features ############################### [39m
+[36m 
+############################## FEATURE SELECTION ############################### [39m
+PRINCIPAL COMPONENT ANALYSIS:
+	--> New Feature Space Dimension: 80
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 8
+[36m 
+############################## DATASET SPLITTING ############################### [39m
+DIMENSIONS:
+	--> Training Set: 64
+	--> Testing Set: 16
+[36m 
+############################### SKLEARN TO TORCH ############################### [39m
+[36m 
+############################ HYPERPARAMETERS LISTS ############################# [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5949
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4974
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4397
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5346
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5513
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4218
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.3910
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5923
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.6256
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4218
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4410
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5449
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4244
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4051
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4718
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4077
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6218
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5449
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4064
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4231
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5192
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5269
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4231
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4500
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6128
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5603
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.3897
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5282
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6090
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4538
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.6128
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4551
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5590
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5577
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4551
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5808
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5923
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4795
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.6115
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.3282
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4795
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5667
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4103
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4974
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4026
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4795
+	--> Best value for each hyperparameter:
+	--> Hidden Size: [5, 3],
+	--> Learning Rate: 0.001,
+	--> Batch Size: 64,
+	--> Alpha: 0.0001,
+	--> Dropout: 0.0
+	--> Best Mean Accuracy: 0.6256
+[36m 
+################################### TRAINING ################################### [39m
+	--> Epoch [1/100], Loss: 1.6998, Validation Loss: 1.1647
+	--> Epoch [2/100], Loss: 1.6565, Validation Loss: 1.1493
+	--> Epoch [3/100], Loss: 1.6144, Validation Loss: 1.1339
+	--> Epoch [4/100], Loss: 1.5733, Validation Loss: 1.1324
+	--> Epoch [5/100], Loss: 1.5693, Validation Loss: 1.1309
+	--> Epoch [6/100], Loss: 1.5652, Validation Loss: 1.1294
+	--> Epoch [7/100], Loss: 1.5612, Validation Loss: 1.1292
+	--> Epoch [8/100], Loss: 1.5608, Validation Loss: 1.1291
+	--> Epoch [9/100], Loss: 1.5604, Validation Loss: 1.1289
+	--> Epoch [10/100], Loss: 1.5600, Validation Loss: 1.1289
+	--> Epoch [11/100], Loss: 1.5600, Validation Loss: 1.1289
+	--> Epoch [12/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [13/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [14/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [15/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [16/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [17/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [18/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [19/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [20/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [21/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [22/100], Loss: 1.5599, Validation Loss: 1.1289
+	--> Epoch [23/100], Loss: 1.5599, Validation Loss: 1.1289
+Early stopping
+	--> Training took 0.15802454948425293 sec
+[36m 
+################################### TESTING #################################### [39m
+	--> Testing took 0.0 sec
+	--> Final Accuracy: 0.6250
+[36m 
+############################## TRIAL: 9 features ############################### [39m
+[36m 
+############################## FEATURE SELECTION ############################### [39m
+PRINCIPAL COMPONENT ANALYSIS:
+	--> New Feature Space Dimension: 80
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 9
+[36m 
+############################## DATASET SPLITTING ############################### [39m
+DIMENSIONS:
+	--> Training Set: 64
+	--> Testing Set: 16
+[36m 
+############################### SKLEARN TO TORCH ############################### [39m
+[36m 
+############################ HYPERPARAMETERS LISTS ############################# [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4808
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4808
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6244
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6397
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4538
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4654
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4051
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4064
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5603
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4218
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4103
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4974
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4051
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5282
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5436
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5449
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4231
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4218
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5949
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4487
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5500
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6410
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4885
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5987
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6564
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5795
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5359
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5282
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6077
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.3897
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4538
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4051
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4346
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4090
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6705
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5269
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6051
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5500
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6115
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.3577
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4564
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5744
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4410
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5192
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4026
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Best value for each hyperparameter:
+	--> Hidden Size: [10, 5],
+	--> Learning Rate: 0.001,
+	--> Batch Size: 16,
+	--> Alpha: 0.01,
+	--> Dropout: 0.0
+	--> Best Mean Accuracy: 0.6705
+[36m 
+################################### TRAINING ################################### [39m
+	--> Epoch [1/100], Loss: 2.1415, Validation Loss: 1.5654
+	--> Epoch [2/100], Loss: 2.8811, Validation Loss: 1.5839
+	--> Epoch [3/100], Loss: 2.5678, Validation Loss: 1.6557
+	--> Epoch [4/100], Loss: 2.1502, Validation Loss: 1.6598
+	--> Epoch [5/100], Loss: 2.1791, Validation Loss: 1.6641
+	--> Epoch [6/100], Loss: 1.7822, Validation Loss: 1.6680
+Early stopping
+	--> Training took 0.05513143539428711 sec
+[36m 
+################################### TESTING #################################### [39m
+	--> Testing took 0.0 sec
+	--> Final Accuracy: 0.4375
+[36m 
+############################## TRIAL: 10 features ############################## [39m
+[36m 
+############################## FEATURE SELECTION ############################### [39m
+PRINCIPAL COMPONENT ANALYSIS:
+	--> New Feature Space Dimension: 80
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 10
+[36m 
+############################## DATASET SPLITTING ############################### [39m
+DIMENSIONS:
+	--> Training Set: 64
+	--> Testing Set: 16
+[36m 
+############################### SKLEARN TO TORCH ############################### [39m
+[36m 
+############################ HYPERPARAMETERS LISTS ############################# [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6077
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5782
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5782
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5038
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6244
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6051
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5769
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5141
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5795
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5795
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6115
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4705
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5949
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4885
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4564
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4654
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4051
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5038
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5808
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5038
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5513
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4974
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5667
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6590
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5782
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4885
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4346
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4718
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5936
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4205
+	--> Hidden Size: [8, 4], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4974
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5500
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6397
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4359
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5192
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.3872
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [8, 4], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4077
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5359
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5808
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5205
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5910
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.3744
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5449
+	--> Hidden Size: [10, 5], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.3590
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5141
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4872
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5782
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4692
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4577
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4064
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.3923
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [10, 5], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4321
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.6256
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4821
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.3897
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4192
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4654
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.7026
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4679
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [10, 5], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Best value for each hyperparameter:
+	--> Hidden Size: [10, 5],
+	--> Learning Rate: 0.0001,
+	--> Batch Size: 32,
+	--> Alpha: 0.0001,
+	--> Dropout: 0.0
+	--> Best Mean Accuracy: 0.7026
+[36m 
+################################### TRAINING ################################### [39m
+	--> Epoch [1/100], Loss: 3.1599, Validation Loss: 1.9612
+	--> Epoch [2/100], Loss: 2.1578, Validation Loss: 1.9551
+	--> Epoch [3/100], Loss: 2.7945, Validation Loss: 1.9483
+	--> Epoch [4/100], Loss: 3.1102, Validation Loss: 1.9476
+	--> Epoch [5/100], Loss: 2.8135, Validation Loss: 1.9469
+	--> Epoch [6/100], Loss: 2.5197, Validation Loss: 1.9462
+	--> Epoch [7/100], Loss: 2.6659, Validation Loss: 1.9462
+	--> Epoch [8/100], Loss: 2.6527, Validation Loss: 1.9461
+	--> Epoch [9/100], Loss: 2.4603, Validation Loss: 1.9460
+	--> Epoch [10/100], Loss: 2.8027, Validation Loss: 1.9460
+	--> Epoch [11/100], Loss: 2.7271, Validation Loss: 1.9460
+	--> Epoch [12/100], Loss: 2.4317, Validation Loss: 1.9460
+	--> Epoch [13/100], Loss: 2.2868, Validation Loss: 1.9460
+	--> Epoch [14/100], Loss: 2.1515, Validation Loss: 1.9460
+	--> Epoch [15/100], Loss: 2.0316, Validation Loss: 1.9460
+	--> Epoch [16/100], Loss: 2.9616, Validation Loss: 1.9460
+	--> Epoch [17/100], Loss: 3.0953, Validation Loss: 1.9460
+	--> Epoch [18/100], Loss: 2.0649, Validation Loss: 1.9460
+	--> Epoch [19/100], Loss: 2.6069, Validation Loss: 1.9460
+	--> Epoch [20/100], Loss: 2.5106, Validation Loss: 1.9460
+Early stopping
+	--> Training took 0.15565037727355957 sec
+[36m 
+################################### TESTING #################################### [39m
+	--> Testing took 0.000997304916381836 sec
+	--> Final Accuracy: 0.5000
+[36m 
+############################## TRIAL: 11 features ############################## [39m
+[36m 
+############################## FEATURE SELECTION ############################### [39m
+PRINCIPAL COMPONENT ANALYSIS:
+	--> New Feature Space Dimension: 80
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 11
+[36m 
+############################## DATASET SPLITTING ############################### [39m
+DIMENSIONS:
+	--> Training Set: 64
+	--> Testing Set: 16
+[36m 
+############################### SKLEARN TO TORCH ############################### [39m
+[36m 
+############################ HYPERPARAMETERS LISTS ############################# [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5667
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4231
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5026
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5795
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5321
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5487
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4372
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4846
+	--> Hidden Size: [5, 3], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5808
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.6872
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5474
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5615
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5000
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5897
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4833
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5449
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5628
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5141
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5795
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5462
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.4385
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4231
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.3897
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5282
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.6103
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5923
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.4513
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4667
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4987
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [5, 3], Learning Rate: 0.0001, Batch Size: 64, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5333
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5641
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.4859
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5128
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.6141
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5141
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5167
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 16, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5013
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.5308
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5179
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.001, Dropout: 0.0, Mean Accuracy: 0.5154
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 32, Alpha: 0.0001, Dropout: 0.0, Mean Accuracy: 0.5295
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.01, Dropout: 0.0, Mean Accuracy: 0.4526
+	--> Hidden Size: [8, 4], Learning Rate: 0.01, Batch Size: 64, Alpha: 0.005, Dropout: 0.0, Mean Accuracy: 0.5154
