@@ -2,7 +2,7 @@ import time
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from src.torch_tests.functions.f9_mlp_models import *
+from src.binary_classification.functions_torch.f9_mlp_models import *
 
 
 def training(device, X, y, X_validation, y_validation, hyperparameters):

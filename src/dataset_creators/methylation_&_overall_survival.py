@@ -12,7 +12,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 METHYLATION_NAMES = 'methylation_names'
-LOG_PATH = '../../logs/files/3.2 - METHYLATION & OS - Dataset.txt'
+LOG_PATH = '../../logs/files/1 - METHYLATION & OS - Dataset.txt'
 
 
 ## MAIN

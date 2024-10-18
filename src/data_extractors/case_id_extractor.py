@@ -1,6 +1,7 @@
 from collections import Counter
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
+from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
@@ -8,6 +9,7 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
+LOG_PATH = '../../logs/files/0 - CASE ID Extractor.txt'
 
 
 ## FUNCTIONS
@@ -48,6 +50,10 @@ def check_singles_case_ids(json_file):
 ## MAIN
 if __name__ == "__main__":
 
+    # Open LOG file
+    logfile = open(LOG_PATH, 'w')
+    sys.stdout = DualOutput(sys.stdout, logfile)
+
     # Loading YAML file
     json_paths = yaml_loader(JSON_PATHS_YAML)
 
@@ -66,3 +72,7 @@ if __name__ == "__main__":
 
     # Printing data
     myprint(data[OVERALL_SURVIVAL])
+
+    # Close LOG file
+    sys.stdout = sys.__stdout__
+    logfile.close()

@@ -1,28 +1,29 @@
 from colorama import Fore
 from config.methods.configuration_loader import yaml_loader
-from src.binary_classification.functions.f1_dataset_acquisition import dataset_acquisition
-from src.binary_classification.functions.f2_exploratory_data_analysis import exploratory_data_analysis
-from src.binary_classification.functions.f3_features_preprocessing import features_preprocessing
-from src.binary_classification.functions.f4_feature_selection import feature_selection
-from src.binary_classification.functions.f5_dataset_splitting import dataset_splitting
-from src.binary_classification.functions.f6_models import models
-from src.binary_classification.functions.f7_grid_search import grid_search
-from src.binary_classification.functions.f8_cross_validation_model_assessment import cross_validation_model_assessment
-from src.binary_classification.functions.f9_training import training
-from src.binary_classification.functions.f10_testing import testing
+from src.binary_classification.functions_sklearn.f1_dataset_acquisition import dataset_acquisition
+from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
+from src.binary_classification.functions_sklearn.f3_features_preprocessing import features_preprocessing
+from src.binary_classification.functions_sklearn.f4_feature_selection import feature_selection
+from src.binary_classification.functions_sklearn.f5_dataset_splitting import dataset_splitting
+from src.binary_classification.functions_sklearn.f6_models import models
+from src.binary_classification.functions_sklearn.f7_grid_search import grid_search
+from src.binary_classification.functions_sklearn.f8_cross_validation_model_assessment import cross_validation_model_assessment
+from src.binary_classification.functions_sklearn.f9_training import training
+from src.binary_classification.functions_sklearn.f10_testing import testing
 from logs.methods.log_storer import *
+
 
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
-GENE_EXPRESSION_NAMES = 'gene_expression_names'
-LOG_PATH = '../../logs/files/2.3 - GENE EXPRESSION & OS - Binary Classification.txt'
+METHYLATION = 'methylation'
+METHYLATION_NAMES = 'methylation_names'
+LOG_PATH = '../../logs/files/2 - METHYLATION & OS.txt'
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1000  # 730 (2 years)
-UPPER_THRESHOLD = 3000  # 2920 (8 years)
-PCA_DIMENSION = 90
-FEATURES_NUMBER = 35
+LOWER_THRESHOLD = 1500  # 730 (2 years)
+UPPER_THRESHOLD = 2500  # 2920 (8 years)
+PCA_DIMENSION = 80
+FEATURES_NUMBER = 20
 VERBOSE = False
 PLOT = False
 
@@ -42,9 +43,9 @@ if __name__ == "__main__":
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
     dataset, dataset_columns = dataset_acquisition(
-        path=dataset_paths[GENE_EXPRESSION],
+        path=dataset_paths[METHYLATION],
         json_paths_yaml=JSON_PATHS_YAML,
-        names=GENE_EXPRESSION_NAMES)
+        names=METHYLATION_NAMES)
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')

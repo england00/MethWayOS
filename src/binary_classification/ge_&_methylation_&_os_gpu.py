@@ -1,15 +1,15 @@
 from colorama import Fore
 from config.methods.configuration_loader import yaml_loader
-from src.binary_classification.functions.f1_dataset_acquisition import dataset_acquisition
-from src.binary_classification.functions.f2_exploratory_data_analysis import exploratory_data_analysis
-from src.binary_classification.functions.f3_features_preprocessing import features_preprocessing
-from src.binary_classification.functions.f4_feature_selection import feature_selection
-from src.binary_classification.functions.f5_dataset_splitting import dataset_splitting
-from src.torch_tests.functions.f6_sklearn_to_torch import sklearn_to_torch
-from src.torch_tests.functions.f7_hyperparameters import *
-from src.torch_tests.functions.f8_grid_search import grid_search
-from src.torch_tests.functions.f10_training import training
-from src.torch_tests.functions.f11_testing import testing
+from src.binary_classification.functions_sklearn.f1_dataset_acquisition import dataset_acquisition
+from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
+from src.binary_classification.functions_sklearn.f3_features_preprocessing import features_preprocessing
+from src.binary_classification.functions_sklearn.f4_feature_selection import feature_selection
+from src.binary_classification.functions_sklearn.f5_dataset_splitting import dataset_splitting
+from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
+from src.binary_classification.functions_torch.f7_hyperparameters import *
+from src.binary_classification.functions_torch.f8_grid_search import grid_search
+from src.binary_classification.functions_torch.f10_training import training
+from src.binary_classification.functions_torch.f11_testing import testing
 from logs.methods.log_storer import *
 
 
@@ -18,7 +18,7 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
-LOG_PATH = '../../logs/files/4.4 - GENE EXPRESSION & METHYLATION & OS - Binary Classification (GPU).txt'
+LOG_PATH = '../../logs/files/3 - GENE EXPRESSION & METHYLATION & OS - (GPU).txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)

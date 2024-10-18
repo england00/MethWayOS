@@ -14,7 +14,7 @@ METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
-LOG_PATH = '../../logs/files/4.2 - GENE EXPRESSION & METHYLATION & OS - Dataset.txt'
+LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & METHYLATION & OS - Dataset.txt'
 
 
 ## MAIN

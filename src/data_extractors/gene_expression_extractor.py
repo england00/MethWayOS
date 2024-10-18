@@ -12,7 +12,7 @@ DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 OVERALL_SURVIVAL = 'overall_survival'
-LOG_PATH = '../../logs/files/2.1 - GENE EXPRESSION Extractor.txt'
+LOG_PATH = '../../logs/files/0 - GENE EXPRESSION Extractor.txt'
 
 
 ## FUNCTIONS

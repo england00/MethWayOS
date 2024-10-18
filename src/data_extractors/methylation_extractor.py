@@ -13,7 +13,7 @@ DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 METHYLATION_NAMES = 'methylation_names'
-LOG_PATH = '../../logs/files/3.1 - METHYLATION Extractor.txt'
+LOG_PATH = '../../logs/files/0 - METHYLATION Extractor.txt'
 
 
 ## FUNCTIONS
