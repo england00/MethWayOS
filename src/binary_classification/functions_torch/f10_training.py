@@ -52,7 +52,7 @@ def training(device, X, y, rand_state, hyperparameters, k_folds=5):
                                betas=(hyperparameters['alpha'], 0.999))
 
         # Early Stopping Parameters
-        patience = 5
+        patience = 2
         best_val_loss = float('inf')
         epochs_no_improve = 0
 

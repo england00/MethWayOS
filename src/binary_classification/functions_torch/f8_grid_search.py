@@ -4,7 +4,6 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
-
 def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
     """
         :param device: CPU or GPU
@@ -13,14 +12,14 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
         :param rand_state: chosen random seed
         :param k_folds: number of used folds for cross validation
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
-        :param k_folds: number of used fold for cross validation
-        :return dictionary: dictionary of hyperparameters
+        :return: best_parameters (dictionary of hyperparameters), best_validation_loss (float), best_accuracy (float)
     """
     # Setting K-Fold Cross Validation
     k_fold = KFold(n_splits=k_folds, shuffle=True, random_state=rand_state)
 
     # Best Params Initialization
     best_accuracy = 0.0
+    best_validation_loss = float('inf')
     best_parameters = {}
 
     # Grid Search
@@ -30,6 +29,7 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                 for alpha in hyperparameters["alpha"]:
                     for dropout in hyperparameters["dropout"]:
                         fold_accuracies = []
+                        fold_validation_losses = []
 
                         # Cross Validation
                         for training_index, validation_index in k_fold.split(X):
@@ -54,7 +54,7 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                             optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(alpha, 0.999))
 
                             # Early Stopping Parameters
-                            patience = 5
+                            patience = 2
                             best_loss = float('inf')
                             counter = 0
 
@@ -97,13 +97,15 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                                 _, predicted = torch.max(outputs, 1)
                                 accuracy = (predicted == y_fold_validation).sum().item() / y_fold_validation.size(0)
                                 fold_accuracies.append(accuracy)
+                                fold_validation_losses.append(best_loss)
 
-                        # Mean Accuracy
+                        # Mean Accuracy and Mean Validation Loss
                         mean_accuracy = sum(fold_accuracies) / len(fold_accuracies)
+                        mean_validation_loss = sum(fold_validation_losses) / len(fold_validation_losses)
 
                         # Saving Best Configuration
-                        if mean_accuracy > best_accuracy:
-                            best_accuracy = mean_accuracy
+                        # Update the best parameters if both Mean Accuracy is higher and Mean Validation loss is lower
+                        if mean_accuracy > best_accuracy and mean_validation_loss < best_validation_loss:
                             best_parameters = {
                                 'hidden_layers_configuration': hidden_sizes,
                                 'learning_rate': learning_rate,
@@ -112,20 +114,24 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                                 'dropout': dropout,
                                 'max_epochs_number': hyperparameters["max_epochs_number"]
                             }
+                            best_accuracy = mean_accuracy
+                            best_validation_loss = mean_validation_loss
 
                         print(f'\t--> Hidden Size: {hidden_sizes}, '
                               f'Learning Rate: {learning_rate}, '
                               f'Batch Size: {batch_size}, '
                               f'Alpha: {alpha}, '
                               f'Dropout: {dropout}, '
-                              f'Mean Accuracy: {mean_accuracy:.4f}')
+                              f'Mean Accuracy: {mean_accuracy:.4f}, '
+                              f'Mean Validation Loss: {mean_validation_loss:.4f}')
 
-    print('\t--> Best value for each hyperparameter:')
+    print('\nBest value for each hyperparameter:')
     print(f'\t--> Hidden Size: {best_parameters["hidden_layers_configuration"]},\n'
           f'\t--> Learning Rate: {best_parameters["learning_rate"]},\n'
           f'\t--> Batch Size: {best_parameters["batch_size"]},\n'
           f'\t--> Alpha: {best_parameters["alpha"]},\n'
           f'\t--> Dropout: {best_parameters["dropout"]}')
-    print(f'\t--> Best Mean Accuracy: {best_accuracy:.4f}')
+    print(f'\t--> Best Mean Accuracy: {best_accuracy:.4f}, '
+          f'Best Mean Validation Loss: {best_validation_loss:.4f}')
 
     return best_parameters
