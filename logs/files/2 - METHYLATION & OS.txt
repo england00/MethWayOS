@@ -27,3 +27,78 @@ DIMENSIONS:
 [36m 
 ################################# GRID SEARCH ################################## [39m
 DECISION TREE:
+Accuracy:   [32m 0.6726315789473684 [39m
+	--> best value for hyperparameter "criterion":  [33m entropy [39m
+	--> best value for hyperparameter "max_depth":  [33m 11 [39m
+	--> best value for hyperparameter "max_features":  [33m sqrt [39m
+	--> best value for hyperparameter "min_samples_split":  [33m 10 [39m
+	--> best value for hyperparameter "min_samples_leaf":  [33m 1 [39m
+	--> best value for hyperparameter "splitter":  [33m random [39m
+
+
+MULTI-LAYER PERCEPTRON:
+Accuracy:   [32m 0.6636842105263159 [39m
+	--> best value for hyperparameter "alpha":  [33m 0.01 [39m
+	--> best value for hyperparameter "activation":  [33m tanh [39m
+	--> best value for hyperparameter "hidden_layer_sizes":  [33m (20,) [39m
+	--> best value for hyperparameter "learning_rate":  [33m constant [39m
+	--> best value for hyperparameter "learning_rate_init":  [33m 0.001 [39m
+	--> best value for hyperparameter "solver":  [33m adam [39m
+
+
+SUPPORT VECTOR CLASSIFIER:
+Accuracy:   [32m 0.6236842105263157 [39m
+	--> best value for hyperparameter "C":  [33m 50 [39m
+	--> best value for hyperparameter "gamma":  [33m scale [39m
+	--> best value for hyperparameter "kernel":  [33m rbf [39m
+
+
+[36m 
+############################### CROSS VALIDATION ############################### [39m
+DECISION TREE:
+	--> cross-validated Accuracy:  [32m 0.4794736842105264 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.4650187239660924 [39m
+	--> Validation took 0.10169267654418945 sec
+
+MULTI-LAYER PERCEPTRON:
+	--> cross-validated Accuracy:  [32m 0.591578947368421 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.5929078450602209 [39m
+	--> Validation took 1.3575572967529297 sec
+
+SUPPORT VECTOR CLASSIFIER:
+	--> cross-validated Accuracy:  [32m 0.6236842105263157 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.6215940457203615 [39m
+	--> Validation took 1.3670947551727295 sec
+
+RANDOM FOREST CLASSIFIER:
+	--> cross-validated Accuracy:  [32m 0.4784210526315789 [39m
+	--> cross-validated Weighted F1-score:  [32m 0.4732980789569833 [39m
+	--> Validation took 1.9354770183563232 sec
+[36m 
+################################### TRAINING ################################### [39m
+DECISION TREE' training took 0.0052034854888916016 sec
+MULTI-LAYER PERCEPTRON' training took 0.39257001876831055 sec
+SUPPORT VECTOR CLASSIFIER' training took 0.004122257232666016 sec
+RAMDOM FOREST' training took 0.038587093353271484 sec
+[36m 
+######################## TESTING, PREDICTION & METRICS ######################### [39m
+DECISION TREE' testing took 0.0010783672332763672 sec:
+	--> Accuracy:  0.52
+	--> Precision:  0.52
+	--> Recall:  0.52
+	--> F1-Score:  0.52
+MULTI-LAYER PERCEPTRON' testing took 0.002015352249145508 sec:
+	--> Accuracy:  0.64
+	--> Precision:  0.7143589743589744
+	--> Recall:  0.64
+	--> F1-Score:  0.6518226600985222
+SUPPORT VECTOR CLASSIFIER' testing took 0.002009868621826172 sec:
+	--> Accuracy:  0.64
+	--> Precision:  0.6522222222222223
+	--> Recall:  0.64
+	--> F1-Score:  0.6451336898395722
+RAMDOM FOREST' testing took 0.0030655860900878906 sec:
+	--> Accuracy:  0.48
+	--> Precision:  0.408
+	--> Recall:  0.48
+	--> F1-Score:  0.44108108108108113
