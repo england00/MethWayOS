@@ -19,6 +19,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
 LOG_PATH = '../../logs/files/3 - GENE EXPRESSION & METHYLATION & OS - (GPU).txt'
+SHUFFLE = True
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
@@ -74,7 +75,7 @@ if __name__ == "__main__":
 
         # Dataset Splitting
         title('DATASET SPLITTING')
-        training_set, testing_set = dataset_splitting(dataframe=dataset_trial, rand_state=RANDOM_STATE)
+        training_set, testing_set = dataset_splitting(dataframe=dataset_trial, shuffle=SHUFFLE, rand_state=RANDOM_STATE)
 
         # SKLearn to Torch
         title('SKLEARN TO TORCH')
@@ -92,6 +93,7 @@ if __name__ == "__main__":
             device=device,
             x=X_training_tensor,
             y=y_training_tensor,
+            shuffle=SHUFFLE,
             rand_state=RANDOM_STATE,
             hyperparameters=hyperparameters,
             k_folds=5)
@@ -102,6 +104,7 @@ if __name__ == "__main__":
             device=device,
             x=X_training_tensor,
             y=y_training_tensor,
+            shuffle=SHUFFLE,
             hyperparameters=best_parameters,
             k_fold_setting=k_fold)
 

@@ -19,11 +19,12 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & OS - (GPU) V1.txt'
-RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
+SHUFFLE = False
+RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
-SECOND_FEATURES_SELECTION = 900
+SECOND_FEATURES_SELECTION = 100
 VERBOSE = False
 PLOT = False
 
@@ -46,6 +47,7 @@ if __name__ == "__main__":
         path=dataset_paths[GENE_EXPRESSION],
         json_paths_yaml=JSON_PATHS_YAML,
         names=GENE_EXPRESSION_NAMES,
+        shuffle=SHUFFLE,
         rand_state=RANDOM_STATE)
 
     # Training Set Management
@@ -98,6 +100,7 @@ if __name__ == "__main__":
         device=device,
         x=X_training_tensor,
         y=y_training_tensor,
+        shuffle=SHUFFLE,
         rand_state=RANDOM_STATE,
         hyperparameters=hyperparameters,
         k_folds=5)
@@ -108,6 +111,7 @@ if __name__ == "__main__":
         device=device,
         x=X_training_tensor,
         y=y_training_tensor,
+        shuffle=SHUFFLE,
         hyperparameters=best_parameters,
         k_fold_setting=k_fold)
 

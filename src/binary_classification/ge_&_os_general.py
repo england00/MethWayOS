@@ -19,6 +19,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/2 - GENE EXPRESSION & OS.txt'
+SHUFFLE = False
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
 
     # Dataset Splitting
     title('DATASET SPLITTING')
-    training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
+    training_set, testing_set = dataset_splitting(dataframe=dataset, shuffle=SHUFFLE, rand_state=RANDOM_STATE)
 
     # Model Selection
     title('MODELS SELECTION')

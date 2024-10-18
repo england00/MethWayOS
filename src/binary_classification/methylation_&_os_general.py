@@ -19,6 +19,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = '../../logs/files/2 - METHYLATION & OS.txt'
+SHUFFLE = False
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1500  # 730 (2 years)
 UPPER_THRESHOLD = 2500  # 2920 (8 years)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
 
     # Dataset Splitting
     title('DATASET SPLITTING')
-    training_set, testing_set = dataset_splitting(dataframe=dataset, rand_state=RANDOM_STATE)
+    training_set, testing_set = dataset_splitting(dataframe=dataset, shuffle=SHUFFLE, rand_state=RANDOM_STATE)
 
     # Model Selection
     title('MODELS SELECTION')

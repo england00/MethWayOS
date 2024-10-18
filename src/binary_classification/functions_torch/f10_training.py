@@ -5,14 +5,15 @@ from torch.utils.data import DataLoader, TensorDataset
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
 
-def training(device, x, y, hyperparameters, k_fold_setting):
+def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
     """
         :param device: CPU or GPU
         :param x: training set without labels
         :param y: training set with only labels
+        :param shuffle: shuffle flag
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
         :param k_fold_setting: cross validation setting used during Grid Search
-        :return model: trained model
+        :return best_model: trained model
     """
     # Best Training Params Initialization
     best_model = None
@@ -35,7 +36,7 @@ def training(device, x, y, hyperparameters, k_fold_setting):
 
         # Create DataLoader for training data
         training_set = TensorDataset(X_fold_training, y_fold_training)
-        training_loader = DataLoader(training_set, batch_size=hyperparameters['batch_size'], shuffle=True)
+        training_loader = DataLoader(training_set, batch_size=hyperparameters['batch_size'], shuffle=shuffle)
 
         # MLP Model for this fold
         model = MLP2Hidden(input_size=x.shape[1],

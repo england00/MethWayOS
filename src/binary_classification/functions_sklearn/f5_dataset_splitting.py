@@ -1,9 +1,10 @@
 from sklearn.model_selection import train_test_split
 
 
-def dataset_splitting(dataframe, rand_state):
+def dataset_splitting(dataframe, shuffle, rand_state):
     """
         :param dataframe: preprocessed dataset loaded inside a dataframe
+        :param shuffle: shuffle flag
         :param rand_state: chosen random seed
         :return training_dataframe: training set loaded inside a dataframe
         :return testing_dataframe: testing set loaded inside a dataframe
@@ -11,8 +12,8 @@ def dataset_splitting(dataframe, rand_state):
     # Splitting dataset in TRAINING and TESTING
     training_dataframe, testing_dataframe = train_test_split(dataframe,
                                                              test_size=0.2,
-                                                             random_state=rand_state,
-                                                             shuffle=True)
+                                                             shuffle=shuffle,
+                                                             random_state=rand_state)
     print('DIMENSIONS:')
     print(f"\t--> Training Set: {len(training_dataframe)}")
     print(f"\t--> Testing Set: {len(testing_dataframe)}")
