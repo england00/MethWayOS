@@ -23,7 +23,7 @@ RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test s
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
-SECOND_FEATURES_SELECTION = 100
+SECOND_FEATURES_SELECTION = 200
 VERBOSE = False
 PLOT = False
 
