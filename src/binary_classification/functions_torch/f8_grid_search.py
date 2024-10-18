@@ -5,17 +5,19 @@ from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
 
-def grid_search(device, X, y, rand_state, hyperparameters):
+def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
     """
         :param device: CPU or GPU
         :param X: training set without labels
         :param y: training set with only labels
         :param rand_state: chosen random seed
+        :param k_folds: number of used folds for cross validation
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
+        :param k_folds: number of used fold for cross validation
         :return dictionary: dictionary of hyperparameters
     """
     # Setting K-Fold Cross Validation
-    k_fold = KFold(n_splits=5, shuffle=True, random_state=rand_state)
+    k_fold = KFold(n_splits=k_folds, shuffle=True, random_state=rand_state)
 
     # Best Params Initialization
     best_accuracy = 0.0
@@ -41,7 +43,7 @@ def grid_search(device, X, y, rand_state, hyperparameters):
                             y_fold_training, y_fold_validation = (y_fold_training.to(device),
                                                                   y_fold_validation.to(device))
 
-                            # MLP Model
+                            # MLP Model for this fold
                             training_set = TensorDataset(X_fold_training, y_fold_training)
                             training_loader = DataLoader(training_set, batch_size=batch_size, shuffle=True)
                             model = MLP2Hidden(input_size=X.shape[1],

@@ -24,15 +24,19 @@ class MLP2Hidden(nn.Module):
         super(MLP2Hidden, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_layer_config[0])
         self.relu1 = nn.ReLU()
+        self.dropout1 = nn.Dropout(dropout_rate)
         self.fc2 = nn.Linear(hidden_layer_config[0], hidden_layer_config[1])
         self.relu2 = nn.ReLU()
+        self.dropout2 = nn.Dropout(dropout_rate)
         self.fc3 = nn.Linear(hidden_layer_config[1], output_size)
 
     def forward(self, x):
         x = self.fc1(x)
         x = self.relu1(x)
+        x = self.dropout1(x)
         x = self.fc2(x)
         x = self.relu2(x)
+        x = self.dropout2(x)
         x = self.fc3(x)
         return x
 

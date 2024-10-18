@@ -99,7 +99,8 @@ if __name__ == "__main__":
         X=X_training_tensor,
         y=y_training_tensor,
         rand_state=RANDOM_STATE,
-        hyperparameters=hyperparameters)
+        hyperparameters=hyperparameters,
+        k_folds=5)
 
     # Training
     title('TRAINING')
@@ -107,9 +108,9 @@ if __name__ == "__main__":
         device=device,
         X=X_training_tensor,
         y=y_training_tensor,
-        X_validation=X_testing_tensor,
-        y_validation=y_testing_tensor,
-        hyperparameters=best_parameters)
+        rand_state=RANDOM_STATE,
+        hyperparameters=best_parameters,
+        k_folds=5)
 
     # Testing
     title('TESTING')

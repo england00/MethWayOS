@@ -18,8 +18,8 @@ def double_layer_hyperparameters():
     return {
         "alpha": [0.01, 0.005, 0.001, 0.0001],
         "batch_size": [8, 16, 32, 64],
-        "dropout": [0.0],
-        "hidden_layers_configuration": [[5, 3], [8, 4], [10, 5], [16, 8], [20, 10], [32, 16]],
+        "dropout": [0.3, 0.5, 0.7],
+        "hidden_layers_configuration": [[8, 4], [16, 8], [32, 16], [64, 32], [128, 64]],
         "learning_rate": [0.01, 0.001, 0.0001],
         "max_epochs_number": 100}
 
