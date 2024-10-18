@@ -3,6 +3,13 @@ from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions_torch.f1_dataset_acquisition_and_splitting import dataset_acquisition_and_splitting
 from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
 from src.binary_classification.functions_sklearn.f3_features_preprocessing import features_preprocessing
+from src.binary_classification.functions_torch.f4_features_selection_training_set import features_selection_for_training
+from src.binary_classification.functions_torch.f5_features_selection_testing_set import features_selection_for_testing
+from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
+from src.binary_classification.functions_torch.f7_hyperparameters import double_layer_hyperparameters
+from src.binary_classification.functions_torch.f8_grid_search import grid_search
+from src.binary_classification.functions_torch.f10_training import training
+from src.binary_classification.functions_torch.f11_testing import testing
 from logs.methods.log_storer import *
 
 
@@ -15,9 +22,10 @@ LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & OS - (GPU) V1.txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
-PCA_DIMENSION = 80
-VERBOSE = True
-PLOT = True
+FIRST_FEATURES_SELECTION = 2000
+SECOND_FEATURES_SELECTION = 500
+VERBOSE = False
+PLOT = False
 
 
 ## FUNCTIONS
@@ -40,23 +48,75 @@ if __name__ == "__main__":
         names=GENE_EXPRESSION_NAMES,
         rand_state=RANDOM_STATE)
 
-    # Exploratory Data Analysis
-    title('EXPLORATORY DATA ANALYSIS with RAW DATA (TRAINING SET)')
+    # Training Set Management
+    title('TRAINING SET MANAGEMENT')
+    title('EXPLORATORY DATA ANALYSIS with RAW DATA')
     exploratory_data_analysis(dataframe=training_set, verbose=VERBOSE, plot=PLOT)
-
-    # Feature Preprocessing
-    title('FEATURES PREPROCESSING (TRAINING SET)')
+    title('FEATURES PREPROCESSING')
     dataset_columns.remove('y')
-    dataset = features_preprocessing(
+    training_set = features_preprocessing(
         dataframe=training_set,
         lower_threshold=LOWER_THRESHOLD,
         upper_threshold=UPPER_THRESHOLD,
         verbose=VERBOSE,
         column_names=dataset_columns)
+    title('FEATURES SELECTION')
+    training_set, selected_columns = features_selection_for_training(
+        dataframe=training_set,
+        variance_selection_dimension=FIRST_FEATURES_SELECTION,
+        correlation_filter_dimension=SECOND_FEATURES_SELECTION)
 
+    # Testing Set Management
+    title('TESTING SET MANAGEMENT')
+    title('EXPLORATORY DATA ANALYSIS with RAW DATA')
+    exploratory_data_analysis(dataframe=testing_set, verbose=VERBOSE, plot=PLOT)
+    title('FEATURES PREPROCESSING')
+    testing_set = features_preprocessing(
+        dataframe=testing_set,
+        lower_threshold=LOWER_THRESHOLD,
+        upper_threshold=UPPER_THRESHOLD,
+        verbose=VERBOSE,
+        column_names=dataset_columns)
+    title('FEATURES SELECTION')
+    testing_set = features_selection_for_testing(
+        dataframe=testing_set,
+        selected_features=selected_columns)
 
+    # SKLearn to Torch
+    title('SKLEARN TO TORCH')
+    device, X_training_tensor, y_training_tensor, X_testing_tensor, y_testing_tensor = sklearn_to_torch(
+        training_dataframe=training_set,
+        testing_dataframe=testing_set)
 
+    # Hyperparameters Lists
+    title('HYPERPARAMETERS LISTS')
+    hyperparameters = double_layer_hyperparameters()
 
+    # Grid Search
+    title('GRID SEARCH')
+    best_parameters = grid_search(
+        device=device,
+        X=X_training_tensor,
+        y=y_training_tensor,
+        rand_state=RANDOM_STATE,
+        hyperparameters=hyperparameters)
+
+    # Training
+    title('TRAINING')
+    model = training(
+        device=device,
+        X=X_training_tensor,
+        y=y_training_tensor,
+        X_validation=X_testing_tensor,
+        y_validation=y_testing_tensor,
+        hyperparameters=best_parameters)
+
+    # Testing
+    title('TESTING')
+    testing(
+        model=model,
+        X_testing=X_testing_tensor,
+        y_testing=y_testing_tensor)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

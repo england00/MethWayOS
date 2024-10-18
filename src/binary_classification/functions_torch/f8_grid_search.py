@@ -52,7 +52,7 @@ def grid_search(device, X, y, rand_state, hyperparameters):
                             optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(alpha, 0.999))
 
                             # Early Stopping Parameters
-                            patience = 2
+                            patience = 5
                             best_loss = float('inf')
                             counter = 0
 

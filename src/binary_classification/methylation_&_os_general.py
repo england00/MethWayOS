@@ -3,7 +3,7 @@ from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions_sklearn.f1_dataset_acquisition import dataset_acquisition
 from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
 from src.binary_classification.functions_sklearn.f3_features_preprocessing import features_preprocessing
-from src.binary_classification.functions_sklearn.f4_feature_selection import feature_selection
+from src.binary_classification.functions_sklearn.f4_features_selection import features_selection
 from src.binary_classification.functions_sklearn.f5_dataset_splitting import dataset_splitting
 from src.binary_classification.functions_sklearn.f6_models import models
 from src.binary_classification.functions_sklearn.f7_grid_search import grid_search
@@ -61,9 +61,9 @@ if __name__ == "__main__":
         verbose=VERBOSE,
         column_names=dataset_columns)
 
-    # Feature Selection
-    title('FEATURE SELECTION')
-    dataset = feature_selection(
+    # Features Selection
+    title('FEATURES SELECTION')
+    dataset = features_selection(
         dataframe=dataset,
         rand_state=RANDOM_STATE,
         pca_dimension=PCA_DIMENSION,

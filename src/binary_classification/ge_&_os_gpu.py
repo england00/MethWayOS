@@ -3,7 +3,7 @@ from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions_sklearn.f1_dataset_acquisition import dataset_acquisition
 from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
 from src.binary_classification.functions_sklearn.f3_features_preprocessing import features_preprocessing
-from src.binary_classification.functions_sklearn.f4_feature_selection import feature_selection
+from src.binary_classification.functions_sklearn.f4_features_selection import features_selection
 from src.binary_classification.functions_sklearn.f5_dataset_splitting import dataset_splitting
 from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
 from src.binary_classification.functions_torch.f7_hyperparameters import *
@@ -64,9 +64,9 @@ if __name__ == "__main__":
     for features_number in range(8, 40):
         title(f'TRIAL: {features_number} features')
 
-        # Feature Selection
-        title('FEATURE SELECTION')
-        dataset_trial = feature_selection(
+        # Features Selection
+        title('FEATURES SELECTION')
+        dataset_trial = features_selection(
             dataframe=dataset,
             rand_state=RANDOM_STATE,
             pca_dimension=PCA_DIMENSION,

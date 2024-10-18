@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 
-def feature_selection(dataframe, rand_state, pca_dimension, feature_number):
+def features_selection(dataframe, rand_state, pca_dimension, feature_number):
     """
         :param dataframe: preprocessed dataset loaded inside a dataframe
         :param rand_state: chosen random seed
