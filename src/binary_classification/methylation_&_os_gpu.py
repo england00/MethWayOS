@@ -88,9 +88,9 @@ if __name__ == "__main__":
 
         # Grid Search
         title('GRID SEARCH')
-        best_parameters = grid_search(
+        best_parameters, k_fold = grid_search(
             device=device,
-            X=X_training_tensor,
+            x=X_training_tensor,
             y=y_training_tensor,
             rand_state=RANDOM_STATE,
             hyperparameters=hyperparameters,
@@ -100,17 +100,16 @@ if __name__ == "__main__":
         title('TRAINING')
         model = training(
             device=device,
-            X=X_training_tensor,
+            x=X_training_tensor,
             y=y_training_tensor,
-            rand_state=RANDOM_STATE,
             hyperparameters=best_parameters,
-            k_folds=5)
+            k_fold_setting=k_fold)
 
         # Testing
         title('TESTING')
         testing(
             model=model,
-            X_testing=X_testing_tensor,
+            x_testing=X_testing_tensor,
             y_testing=y_testing_tensor)
 
     # Close LOG file

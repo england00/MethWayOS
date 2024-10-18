@@ -2,34 +2,30 @@ import time
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
 
-def training(device, X, y, rand_state, hyperparameters, k_folds=5):
+def training(device, x, y, hyperparameters, k_fold_setting):
     """
         :param device: CPU or GPU
-        :param X: training set without labels
+        :param x: training set without labels
         :param y: training set with only labels
-        :param rand_state: chosen random seed
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
-        :param k_folds: number of used folds for cross validation
+        :param k_fold_setting: cross validation setting used during Grid Search
         :return model: trained model
     """
-    # Setting K-Fold Cross Validation
-    k_fold = KFold(n_splits=5, shuffle=True, random_state=rand_state)
-
     # Best Training Params Initialization
     best_model = None
+    best_model_fold = None
     best_fold_loss = float('inf')
 
     # Cross Validation
-    for fold, (training_index, validation_index) in enumerate(k_fold.split(X)):
-        print(f'\nFold {fold + 1}/{k_folds}')
+    for fold, (training_index, validation_index) in enumerate(k_fold_setting.split(x)):
+        print(f'\nFold {fold + 1}/{k_fold_setting.n_splits}')
 
         # Validation Set Folds and GPU moving
-        X_fold_training, X_fold_validation = (X[training_index],
-                                              X[validation_index])
+        X_fold_training, X_fold_validation = (x[training_index],
+                                              x[validation_index])
         y_fold_training, y_fold_validation = (y[training_index],
                                               y[validation_index])
         X_fold_training, X_fold_validation = (X_fold_training.to(device),
@@ -42,7 +38,7 @@ def training(device, X, y, rand_state, hyperparameters, k_folds=5):
         training_loader = DataLoader(training_set, batch_size=hyperparameters['batch_size'], shuffle=True)
 
         # MLP Model for this fold
-        model = MLP2Hidden(input_size=X.shape[1],
+        model = MLP2Hidden(input_size=x.shape[1],
                            hidden_layer_config=hyperparameters['hidden_layers_configuration'],
                            output_size=2,
                            dropout_rate=hyperparameters['dropout']).to(device)
@@ -53,6 +49,7 @@ def training(device, X, y, rand_state, hyperparameters, k_folds=5):
 
         # Early Stopping Parameters
         patience = 2
+        loss = None
         best_val_loss = float('inf')
         epochs_no_improve = 0
 

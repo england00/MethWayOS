@@ -4,10 +4,10 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
-def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
+def grid_search(device, x, y, rand_state, hyperparameters, k_folds=5):
     """
         :param device: CPU or GPU
-        :param X: training set without labels
+        :param x: training set without labels
         :param y: training set with only labels
         :param rand_state: chosen random seed
         :param k_folds: number of used folds for cross validation
@@ -18,8 +18,8 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
     k_fold = KFold(n_splits=k_folds, shuffle=True, random_state=rand_state)
 
     # Best Params Initialization
-    best_accuracy = 0.0
-    best_validation_loss = float('inf')
+    best_mean_accuracy = 0.0
+    best_mean_validation_loss = float('inf')
     best_parameters = {}
 
     # Grid Search
@@ -32,10 +32,10 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                         fold_validation_losses = []
 
                         # Cross Validation
-                        for training_index, validation_index in k_fold.split(X):
+                        for training_index, validation_index in k_fold.split(x):
                             # Validation Set Folds and GPU moving
-                            X_fold_training, X_fold_validation = (X[training_index],
-                                                                  X[validation_index])
+                            X_fold_training, X_fold_validation = (x[training_index],
+                                                                  x[validation_index])
                             y_fold_training, y_fold_validation = (y[training_index],
                                                                   y[validation_index])
                             X_fold_training, X_fold_validation = (X_fold_training.to(device),
@@ -46,7 +46,7 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                             # MLP Model for this fold
                             training_set = TensorDataset(X_fold_training, y_fold_training)
                             training_loader = DataLoader(training_set, batch_size=batch_size, shuffle=True)
-                            model = MLP2Hidden(input_size=X.shape[1],
+                            model = MLP2Hidden(input_size=x.shape[1],
                                                hidden_layer_config=hidden_sizes,
                                                output_size=2,
                                                dropout_rate=dropout).to(device)
@@ -75,7 +75,6 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
 
                                 # Model Evaluation
                                 model.eval()
-                                validation_loss = 0.0
                                 with torch.no_grad():
                                     val_outputs = model(X_fold_validation.to(device))
                                     val_loss = criterion(val_outputs, y_fold_validation.to(device))
@@ -105,7 +104,7 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
 
                         # Saving Best Configuration
                         # Update the best parameters if both Mean Accuracy is higher and Mean Validation loss is lower
-                        if mean_accuracy > best_accuracy and mean_validation_loss < best_validation_loss:
+                        if mean_accuracy > best_mean_accuracy and mean_validation_loss < best_mean_validation_loss:
                             best_parameters = {
                                 'hidden_layers_configuration': hidden_sizes,
                                 'learning_rate': learning_rate,
@@ -114,8 +113,8 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                                 'dropout': dropout,
                                 'max_epochs_number': hyperparameters["max_epochs_number"]
                             }
-                            best_accuracy = mean_accuracy
-                            best_validation_loss = mean_validation_loss
+                            best_mean_accuracy = mean_accuracy
+                            best_mean_validation_loss = mean_validation_loss
 
                         print(f'\t--> Hidden Size: {hidden_sizes}, '
                               f'Learning Rate: {learning_rate}, '
@@ -123,7 +122,9 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
                               f'Alpha: {alpha}, '
                               f'Dropout: {dropout}, '
                               f'Mean Accuracy: {mean_accuracy:.4f}, '
-                              f'Mean Validation Loss: {mean_validation_loss:.4f}')
+                              f'Mean Validation Loss: {mean_validation_loss:.4f}, ',
+                              f'Current Best Mean Accuracy: {best_mean_accuracy:.4f}, ',
+                              f'Current Best Mean Validation Loss: {best_mean_validation_loss:.4f}')
 
     print('\nBest value for each hyperparameter:')
     print(f'\t--> Hidden Size: {best_parameters["hidden_layers_configuration"]},\n'
@@ -131,7 +132,7 @@ def grid_search(device, X, y, rand_state, hyperparameters, k_folds=5):
           f'\t--> Batch Size: {best_parameters["batch_size"]},\n'
           f'\t--> Alpha: {best_parameters["alpha"]},\n'
           f'\t--> Dropout: {best_parameters["dropout"]}')
-    print(f'\t--> Best Mean Accuracy: {best_accuracy:.4f}, '
-          f'Best Mean Validation Loss: {best_validation_loss:.4f}')
+    print(f'Best Mean Accuracy: {best_mean_accuracy:.4f},\n'
+          f'Best Mean Validation Loss: {best_mean_validation_loss:.4f}')
 
-    return best_parameters
+    return best_parameters, k_fold
