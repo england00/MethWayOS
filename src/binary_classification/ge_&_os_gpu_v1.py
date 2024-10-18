@@ -6,7 +6,7 @@ from src.binary_classification.functions_sklearn.f3_features_preprocessing impor
 from src.binary_classification.functions_torch.f4_features_selection_training_set import features_selection_for_training
 from src.binary_classification.functions_torch.f5_features_selection_testing_set import features_selection_for_testing
 from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
-from src.binary_classification.functions_torch.f7_hyperparameters import double_layer_hyperparameters
+from src.binary_classification.functions_torch.f7_hyperparameters import general_hyperparameters
 from src.binary_classification.functions_torch.f8_grid_search import grid_search
 from src.binary_classification.functions_torch.f10_training import training
 from src.binary_classification.functions_torch.f11_testing import testing
@@ -90,10 +90,6 @@ if __name__ == "__main__":
         training_dataframe=training_set,
         testing_dataframe=testing_set)
 
-    # Hyperparameters Lists
-    title('HYPERPARAMETERS LISTS')
-    hyperparameters = double_layer_hyperparameters()
-
     # Grid Search
     title('GRID SEARCH')
     best_parameters, k_fold = grid_search(
@@ -102,7 +98,7 @@ if __name__ == "__main__":
         y=y_training_tensor,
         shuffle=SHUFFLE,
         rand_state=RANDOM_STATE,
-        hyperparameters=hyperparameters,
+        hyperparameters=general_hyperparameters(),
         k_folds=5)
 
     # Training

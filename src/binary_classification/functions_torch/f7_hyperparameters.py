@@ -1,3 +1,16 @@
+def general_hyperparameters():
+    """
+        :return dictionary: dictionary of hyperparameters
+    """
+    return {
+        "alpha": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
+        "batch_size": [4, 8, 16, 32, 64, 128],
+        "dropout": [0.3, 0.5, 0.7],
+        "hidden_layers_configuration": [[8], [16], [32], [8, 4], [16, 8], [32, 16]],
+        "learning_rate": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
+        "max_epochs_number": 100}
+
+
 def single_layer_hyperparameters():
     """
         :return dictionary: dictionary of hyperparameters
@@ -5,7 +18,7 @@ def single_layer_hyperparameters():
     return {
         "alpha": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "batch_size": [4, 8, 16, 32, 64, 128],
-        "dropout": [0.0],
+        "dropout": [0.3, 0.5, 0.7],
         "hidden_layers_configuration": [[8], [16], [32], [64]],
         "learning_rate": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "max_epochs_number": 100}

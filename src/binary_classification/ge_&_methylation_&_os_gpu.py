@@ -83,10 +83,6 @@ if __name__ == "__main__":
             training_dataframe=training_set,
             testing_dataframe=testing_set)
 
-        # Hyperparameters Lists
-        title('HYPERPARAMETERS LISTS')
-        hyperparameters = double_layer_hyperparameters()
-
         # Grid Search
         title('GRID SEARCH')
         best_parameters, k_fold = grid_search(
@@ -95,7 +91,7 @@ if __name__ == "__main__":
             y=y_training_tensor,
             shuffle=SHUFFLE,
             rand_state=RANDOM_STATE,
-            hyperparameters=hyperparameters,
+            hyperparameters=double_layer_hyperparameters(),
             k_folds=5)
 
         # Training

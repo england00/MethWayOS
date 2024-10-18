@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
+
 def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
     """
         :param device: CPU or GPU
@@ -48,16 +49,16 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                             # MLP Model for this fold
                             training_set = TensorDataset(X_fold_training, y_fold_training)
                             training_loader = DataLoader(training_set, batch_size=batch_size, shuffle=shuffle)
-                            model = MLP2Hidden(input_size=x.shape[1],
-                                               hidden_layer_config=hidden_sizes,
-                                               output_size=2,
-                                               dropout_rate=dropout).to(device)
+                            model = MLPHidden(input_size=x.shape[1],
+                                              hidden_layer_config=hidden_sizes,
+                                              output_size=2,
+                                              dropout_rate=dropout).to(device)
                             criterion = nn.CrossEntropyLoss()
                             optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(alpha, 0.999))
 
                             # Early Stopping Parameters
-                            patience = 2
-                            best_loss = float('inf')
+                            early_stopping_patience = 2
+                            best_validation_loss = float('inf')
                             counter = 0
 
                             # Training Model
@@ -78,17 +79,16 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                                 # Model Evaluation
                                 model.eval()
                                 with torch.no_grad():
-                                    val_outputs = model(X_fold_validation.to(device))
-                                    val_loss = criterion(val_outputs, y_fold_validation.to(device))
-                                    validation_loss = val_loss.item()
+                                    validation_outputs = model(X_fold_validation)
+                                    validation_loss = criterion(validation_outputs, y_fold_validation).item()
 
                                 # Early Stopping check
-                                if validation_loss < best_loss:
-                                    best_loss = validation_loss
+                                if validation_loss < best_validation_loss:
+                                    best_validation_loss = validation_loss
                                     counter = 0
                                 else:
                                     counter += 1
-                                    if counter >= patience:
+                                    if counter >= early_stopping_patience:
                                         break
 
                             # Final Model Evaluation on Validation Set
@@ -98,7 +98,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                                 _, predicted = torch.max(outputs, 1)
                                 accuracy = (predicted == y_fold_validation).sum().item() / y_fold_validation.size(0)
                                 fold_accuracies.append(accuracy)
-                                fold_validation_losses.append(best_loss)
+                                fold_validation_losses.append(best_validation_loss)
 
                         # Mean Accuracy and Mean Validation Loss
                         mean_accuracy = sum(fold_accuracies) / len(fold_accuracies)
