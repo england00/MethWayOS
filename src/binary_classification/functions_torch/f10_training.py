@@ -16,9 +16,8 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
         :return best_model: trained model
     """
     # Best Training Params Initialization
-    best_model = None
-    best_model_fold = None
-    best_fold_loss = float('inf')
+    total_epochs = 0
+    total_folds = k_fold_setting.n_splits
 
     # Cross Validation
     for fold, (training_index, validation_index) in enumerate(k_fold_setting.split(x)):
@@ -34,11 +33,9 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
         y_fold_training, y_fold_validation = (y_fold_training.to(device),
                                               y_fold_validation.to(device))
 
-        # Create DataLoader for training data
+        # MLP Model for this fold
         training_set = TensorDataset(X_fold_training, y_fold_training)
         training_loader = DataLoader(training_set, batch_size=hyperparameters['batch_size'], shuffle=shuffle)
-
-        # MLP Model for this fold
         model = MLPHidden(input_size=x.shape[1],
                           hidden_layer_config=hyperparameters['hidden_layers_configuration'],
                           output_size=2,
@@ -49,10 +46,11 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                                betas=(hyperparameters['alpha'], 0.999))
 
         # Early Stopping Parameters
-        early_stopping_patience = 4
+        early_stopping_patience = 3
         loss = None
         best_validation_loss = float('inf')
-        counter = 0
+        patience_counter = 0
+        fold_epoch_counter = 0
 
         # Learning Rate Scheduling
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, factor=0.5)
@@ -61,6 +59,7 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
         set_t0 = time.time()
         for epoch in range(hyperparameters["max_epochs_number"]):
             model.train()
+            fold_epoch_counter += 1
             for X_batch, y_batch in training_loader:
                 X_batch, y_batch = X_batch.to(device), y_batch.to(device)
 
@@ -73,7 +72,7 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                 loss.backward()
                 optimizer.step()
 
-            # Model Evaluation on Validation Set
+            # Model Evaluation only for this epoch
             model.eval()
             with torch.no_grad():
                 outputs = model(X_fold_validation)
@@ -87,30 +86,53 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
             # Early Stopping check
             if validation_loss < best_validation_loss:
                 best_validation_loss = validation_loss
-                counter = 0
-                # torch.save(model.state_dict(), './model_weights/Methylation & OS Binary Classification.pth')
-                best_model_fold = model  # Save the model of this fold
+                patience_counter = 0
             else:
-                counter += 1
-                if counter >= early_stopping_patience:
+                patience_counter += 1
+                if patience_counter >= early_stopping_patience:
                     print("Early stopping")
                     break
 
-            # Early Stopping check
-            if validation_loss < best_validation_loss:
-                best_validation_loss = validation_loss
-                counter = 0
-            else:
-                counter += 1
-                if counter >= early_stopping_patience:
-                    break
+        # Checking epochs used with this fold
+        total_epochs += fold_epoch_counter
+        print(f'\t--> Training for Fold {fold + 1} took {time.time() - set_t0} sec, using {fold_epoch_counter} epochs')
 
-        # Keep track of the best model across all folds
-        if best_validation_loss < best_fold_loss:
-            best_fold_loss = best_validation_loss
-            best_model = best_model_fold  # Update best model
+    # Average necessary epochs
+    average_epochs = total_epochs // total_folds
+    print(f'\nAverage number of epochs used: {average_epochs} across {total_folds} folds')
 
-        print(f'\t--> Training for Fold {fold + 1} took {time.time() - set_t0} sec')
+    # Final MLP Model
+    training_set_final = TensorDataset(x.to(device), y.to(device))
+    training_loader_final = DataLoader(training_set_final, batch_size=hyperparameters['batch_size'], shuffle=shuffle)
+    best_model = MLPHidden(input_size=x.shape[1],
+                           hidden_layer_config=hyperparameters['hidden_layers_configuration'],
+                           output_size=2,
+                           dropout_rate=hyperparameters['dropout']).to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer_final = optim.Adam(best_model.parameters(),
+                                 lr=hyperparameters['learning_rate'],
+                                 betas=(hyperparameters['alpha'], 0.999))
 
-    print(f'\nBest validation loss across all folds: {best_fold_loss:.4f}')
+    # Final Training
+    print("\nStarting final training on the entire dataset:")
+    set_t0 = time.time()
+    loss = None
+    for epoch in range(average_epochs):
+        best_model.train()
+        for X_batch, y_batch in training_loader_final:
+            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+
+            # Forward Pass
+            outputs = best_model(X_batch)
+            loss = criterion(outputs, y_batch)
+
+            # Backward Pass
+            optimizer_final.zero_grad()
+            loss.backward()
+            optimizer_final.step()
+
+        print(f'\t--> Final training Epoch [{epoch + 1}/{average_epochs}], Loss: {loss.item():.4f}')
+
+    print(f'\nFinal training took {time.time() - set_t0} sec')
+    # torch.save(best_model.state_dict(), './model_weights/Methylation & OS Binary Classification.pth')
     return best_model

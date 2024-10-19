@@ -99,7 +99,9 @@ if __name__ == "__main__":
         shuffle=SHUFFLE,
         rand_state=RANDOM_STATE,
         hyperparameters=general_hyperparameters(),
-        k_folds=5)
+        k_folds=5,
+        x_test=X_testing_tensor,
+        y_test=y_testing_tensor)
 
     # Training
     title('TRAINING')
