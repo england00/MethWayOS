@@ -8,8 +8,8 @@ from src.binary_classification.functions_torch.f5_features_selection_testing_set
 from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
 from src.binary_classification.functions_torch.f7_hyperparameters import general_hyperparameters
 from src.binary_classification.functions_torch.f8_grid_search import grid_search
-from src.binary_classification.functions_torch.f10_training import training
-from src.binary_classification.functions_torch.f11_testing import testing
+from src.binary_classification.functions_torch.f10_training_single_model import training
+from src.binary_classification.functions_torch.f11_testing_single_model import testing
 from logs.methods.log_storer import *
 
 

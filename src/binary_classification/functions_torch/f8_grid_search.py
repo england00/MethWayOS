@@ -4,8 +4,8 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
-from src.binary_classification.functions_torch.f10_training import training
-from src.binary_classification.functions_torch.f11_testing import testing
+from src.binary_classification.functions_torch.f10_training_single_model import training
+from src.binary_classification.functions_torch.f11_testing_single_model import testing
 
 
 def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_test, y_test):
