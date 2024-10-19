@@ -1,3 +1,4 @@
+import numpy as np
 import time
 import torch
 import torch.optim as optim
@@ -16,7 +17,7 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
         :return best_model: trained model
     """
     # Best Training Params Initialization
-    total_epochs = 0
+    total_epochs = []
     total_folds = k_fold_setting.n_splits
 
     # Cross Validation
@@ -94,12 +95,12 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                     break
 
         # Checking epochs used with this fold
-        total_epochs += fold_epoch_counter
+        total_epochs.append(fold_epoch_counter)
         print(f'\t--> Training for Fold {fold + 1} took {time.time() - set_t0} sec, using {fold_epoch_counter} epochs')
 
     # Average necessary epochs
-    average_epochs = total_epochs // total_folds
-    print(f'\nAverage number of epochs used: {average_epochs} across {total_folds} folds')
+    median_epochs = int(np.median(total_epochs))
+    print(f'\nMedian number of epochs used: {median_epochs} across {total_folds} folds')
 
     # Final MLP Model
     training_set_final = TensorDataset(x.to(device), y.to(device))
@@ -117,7 +118,7 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
     print("\nStarting final training on the entire dataset:")
     set_t0 = time.time()
     loss = None
-    for epoch in range(average_epochs):
+    for epoch in range(median_epochs):
         best_model.train()
         for X_batch, y_batch in training_loader_final:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
@@ -131,7 +132,7 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
             loss.backward()
             optimizer_final.step()
 
-        print(f'\t--> Final training Epoch [{epoch + 1}/{average_epochs}], Loss: {loss.item():.4f}')
+        print(f'\t--> Final training Epoch [{epoch + 1}/{median_epochs}], Loss: {loss.item():.4f}')
 
     print(f'\nFinal training took {time.time() - set_t0} sec')
     # torch.save(best_model.state_dict(), './model_weights/Methylation & OS Binary Classification.pth')
