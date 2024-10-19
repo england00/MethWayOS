@@ -24,18 +24,17 @@ def training(device, x, y, shuffle, hyperparameters, n_models=5, validation_spli
     dataset_size = len(x)
     indices = np.arange(dataset_size)
     np.random.shuffle(indices)
-    val_size = int(dataset_size * validation_split)
-    val_indices = indices[:val_size]
-    train_indices = indices[val_size:]
-
-    x_val = x[val_indices].to(device)
-    y_val = y[val_indices].to(device)
+    validation_size = int(dataset_size * validation_split)
+    validation_indices = indices[:validation_size]
+    training_indices = indices[validation_size:]
+    x_val = x[validation_indices].to(device)
+    y_val = y[validation_indices].to(device)
 
     for model_idx in range(n_models):
         print(f'\nTraining model {model_idx + 1}/{n_models}')
 
         # Randomly sample the training set with replacement
-        sampled_indices = np.random.choice(train_indices, size=len(train_indices), replace=True)
+        sampled_indices = np.random.choice(training_indices, size=len(training_indices), replace=True)
         x_sampled = x[sampled_indices].to(device)
         y_sampled = y[sampled_indices].to(device)
 
