@@ -2,14 +2,25 @@ def general_hyperparameters():
     """
         :return dictionary: dictionary of hyperparameters
     """
+    '''
     return {
-        "alpha": [1e-2, 1e-3, 1e-4, 1e-5],
+        "alpha": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "batch_size": [4, 8, 16, 32, 64, 128],
-        "dropout": [0.25, 0.5],
+        "dropout": [0.3, 0.5, 0.7],
         "hidden_layers_configuration": [[8], [16], [32], [8, 4], [16, 8], [32, 16]],
-        "learning_rate": [1e-2, 1e-3, 1e-4, 1e-5],
+        "learning_rate": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "weight_decay": [1e-1, 1e-2, 1e-3],
         "max_epochs_number": 100}
+        '''
+
+    return {
+        "alpha": [1e-3, 1e-4, 1e-5],
+        "batch_size": [8, 16, 32, 64],
+        "dropout": [0.2, 0.4, 0.6],
+        "hidden_layers_configuration": [[8], [16], [8, 4], [16, 8]],
+        "learning_rate": [1e-3, 1e-4],
+        "weight_decay": [1e-3, 1e-4],
+        "max_epochs_number": 200}
 
 
 def single_layer_hyperparameters():

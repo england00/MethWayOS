@@ -8,8 +8,8 @@ from src.binary_classification.functions_torch.f5_features_selection_testing_set
 from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
 from src.binary_classification.functions_torch.f7_hyperparameters import general_hyperparameters
 from src.binary_classification.functions_torch.f8_grid_search import grid_search
-from src.binary_classification.functions_torch.f10_training_single_model import training
-from src.binary_classification.functions_torch.f11_testing_single_model import testing
+from src.binary_classification.functions_torch.f10_training_kfold_voting import training
+from src.binary_classification.functions_torch.f11_testing_kfold_voting import testing
 from logs.methods.log_storer import *
 
 
@@ -24,7 +24,7 @@ RANDOM_STATE = None  # if 'None' changes the seed to split training set and test
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
-SECOND_FEATURES_SELECTION = 250
+SECOND_FEATURES_SELECTION = 200
 VERBOSE = False
 PLOT = False
 
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # Testing
     title('TESTING')
     testing(
-        model=model,
+        models=model,
         x_testing=X_testing_tensor,
         y_testing=y_testing_tensor)
 

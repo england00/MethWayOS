@@ -3,9 +3,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
-
-from src.binary_classification.functions_torch.f10_training_single_model import training
-from src.binary_classification.functions_torch.f11_testing_single_model import testing
+from src.binary_classification.functions_torch.f10_training_kfold_voting import training
+from src.binary_classification.functions_torch.f11_testing_kfold_voting import testing
 
 
 def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_test, y_test):
@@ -53,7 +52,9 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
 
                                 # MLP Model for this fold
                                 training_set = TensorDataset(X_fold_training, y_fold_training)
-                                training_loader = DataLoader(training_set, batch_size=batch_size, shuffle=shuffle)
+                                training_loader = DataLoader(training_set,
+                                                             batch_size=batch_size,
+                                                             shuffle=shuffle)
                                 model = MLPHidden(input_size=x.shape[1],
                                                   hidden_layer_config=hidden_sizes,
                                                   output_size=2,
@@ -131,9 +132,20 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                 best_mean_validation_loss = mean_validation_loss
 
                                 ###########################################################################
+                                print('\nCURRENT BEST MODEL')
+                                print(f'\t--> Hidden Size: {hidden_sizes}, '
+                                      f'Learning Rate: {learning_rate}, '
+                                      f'Batch Size: {batch_size}, '
+                                      f'Alpha: {alpha}, '
+                                      f'Dropout: {dropout}, '
+                                      f'Weigh Decay: {weight_decay}, '
+                                      f'Accuracy: {mean_accuracy:.4f}, '
+                                      f'Validation Loss: {mean_validation_loss:.4f}, ',
+                                      f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
+                                      f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
 
                                 # Training
-                                print('\nTRAINING')
+                                print('\nTRAINING:')
                                 current_model = training(
                                     device=device,
                                     x=x,
@@ -143,14 +155,15 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                     k_fold_setting=k_fold)
 
                                 # Testing
-                                print('\nTESTING')
+                                print('\nTESTING:')
                                 testing(
-                                    model=current_model,
+                                    models=current_model,
                                     x_testing=x_test,
                                     y_testing=y_test)
 
                                 ###########################################################################
 
+                            '''
                             print(f'\t--> Hidden Size: {hidden_sizes}, '
                                   f'Learning Rate: {learning_rate}, '
                                   f'Batch Size: {batch_size}, '
@@ -161,6 +174,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                   f'Validation Loss: {mean_validation_loss:.4f}, ',
                                   f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
                                   f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
+                            '''
 
     print('\nBest value for each hyperparameter:')
     print(f'\t--> Hidden Size: {best_parameters["hidden_layers_configuration"]},\n'
