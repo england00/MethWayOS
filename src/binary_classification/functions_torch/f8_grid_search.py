@@ -107,7 +107,9 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
 
                         # Saving Best Hyperparameters Configuration
                         # Update the best parameters if both Mean Accuracy is higher and Mean Validation loss is lower
-                        if mean_accuracy > best_mean_accuracy and mean_validation_loss < best_mean_validation_loss:
+                        if (mean_validation_loss < best_mean_validation_loss or
+                                (mean_validation_loss < (best_mean_validation_loss + 0.1)
+                                 and mean_accuracy > best_mean_accuracy)):
                             best_parameters = {
                                 'hidden_layers_configuration': hidden_sizes,
                                 'learning_rate': learning_rate,
