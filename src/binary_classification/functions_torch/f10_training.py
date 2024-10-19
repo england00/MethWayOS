@@ -42,9 +42,10 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                           output_size=2,
                           dropout_rate=hyperparameters['dropout']).to(device)
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.parameters(),
-                               lr=hyperparameters['learning_rate'],
-                               betas=(hyperparameters['alpha'], 0.999))
+        optimizer = optim.AdamW(model.parameters(),
+                                lr=hyperparameters['learning_rate'],
+                                betas=(hyperparameters['alpha'], 0.999),
+                                weight_decay=hyperparameters['weight_decay'])
 
         # Early Stopping Parameters
         early_stopping_patience = 3
@@ -110,9 +111,10 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                            output_size=2,
                            dropout_rate=hyperparameters['dropout']).to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer_final = optim.Adam(best_model.parameters(),
-                                 lr=hyperparameters['learning_rate'],
-                                 betas=(hyperparameters['alpha'], 0.999))
+    optimizer_final = optim.AdamW(best_model.parameters(),
+                                  lr=hyperparameters['learning_rate'],
+                                  betas=(hyperparameters['alpha'], 0.999),
+                                  weight_decay=hyperparameters['weight_decay'])
 
     # Final Training
     print("\nStarting final training on the entire dataset:")
