@@ -68,15 +68,15 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                                     X_batch, y_batch = X_batch.to(device), y_batch.to(device)
 
                                     # Forward Pass
-                                    outputs = model(X_batch)
-                                    loss = criterion(outputs, y_batch)
+                                    final_validation_outputs = model(X_batch)
+                                    loss = criterion(final_validation_outputs, y_batch)
 
                                     # Backward Pass
                                     optimizer.zero_grad()
                                     loss.backward()
                                     optimizer.step()
 
-                                # Model Evaluation
+                                # Model Evaluation for this epoch
                                 model.eval()
                                 with torch.no_grad():
                                     validation_outputs = model(X_fold_validation)
@@ -94,17 +94,18 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                             # Final Model Evaluation on Validation Set
                             model.eval()
                             with torch.no_grad():
-                                outputs = model(X_fold_validation)
-                                _, predicted = torch.max(outputs, 1)
+                                final_validation_outputs = model(X_fold_validation)
+                                final_validation_loss = criterion(final_validation_outputs, y_fold_validation).item()
+                                _, predicted = torch.max(final_validation_outputs, 1)
                                 accuracy = (predicted == y_fold_validation).sum().item() / y_fold_validation.size(0)
                                 fold_accuracies.append(accuracy)
-                                fold_validation_losses.append(best_validation_loss)
+                                fold_validation_losses.append(final_validation_loss)
 
                         # Mean Accuracy and Mean Validation Loss
                         mean_accuracy = sum(fold_accuracies) / len(fold_accuracies)
                         mean_validation_loss = sum(fold_validation_losses) / len(fold_validation_losses)
 
-                        # Saving Best Configuration
+                        # Saving Best Hyperparameters Configuration
                         # Update the best parameters if both Mean Accuracy is higher and Mean Validation loss is lower
                         if mean_accuracy > best_mean_accuracy and mean_validation_loss < best_mean_validation_loss:
                             best_parameters = {
@@ -123,10 +124,10 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
                               f'Batch Size: {batch_size}, '
                               f'Alpha: {alpha}, '
                               f'Dropout: {dropout}, '
-                              f'Mean Accuracy: {mean_accuracy:.4f}, '
-                              f'Mean Validation Loss: {mean_validation_loss:.4f}, ',
-                              f'Current Best Mean Accuracy: {best_mean_accuracy:.4f}, ',
-                              f'Current Best Mean Validation Loss: {best_mean_validation_loss:.4f}')
+                              f'Accuracy: {mean_accuracy:.4f}, '
+                              f'Validation Loss: {mean_validation_loss:.4f}, ',
+                              f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
+                              f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
 
     print('\nBest value for each hyperparameter:')
     print(f'\t--> Hidden Size: {best_parameters["hidden_layers_configuration"]},\n'
@@ -134,7 +135,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds=5):
           f'\t--> Batch Size: {best_parameters["batch_size"]},\n'
           f'\t--> Alpha: {best_parameters["alpha"]},\n'
           f'\t--> Dropout: {best_parameters["dropout"]}')
-    print(f'Best Mean Accuracy: {best_mean_accuracy:.4f},\n'
-          f'Best Mean Validation Loss: {best_mean_validation_loss:.4f}')
+    print(f'Best Accuracy: {best_mean_accuracy:.4f},\n'
+          f'Best Validation Loss: {best_mean_validation_loss:.4f}')
 
     return best_parameters, k_fold
