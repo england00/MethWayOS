@@ -8,7 +8,7 @@ from src.binary_classification.functions_torch.f5_features_selection_testing_set
 from src.binary_classification.functions_torch.f6_sklearn_to_torch import sklearn_to_torch
 from src.binary_classification.functions_torch.f7_hyperparameters import general_hyperparameters
 from src.binary_classification.functions_torch.f8_grid_search import grid_search
-from src.binary_classification.functions_torch.f10_training_kfold_voting import training
+from src.binary_classification.functions_torch.f10_training_bagging_ensemble import training
 from src.binary_classification.functions_torch.f11_testing_kfold_voting import testing
 from logs.methods.log_storer import *
 
@@ -110,8 +110,7 @@ if __name__ == "__main__":
         x=X_training_tensor,
         y=y_training_tensor,
         shuffle=SHUFFLE,
-        hyperparameters=best_parameters,
-        k_fold_setting=k_fold)
+        hyperparameters=best_parameters)
 
     # Testing
     title('TESTING')

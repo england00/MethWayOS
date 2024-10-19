@@ -3,7 +3,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import KFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
-from src.binary_classification.functions_torch.f10_training_kfold_voting import training
+from src.binary_classification.functions_torch.f10_training_bagging_ensemble import training
 from src.binary_classification.functions_torch.f11_testing_kfold_voting import testing
 
 
@@ -151,8 +151,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                     x=x,
                                     y=y,
                                     shuffle=shuffle,
-                                    hyperparameters=best_parameters,
-                                    k_fold_setting=k_fold)
+                                    hyperparameters=best_parameters)
 
                                 # Testing
                                 print('\nTESTING:')
