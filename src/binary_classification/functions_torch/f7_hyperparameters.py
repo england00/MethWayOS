@@ -6,20 +6,20 @@ def general_hyperparameters():
     return {
         "alpha": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "batch_size": [4, 8, 16, 32, 64, 128],
-        "dropout": [0.3, 0.5, 0.7],
-        "hidden_layers_configuration": [[8], [16], [32], [8, 4], [16, 8], [32, 16]],
+        "dropout": [0.0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7],
+        "hidden_layers_configuration": [[8], [16], [32], [64], [8, 4], [16, 8], [32, 16]],
         "learning_rate": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "weight_decay": [1e-1, 1e-2, 1e-3],
-        "max_epochs_number": 100}
+        "max_epochs_number": 200}
         '''
 
     return {
-        "alpha": [1e-3, 1e-4, 1e-5],
-        "batch_size": [8, 16, 32, 64],
-        "dropout": [0.2, 0.4, 0.6],
-        "hidden_layers_configuration": [[8], [16], [8, 4], [16, 8]],
-        "learning_rate": [1e-3, 1e-4],
-        "weight_decay": [1e-3, 1e-4],
+        "alpha": [1e-3, 1e-4],
+        "batch_size": [8, 16],
+        "dropout": [0.0, 0.1, 0.2, 0.5, 0.6],
+        "hidden_layers_configuration": [[4], [8], [16], [64]],
+        "learning_rate": [1e-3],
+        "weight_decay": [1e-2, 1e-3, 1e-4],
         "max_epochs_number": 200}
 
 

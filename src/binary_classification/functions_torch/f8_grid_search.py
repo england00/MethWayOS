@@ -132,7 +132,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                 best_mean_validation_loss = mean_validation_loss
 
                                 ###########################################################################
-                                print('\nCURRENT BEST MODEL')
+                                print('\n\nCURRENT BEST MODEL')
                                 print(f'\t--> Hidden Size: {hidden_sizes}, '
                                       f'Learning Rate: {learning_rate}, '
                                       f'Batch Size: {batch_size}, '
@@ -160,6 +160,18 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                     models=current_model,
                                     x_testing=x_test,
                                     y_testing=y_test)
+
+                                print('HYPERPARAMETERS:')
+                                print(f'\t--> Hidden Size: {hidden_sizes}, '
+                                      f'Learning Rate: {learning_rate}, '
+                                      f'Batch Size: {batch_size}, '
+                                      f'Alpha: {alpha}, '
+                                      f'Dropout: {dropout}, '
+                                      f'Weigh Decay: {weight_decay}, '
+                                      f'Accuracy: {mean_accuracy:.4f}, '
+                                      f'Validation Loss: {mean_validation_loss:.4f}, ',
+                                      f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
+                                      f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
 
                                 ###########################################################################
 
