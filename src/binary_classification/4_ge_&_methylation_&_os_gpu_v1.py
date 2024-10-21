@@ -16,9 +16,9 @@ from logs.methods.log_storer import *
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
-GENE_EXPRESSION_NAMES = 'gene_expression_names'
-LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & OS - (GPU) V1.txt'
+GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
+GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
+LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & METHYLATION & OS - (GPU) V1.txt'
 SHUFFLE = False
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
@@ -44,9 +44,11 @@ if __name__ == "__main__":
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
     training_set, testing_set, dataset_columns = dataset_acquisition_and_splitting(
-        path=dataset_paths[GENE_EXPRESSION],
+        path=dataset_paths[GENE_EXPRESSION_AND_METHYLATION],
         json_paths_yaml=JSON_PATHS_YAML,
-        names=GENE_EXPRESSION_NAMES,
+        names=GENE_EXPRESSION_AND_METHYLATION_NAMES,
+        lower_threshold=LOWER_THRESHOLD,
+        upper_threshold=UPPER_THRESHOLD,
         shuffle=SHUFFLE,
         rand_state=RANDOM_STATE)
 
@@ -58,8 +60,6 @@ if __name__ == "__main__":
     dataset_columns.remove('y')
     training_set = features_preprocessing(
         dataframe=training_set,
-        lower_threshold=LOWER_THRESHOLD,
-        upper_threshold=UPPER_THRESHOLD,
         verbose=VERBOSE,
         column_names=dataset_columns)
     title('FEATURES SELECTION')
@@ -75,8 +75,6 @@ if __name__ == "__main__":
     title('FEATURES PREPROCESSING')
     testing_set = features_preprocessing(
         dataframe=testing_set,
-        lower_threshold=LOWER_THRESHOLD,
-        upper_threshold=UPPER_THRESHOLD,
         verbose=VERBOSE,
         column_names=dataset_columns)
     title('FEATURES SELECTION')
