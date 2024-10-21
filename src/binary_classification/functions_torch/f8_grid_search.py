@@ -131,50 +131,51 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                 best_mean_accuracy = mean_accuracy
                                 best_mean_validation_loss = mean_validation_loss
 
-                                ###########################################################################
-                                if x_test is not None and y_test is not None:
-                                    print('\n\nCURRENT BEST MODEL')
-                                    print(f'\t--> Hidden Size: {hidden_sizes}, '
-                                          f'Learning Rate: {learning_rate}, '
-                                          f'Batch Size: {batch_size}, '
-                                          f'Alpha: {alpha}, '
-                                          f'Dropout: {dropout}, '
-                                          f'Weight Decay: {weight_decay}, '
-                                          f'Accuracy: {mean_accuracy:.4f}, '
-                                          f'Validation Loss: {mean_validation_loss:.4f}, ',
-                                          f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
-                                          f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
+                            ###########################################################################
+                            # PRINTING FOR EACH CONFIGURATION
+                            if x_test is not None and y_test is not None:
+                                print('\n\nCURRENT BEST MODEL')
+                                print(f'\t--> Hidden Size: {hidden_sizes}, '
+                                      f'Learning Rate: {learning_rate}, '
+                                      f'Batch Size: {batch_size}, '
+                                      f'Alpha: {alpha}, '
+                                      f'Dropout: {dropout}, '
+                                      f'Weight Decay: {weight_decay}, '
+                                      f'Accuracy: {mean_accuracy:.4f}, '
+                                      f'Validation Loss: {mean_validation_loss:.4f}, ',
+                                      f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
+                                      f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
 
-                                    # Training
-                                    print('\nTRAINING:')
-                                    current_model = training(
-                                        device=device,
-                                        x=x,
-                                        y=y,
-                                        shuffle=shuffle,
-                                        hyperparameters=best_parameters,
-                                        k_fold_setting=k_fold)
+                                # Training
+                                print('\nTRAINING:')
+                                current_model = training(
+                                    device=device,
+                                    x=x,
+                                    y=y,
+                                    shuffle=shuffle,
+                                    hyperparameters=best_parameters,
+                                    k_fold_setting=k_fold)
 
-                                    # Testing
-                                    print('\nTESTING:')
-                                    testing(
-                                        models=current_model,
-                                        x_testing=x_test,
-                                        y_testing=y_test)
+                                # Testing
+                                print('\nTESTING:')
+                                testing(
+                                    models=current_model,
+                                    x_testing=x_test,
+                                    y_testing=y_test)
 
-                                    print('HYPERPARAMETERS:')
-                                    print(f'\t--> Hidden Size: {hidden_sizes}, '
-                                          f'Learning Rate: {learning_rate}, '
-                                          f'Batch Size: {batch_size}, '
-                                          f'Alpha: {alpha}, '
-                                          f'Dropout: {dropout}, '
-                                          f'Weight Decay: {weight_decay}, '
-                                          f'Accuracy: {mean_accuracy:.4f}, '
-                                          f'Validation Loss: {mean_validation_loss:.4f}, ',
-                                          f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
-                                          f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
+                                print('HYPERPARAMETERS:')
+                                print(f'\t--> Hidden Size: {hidden_sizes}, '
+                                      f'Learning Rate: {learning_rate}, '
+                                      f'Batch Size: {batch_size}, '
+                                      f'Alpha: {alpha}, '
+                                      f'Dropout: {dropout}, '
+                                      f'Weight Decay: {weight_decay}, '
+                                      f'Accuracy: {mean_accuracy:.4f}, '
+                                      f'Validation Loss: {mean_validation_loss:.4f}, ',
+                                      f'Current Best Accuracy: {best_mean_accuracy:.4f}, ',
+                                      f'Current Best Validation Loss: {best_mean_validation_loss:.4f}')
 
-                                ###########################################################################
+                            ###########################################################################
 
                             if x_test is None and y_test is None:
                                 print(f'\t--> Hidden Size: {hidden_sizes}, '
