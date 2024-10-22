@@ -2,11 +2,13 @@ from data.methods.csv_loader import csv_loader
 from sklearn.model_selection import train_test_split
 
 
-def dataset_acquisition_and_splitting(path, json_paths_yaml, names, shuffle, rand_state):
+def dataset_acquisition_and_splitting(path, json_paths_yaml, names, lower_threshold, upper_threshold, shuffle, rand_state):
     """
         :param path: dataset directory
         :param json_paths_yaml: YAML file path to load
         :param names: features name list
+        :param lower_threshold: threshold for DEAD cases
+        :param upper_threshold: threshold for ALIVE cases
         :param shuffle: shuffle flag
         :param rand_state: chosen random seed
         :return training_dataframe: training set loaded inside a dataframe
@@ -15,6 +17,26 @@ def dataset_acquisition_and_splitting(path, json_paths_yaml, names, shuffle, ran
     """
     # Acquiring data from CSV file
     dataframe, dataframe_columns = csv_loader(path, json_paths_yaml, names)
+
+    # Managing imposed thresholds
+    if lower_threshold != 0 and upper_threshold != 0:
+        i = j = 0
+        for item in dataframe['y']:
+            if item <= lower_threshold:
+                i += 1
+            if item >= upper_threshold:
+                j += 1
+        print('ADMITTED SAMPLES VALUES:')
+        print(f'\t--> {i} samples with a label lower than {lower_threshold}')
+        print(f'\t--> {j} samples with a label bigger than {upper_threshold}')
+
+    # Operations to do with BOTH TRAINING SET & TEST SET
+    dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 0  # changing lower values with '0'
+    dataframe.loc[dataframe['y'] >= upper_threshold, 'y'] = 1  # changing higher values with '1'
+
+    # Selecting only rows with labels '0' and '1'
+    label_values = [0, 1]
+    dataframe = dataframe[dataframe['y'].isin(label_values)]
 
     # Splitting dataset in TRAINING and TESTING
     training_dataframe, testing_dataframe = train_test_split(dataframe,
