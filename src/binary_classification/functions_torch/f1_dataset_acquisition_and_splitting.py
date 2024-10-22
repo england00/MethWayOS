@@ -2,7 +2,7 @@ from data.methods.csv_loader import csv_loader
 from sklearn.model_selection import train_test_split
 
 
-def dataset_acquisition_and_splitting(path, json_paths_yaml, names, lower_threshold, upper_threshold, shuffle, rand_state):
+def dataset_acquisition_and_splitting(path, json_paths_yaml, names, shuffle, rand_state, lower_threshold=None, upper_threshold=None):
     """
         :param path: dataset directory
         :param json_paths_yaml: YAML file path to load
@@ -19,7 +19,7 @@ def dataset_acquisition_and_splitting(path, json_paths_yaml, names, lower_thresh
     dataframe, dataframe_columns = csv_loader(path, json_paths_yaml, names)
 
     # Managing imposed thresholds
-    if lower_threshold != 0 and upper_threshold != 0:
+    if lower_threshold is not None and upper_threshold is not None:
         i = j = 0
         for item in dataframe['y']:
             if item <= lower_threshold:
@@ -30,18 +30,19 @@ def dataset_acquisition_and_splitting(path, json_paths_yaml, names, lower_thresh
         print(f'\t--> {i} samples with a label lower than {lower_threshold}')
         print(f'\t--> {j} samples with a label bigger than {upper_threshold}')
 
-    # Operations to do with BOTH TRAINING SET & TEST SET
-    dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 0  # changing lower values with '0'
-    dataframe.loc[dataframe['y'] >= upper_threshold, 'y'] = 1  # changing higher values with '1'
+        # Operations to do with BOTH TRAINING SET & TEST SET
+        dataframe.loc[dataframe['y'] <= lower_threshold, 'y'] = 0  # changing lower values with '0'
+        dataframe.loc[dataframe['y'] >= upper_threshold, 'y'] = 1  # changing higher values with '1'
 
-    # Selecting only rows with labels '0' and '1'
-    label_values = [0, 1]
-    dataframe = dataframe[dataframe['y'].isin(label_values)]
+        # Selecting only rows with labels '0' and '1'
+        label_values = [0, 1]
+        dataframe = dataframe[dataframe['y'].isin(label_values)]
 
     # Splitting dataset in TRAINING and TESTING
     training_dataframe, testing_dataframe = train_test_split(dataframe,
                                                              test_size=0.2,
                                                              random_state=rand_state,
+                                                             stratify=dataframe['y'],
                                                              shuffle=shuffle)
     print('DIMENSIONS:')
     print(f"\t--> Training Set: {len(training_dataframe)}")

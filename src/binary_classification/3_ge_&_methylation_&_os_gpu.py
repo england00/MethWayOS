@@ -107,6 +107,7 @@ if __name__ == "__main__":
         # Testing
         title('TESTING')
         testing(
+            device=device,
             model=model,
             x_testing=X_testing_tensor,
             y_testing=y_testing_tensor)

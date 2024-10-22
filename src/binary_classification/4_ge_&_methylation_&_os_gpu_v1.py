@@ -19,7 +19,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
 LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & METHYLATION & OS - (GPU) V1.txt'
-SHUFFLE = False
+SHUFFLE = True
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
@@ -47,10 +47,10 @@ if __name__ == "__main__":
         path=dataset_paths[GENE_EXPRESSION_AND_METHYLATION],
         json_paths_yaml=JSON_PATHS_YAML,
         names=GENE_EXPRESSION_AND_METHYLATION_NAMES,
-        lower_threshold=LOWER_THRESHOLD,
-        upper_threshold=UPPER_THRESHOLD,
         shuffle=SHUFFLE,
-        rand_state=RANDOM_STATE)
+        rand_state=RANDOM_STATE,
+        lower_threshold=LOWER_THRESHOLD,
+        upper_threshold=UPPER_THRESHOLD)
 
     # Training Set Management
     title('TRAINING SET MANAGEMENT')
@@ -60,8 +60,8 @@ if __name__ == "__main__":
     dataset_columns.remove('y')
     training_set = features_preprocessing(
         dataframe=training_set,
-        verbose=VERBOSE,
-        column_names=dataset_columns)
+        column_names=dataset_columns,
+        verbose=VERBOSE)
     title('FEATURES SELECTION')
     training_set, selected_columns = features_selection_for_training(
         dataframe=training_set,
@@ -75,8 +75,8 @@ if __name__ == "__main__":
     title('FEATURES PREPROCESSING')
     testing_set = features_preprocessing(
         dataframe=testing_set,
-        verbose=VERBOSE,
-        column_names=dataset_columns)
+        column_names=dataset_columns,
+        verbose=VERBOSE)
     title('FEATURES SELECTION')
     testing_set = features_selection_for_testing(
         dataframe=testing_set,
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     # Grid Search
     title('GRID SEARCH')
-    best_parameters, k_fold = grid_search(
+    best_parameters, sk_fold = grid_search(
         device=device,
         x=X_training_tensor,
         y=y_training_tensor,
@@ -109,11 +109,12 @@ if __name__ == "__main__":
         y=y_training_tensor,
         shuffle=SHUFFLE,
         hyperparameters=best_parameters,
-        k_fold_setting=k_fold)
+        sk_fold_setting=sk_fold)
 
     # Testing
     title('TESTING')
     testing(
+        device=device,
         models=model,
         x_testing=X_testing_tensor,
         y_testing=y_testing_tensor)

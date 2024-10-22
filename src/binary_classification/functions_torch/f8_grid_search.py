@@ -1,7 +1,7 @@
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from src.binary_classification.functions_torch.f9_mlp_models import *
 from src.binary_classification.functions_torch.f10_training_kfold_voting import training
 from src.binary_classification.functions_torch.f11_testing_kfold_voting import testing
@@ -17,10 +17,10 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
         :param k_folds: number of used folds for cross validation
         :return: best_parameters (dictionary of hyperparameters), best_validation_loss (float), best_accuracy (float)
-        :return: k_fold: current k_fold setting
+        :return: sk_fold: current sk_fold setting
     """
     # Setting K-Fold Cross Validation
-    k_fold = KFold(n_splits=k_folds, shuffle=shuffle, random_state=rand_state)
+    sk_fold = StratifiedKFold(n_splits=k_folds, shuffle=shuffle, random_state=rand_state)
 
     # Best Params Initialization
     best_mean_accuracy = 0.0
@@ -38,7 +38,7 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                             fold_validation_losses = []
 
                             # K-Fold Cross Validation with this Hyperparameters Configuration
-                            for training_index, validation_index in k_fold.split(x):
+                            for training_index, validation_index in sk_fold.split(x.cpu().numpy(), y.cpu().numpy()):
 
                                 # Validation Set Folds and GPU moving
                                 X_fold_training, X_fold_validation = (x[training_index],
@@ -59,7 +59,9 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                                   hidden_layer_config=hidden_sizes,
                                                   output_size=2,
                                                   dropout_rate=dropout).to(device)
-                                criterion = nn.CrossEntropyLoss()
+                                class_weights = torch.tensor([len(y) / (2 * torch.sum(y == 0)),
+                                                              len(y) / (2 * torch.sum(y == 1))], device=device)
+                                criterion = nn.CrossEntropyLoss(weight=class_weights)
                                 optimizer = optim.AdamW(model.parameters(),
                                                         lr=learning_rate,
                                                         betas=(alpha, 0.999),
@@ -154,11 +156,12 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
                                     y=y,
                                     shuffle=shuffle,
                                     hyperparameters=best_parameters,
-                                    k_fold_setting=k_fold)
+                                    sk_fold_setting=sk_fold)
 
                                 # Testing
                                 print('\nTESTING:')
                                 testing(
+                                    device=device,
                                     models=current_model,
                                     x_testing=x_test,
                                     y_testing=y_test)
@@ -199,4 +202,4 @@ def grid_search(device, x, y, shuffle, rand_state, hyperparameters, k_folds, x_t
     print(f'Best Accuracy: {best_mean_accuracy:.4f},\n'
           f'Best Validation Loss: {best_mean_validation_loss:.4f}')
 
-    return best_parameters, k_fold
+    return best_parameters, sk_fold

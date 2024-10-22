@@ -4,8 +4,9 @@ import torch.nn as nn
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 
-def testing(model, x_testing, y_testing):
+def testing(device, model, x_testing, y_testing):
     """
+        :param device: CPU or GPU
         :param model: model to test
         :param x_testing: testing set without labels
         :param y_testing: testing set with only labels
@@ -16,7 +17,9 @@ def testing(model, x_testing, y_testing):
     with torch.no_grad():
         outputs = model(x_testing)
         _, predicted = torch.max(outputs, 1)
-        criterion = nn.CrossEntropyLoss()
+        class_weights = torch.tensor([len(y_testing) / (2 * torch.sum(y_testing == 0)),
+                                      len(y_testing) / (2 * torch.sum(y_testing == 1))], device=device)
+        criterion = nn.CrossEntropyLoss(weight=class_weights)
 
         # Calculating Metrics
         final_loss = criterion(outputs, y_testing)

@@ -41,7 +41,9 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                           hidden_layer_config=hyperparameters['hidden_layers_configuration'],
                           output_size=2,
                           dropout_rate=hyperparameters['dropout']).to(device)
-        criterion = nn.CrossEntropyLoss()
+        class_weights = torch.tensor([len(y) / (2 * torch.sum(y == 0)),
+                                      len(y) / (2 * torch.sum(y == 1))], device=device)
+        criterion = nn.CrossEntropyLoss(weight=class_weights)
         optimizer = optim.AdamW(model.parameters(),
                                 lr=hyperparameters['learning_rate'],
                                 betas=(hyperparameters['alpha'], 0.999),
@@ -110,7 +112,9 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                            hidden_layer_config=hyperparameters['hidden_layers_configuration'],
                            output_size=2,
                            dropout_rate=hyperparameters['dropout']).to(device)
-    criterion = nn.CrossEntropyLoss()
+    class_weights = torch.tensor([len(y) / (2 * torch.sum(y == 0)),
+                                  len(y) / (2 * torch.sum(y == 1))], device=device)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
     optimizer_final = optim.AdamW(best_model.parameters(),
                                   lr=hyperparameters['learning_rate'],
                                   betas=(hyperparameters['alpha'], 0.999),

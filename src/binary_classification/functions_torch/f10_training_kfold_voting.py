@@ -5,22 +5,22 @@ from torch.utils.data import DataLoader, TensorDataset
 from src.binary_classification.functions_torch.f9_mlp_models import *
 
 
-def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
+def training(device, x, y, shuffle, hyperparameters, sk_fold_setting):
     """
         :param device: CPU or GPU
         :param x: training set without labels
         :param y: training set with only labels
         :param shuffle: shuffle flag
         :param hyperparameters: dictionary of all the possible hyperparameters to test the model with
-        :param k_fold_setting: cross validation setting used during Grid Search
+        :param sk_fold_setting: cross validation setting used during Grid Search
         :return ensemble_model: ensemble of trained models
     """
     # Best Training Params Initialization
     ensemble_model = []
 
     # Cross Validation
-    for fold, (training_index, validation_index) in enumerate(k_fold_setting.split(x)):
-        print(f'\nFold {fold + 1}/{k_fold_setting.n_splits}')
+    for fold, (training_index, validation_index) in enumerate(sk_fold_setting.split(x.cpu().numpy(), y.cpu().numpy())):
+        print(f'\nFold {fold + 1}/{sk_fold_setting.n_splits}')
 
         # Validation Set Folds and GPU moving
         X_fold_training, X_fold_validation = (x[training_index], x[validation_index])
@@ -35,7 +35,9 @@ def training(device, x, y, shuffle, hyperparameters, k_fold_setting):
                           hidden_layer_config=hyperparameters['hidden_layers_configuration'],
                           output_size=2,
                           dropout_rate=hyperparameters['dropout']).to(device)
-        criterion = nn.CrossEntropyLoss()
+        class_weights = torch.tensor([len(y) / (2 * torch.sum(y == 0)),
+                                      len(y) / (2 * torch.sum(y == 1))], device=device)
+        criterion = nn.CrossEntropyLoss(weight=class_weights)
         optimizer = optim.AdamW(model.parameters(),
                                 lr=hyperparameters['learning_rate'],
                                 betas=(hyperparameters['alpha'], 0.999),
