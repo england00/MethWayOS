@@ -66,18 +66,18 @@ if __name__ == "__main__":
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     table_paths = yaml_loader(TABLE_PATHS_YAML)
 
-    # Storing OVERALL SURVIVAL data from JSON file
+    # Loading OVERALL SURVIVAL data from JSON file
     overall_survival_list = json_loader(datastore_paths[OVERALL_SURVIVAL])
     case_ids = []
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
 
-    # Storing GENE EXPRESSION TSS data from CSV file
+    # Loading GENE EXPRESSION TSS data from CSV file
     gene_expression_tss_dataframe, column_names = csv_loader(table_paths[GENE_EXPRESSION_TSS], JSON_PATHS_YAML,
                                                              GENE_EXPRESSION_TSS_NAMES, delimiter=',')
     gene_expression_tss_dictionary = gene_expression_tss_dataframe.iloc[1:].set_index('gene_id')['TSS'].to_dict()
 
-    # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
+    # Loading GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
     buffer = []
     for dictionary in gene_expression_list:
@@ -112,7 +112,7 @@ if __name__ == "__main__":
                     break
     print(f"Loaded {i} files")
 
-    # Storing the datastores inside a JSON file
+    # Storing the datastore inside a JSON file
     json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)
 
     # Close LOG file

@@ -57,7 +57,7 @@ if __name__ == "__main__":
     # Loading YAML file
     json_paths = yaml_loader(JSON_PATHS_YAML)
 
-    # Storing data from JSON file
+    # Loading data from JSON file
     data = {GENE_EXPRESSION: json_loader(json_paths[GENE_EXPRESSION]),
             METHYLATION: json_loader(json_paths[METHYLATION]),
             OVERALL_SURVIVAL: json_loader(json_paths[OVERALL_SURVIVAL])}

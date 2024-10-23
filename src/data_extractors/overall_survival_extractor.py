@@ -28,7 +28,7 @@ if __name__ == "__main__":
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
 
-    # Storing OVERALL SURVIVAL data from JSON file (only 'case_id', 'file_name' and 'file_id')
+    # Loading OVERALL SURVIVAL data from JSON file (only 'case_id', 'file_name' and 'file_id')
     overall_survival_list = json_loader(json_paths[OVERALL_SURVIVAL])
     buffer = []
     for item in overall_survival_list:
@@ -75,7 +75,7 @@ if __name__ == "__main__":
                     break
     gene_expression_list = buffer
 
-    # Storing the datastores inside a JSON file
+    # Storing the datastore inside a JSON file
     json_storer(datastore_paths[OVERALL_SURVIVAL], overall_survival_datastore)
 
     # Close LOG file

@@ -45,13 +45,13 @@ if __name__ == "__main__":
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
 
-    # Storing OVERALL SURVIVAL data from JSON file
+    # Loading OVERALL SURVIVAL data from JSON file
     overall_survival_list = json_loader(datastore_paths[OVERALL_SURVIVAL])
     case_ids = []
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
 
-    # Storing METHYLATION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
+    # Loading METHYLATION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     methylation_list = json_loader(json_paths[METHYLATION])
     buffer = []
     for dictionary in methylation_list:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                     break
     print(f"Loaded {i} files")
 
-    # Storing the datastores inside a JSON file
+    # Storing the datastore inside a JSON file
     json_storer(datastore_paths[METHYLATION], methylation_datastore)
 
     # Close LOG file
