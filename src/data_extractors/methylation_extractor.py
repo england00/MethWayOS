@@ -85,7 +85,7 @@ if __name__ == "__main__":
                     break
     print(f"Loaded {i} files")
 
-    # Storing the datastore inside a JSON file
+    # Storing the datastores inside a JSON file
     json_storer(datastore_paths[METHYLATION], methylation_datastore)
 
     # Close LOG file

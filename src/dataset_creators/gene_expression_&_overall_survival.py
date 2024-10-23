@@ -27,7 +27,7 @@ if __name__ == "__main__":
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
 
-    # Storing data from JSON datastore
+    # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 

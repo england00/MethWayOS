@@ -75,7 +75,7 @@ if __name__ == "__main__":
                     break
     gene_expression_list = buffer
 
-    # Storing the datastore inside a JSON file
+    # Storing the datastores inside a JSON file
     json_storer(datastore_paths[OVERALL_SURVIVAL], overall_survival_datastore)
 
     # Close LOG file

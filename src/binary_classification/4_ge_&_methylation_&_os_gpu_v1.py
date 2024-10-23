@@ -82,6 +82,10 @@ if __name__ == "__main__":
         dataframe=testing_set,
         selected_features=selected_columns)
 
+    print(selected_columns)
+
+    '''
+
     # SKLearn to Torch
     title('SKLEARN TO TORCH')
     device, X_training_tensor, y_training_tensor, X_testing_tensor, y_testing_tensor = sklearn_to_torch(
@@ -122,3 +126,5 @@ if __name__ == "__main__":
     # Close LOG file
     sys.stdout = sys.__stdout__
     logfile.close()
+    
+    '''

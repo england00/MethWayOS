@@ -1,7 +1,6 @@
-from config.methods.configuration_loader import *
-from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
+from data.methods.csv_loader import *
 from data.methods.tsv_loader import *
 from logs.methods.log_storer import *
 
@@ -10,13 +9,16 @@ from logs.methods.log_storer import *
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
+TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
+GENE_EXPRESSION_TSS = 'gene_expression_tss'
+GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
 OVERALL_SURVIVAL = 'overall_survival'
 LOG_PATH = '../../logs/files/0 - GENE EXPRESSION Extractor.txt'
 
 
 ## FUNCTIONS
-def dictionary_format(file_path, data_dictionary):
+def dictionary_format(file_path, data_dictionary, tss_dictionary):
     # Loading TSV file
     data = tsv_loader(file_path)
 
@@ -24,9 +26,14 @@ def dictionary_format(file_path, data_dictionary):
     genes_list = data[6:]
     dict_buffer = {'info': data_dictionary}
     for element in genes_list:
+
         # Selecting only the coding genes with only 'tpm_unstranded', 'fpkm_unstranded' and	'fpkm_uq_unstranded'
         if element[2] == 'protein_coding':
-            dict_buffer[str(element[0])] = [element[6], element[7], element[8]]
+            if str(element[0]).split('.')[0] in tss_dictionary:
+                dict_buffer[str(element[0])] = [element[6], element[7], element[8],
+                                                tss_dictionary[str(element[0]).split('.')[0]]]
+            else:
+                dict_buffer[str(element[0])] = [element[6], element[7], element[8], None]
 
             '''
             # Selecting all the genes with all the information (buffer as a list of dictionaries)
@@ -55,12 +62,18 @@ if __name__ == "__main__":
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
+    table_paths = yaml_loader(TABLE_PATHS_YAML)
 
     # Storing OVERALL SURVIVAL data from JSON file
     overall_survival_list = json_loader(datastore_paths[OVERALL_SURVIVAL])
     case_ids = []
     for dictionary in overall_survival_list:
         case_ids.append(dictionary['info']['case_id'])
+
+    # Storing GENE EXPRESSION TSS data from CSV file
+    gene_expression_tss_dataframe, column_names = csv_loader(table_paths[GENE_EXPRESSION_TSS], JSON_PATHS_YAML,
+                                                             GENE_EXPRESSION_TSS_NAMES, delimiter=',')
+    gene_expression_tss_dictionary = gene_expression_tss_dataframe.iloc[1:].set_index('gene_id')['TSS'].to_dict()
 
     # Storing GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
@@ -92,11 +105,12 @@ if __name__ == "__main__":
             for dictionary in gene_expression_list:
                 if name == dictionary['file_name']:
                     i += 1
-                    gene_expression_datastore.append(dictionary_format(path, dictionary))
+                    gene_expression_datastore.append(
+                        dictionary_format(path, dictionary, gene_expression_tss_dictionary))
                     break
     print(f"Loaded {i} files")
 
-    # Storing the datastore inside a JSON file
+    # Storing the datastores inside a JSON file
     json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)
 
     # Close LOG file
