@@ -49,7 +49,7 @@ if __name__ == "__main__":
                 dataset.append(buffer)
                 i += 1
                 break
-    print(f"Loaded {i} files")
+    print(f"Loaded {i} samples")
 
     # Storing dataset inside a CSV file
     csv_storer(dataset_paths[METHYLATION], dataset)

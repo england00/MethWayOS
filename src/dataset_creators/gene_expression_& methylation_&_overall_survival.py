@@ -34,7 +34,7 @@ if __name__ == "__main__":
     methylation_datastore = json_loader(datastore_paths[METHYLATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
-    # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
+    # Creating the dataset with GENE EXPRESSION and METHYLATION as feature vector and OVERALL SURVIVAL as label
     gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
     gene_expression_keys = gene_expression_keys[1:]
     methylation_keys = [key for key in methylation_datastore[0].keys()]
@@ -48,7 +48,7 @@ if __name__ == "__main__":
                         ge_patient['info']['case_id'] == case['info']['case_id']):
                     buffer = []
                     for key in gene_expression_keys:  # Gene Expression
-                        buffer.append(ge_patient[key][2])  # Adding each feature
+                        buffer.append(ge_patient[key][7])  # Adding each feature
                     for key in methylation_keys:  # Methylation
                         buffer.append(meth_patient[key])  # Adding each feature
                     if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
@@ -59,7 +59,7 @@ if __name__ == "__main__":
                     i += 1
                     break
     gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
-    print(f"Loaded {i} files")
+    print(f"Loaded {i} samples")
 
     # Storing dataset inside a CSV file
     csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION], dataset)

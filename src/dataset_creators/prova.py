@@ -8,7 +8,6 @@ from logs.methods.log_storer import *
 
 import json
 
-
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
@@ -22,11 +21,16 @@ GENE_EXPRESSION_WITH_ASSOCIATED_METHYLATION_NAMES = 'gene_expression_with_associ
 LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & ASSOCIATED METHYLATION & OS - Dataset.txt'
 
 
-def extract_methylation_vectors(df_meth, df_rna_result, data_cpg, size_vector, symmetrical_mode, filtro_meth='median',
-                                filtro_gene='log_median'):
+def extract_methylation_vectors(methylation_dataframe,
+                                gene_expression_dataframe,
+                                cpg_data,
+                                size_vector,
+                                symmetrical_mode,
+                                filtro_meth='median',
+                                filtro_gene='median'):
     TSS_index = int((131328 / 2) - 1)
 
-    df_meth_val_dict = df_meth.set_index('ID_site')[filtro_meth].to_dict()
+    df_meth_val_dict = methylation_dataframe.set_index('ID_site')[filtro_meth].to_dict()
 
     # Create an empty DataFrame
     data = []
@@ -39,14 +43,15 @@ def extract_methylation_vectors(df_meth, df_rna_result, data_cpg, size_vector, s
         start_index_vect = int(center_index - (size_vector / 2) + 1)
         end_index_vect = int(center_index + (size_vector / 2))
 
-    for i, gene_info in tqdm(df_rna_result.iterrows(), total=len(df_rna_result), desc="Estrazione vettori Beta_values"):
+    for i, gene_info in tqdm(gene_expression_dataframe.iterrows(), total=len(gene_expression_dataframe),
+                             desc="Estrazione vettori Beta_values"):
         gene_expression = gene_info[filtro_gene]
         vector = [0] * size_vector  # Create a list of zeros
         gene_name = gene_info['gene_name']
         gene_id = gene_info['gene_id']
 
-        if gene_name in data_cpg:
-            for island in data_cpg[gene_name]:
+        if gene_name in cpg_data:
+            for island in cpg_data[gene_name]:
                 index = int(island['site_index'])
                 site_id = island['site_id']
 
@@ -80,19 +85,85 @@ if __name__ == "__main__":
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
     cpg950_coding_genes = json_loader(datastore_paths[CPG950_CODING_GENES])
 
-    gene_expression_path = 'C:/Users/lucai/Downloads/df_gx_lungs.csv'
-    methylation_path = 'C:/Users/lucai/Downloads/df_meth_lungs.csv'
 
+    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
+    gene_expression_keys = gene_expression_keys[1:]
+    methylation_keys = [key for key in methylation_datastore[0].keys()]
+    methylation_keys = methylation_keys[1:]
+    i = 0
+    dataset = []
+    for ge_patient in gene_expression_datastore:
+        for meth_patient in methylation_datastore:
+            for case in overall_survival_datastore:
+                if (ge_patient['info']['case_id'] == meth_patient['info']['case_id'] and
+                        ge_patient['info']['case_id'] == case['info']['case_id']):
+                    buffer = []
+                    for key in gene_expression_keys:  # Gene Expression
+                        if ge_patient[key][8] is not None:
+                            buffer.append(ge_patient[key][7])  # Adding Gene Expression Value
+
+                            tss_index = ge_patient[key][8]
+                            window_size = 1000
+                            methylation_vector = [0] * window_size
+
+                            start_index_vect = int(tss_index - (window_size / 2))
+                            end_index_vect = int(tss_index + (window_size / 2))
+
+                            if
+
+
+                            if gene_name in cpg_data:
+                                for island in cpg_data[gene_name]:
+                                    index = int(island['site_index'])
+                                    site_id = island['site_id']
+
+                                    if start_index_vect <= index <= end_index_vect and site_id in df_meth_val_dict:
+                                        vector[index - start_index_vect] = df_meth_val_dict[site_id]
+
+                            # Append the row to the data list
+                            data.append([gene_name, gene_id, gene_expression, vector])
+
+
+
+
+
+
+                        else:
+                            gene_expression_keys.remove(key)
+
+
+
+                    for key in methylation_keys:  # Methylation
+                        buffer.append(meth_patient[key])  # Adding each feature
+                    if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
+                        buffer.append(case['last_check']['days_to_death'])  # Adding label
+                    else:  # ALIVE cases
+                        buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
+                    dataset.append(buffer)
+                    i += 1
+                    break
+    gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
+    print(f"Loaded {i} files")
+
+'''
+    gene_expression_path = 'C:/Users/lucai/Downloads/df_gx_lungs.csv'
     df_fpkm_uq = pd.read_csv(gene_expression_path)
+
+
+    methylation_path = 'C:/Users/lucai/Downloads/df_meth_lungs.csv'
     df_meth = pd.read_csv(methylation_path)[['ID_site', 'mean', 'median']]
     df_meth = df_meth[df_meth['ID_site'].str.startswith('cg')]
 
+
     data_meth = extract_methylation_vectors(df_meth, df_fpkm_uq, cpg950_coding_genes, size_vector=1000, symmetrical_mode=True,
                                             filtro_meth='median', filtro_gene='median')
+
 
     df_genes = df_fpkm_uq.merge(data_meth[['gene_id', 'beta_values']], on='gene_id', suffixes=('_df1', '_df2'),
                                 how='inner')
 
     df_genes.to_csv('C:/Users/lucai/Downloads/file.csv', index=False)
 
+
     print(data_meth)
+'''

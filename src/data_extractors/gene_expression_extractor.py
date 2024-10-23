@@ -29,24 +29,26 @@ def dictionary_format(file_path, data_dictionary, tss_dictionary):
 
         # Selecting only the coding genes with only 'tpm_unstranded', 'fpkm_unstranded' and	'fpkm_uq_unstranded'
         if element[2] == 'protein_coding':
-            if str(element[0]).split('.')[0] in tss_dictionary:
-                dict_buffer[str(element[0])] = [element[6], element[7], element[8],
-                                                tss_dictionary[str(element[0]).split('.')[0]]]
+            if str(element[0]).split('.')[0] in tss_dictionary:                                 # gene_id
+                dict_buffer[str(element[0])] = [element[1],                                     # gene_name
+                                                element[2],                                     # gene_type
+                                                element[3],                                     # unstranded
+                                                element[4],                                     # stranded_first
+                                                element[5],                                     # stranded_second
+                                                element[6],                                     # tpm_unstranded
+                                                element[7],                                     # fpkm_unstranded
+                                                element[8],                                     # fpkm_uq_unstranded
+                                                tss_dictionary[str(element[0]).split('.')[0]]]  # TSS
             else:
-                dict_buffer[str(element[0])] = [element[6], element[7], element[8], None]
-
-            '''
-            # Selecting all the genes with all the information (buffer as a list of dictionaries)
-            buffer.append({str(data[1][0]): element[0],  # gene_id
-                           str(data[1][1]): element[1],  # gene_name
-                           str(data[1][2]): element[2],  # gene_type
-                           str(data[1][3]): element[3],  # unstranded
-                           str(data[1][4]): element[4],  # stranded_first
-                           str(data[1][5]): element[5],  # stranded_second
-                           str(data[1][6]): element[6],  # tpm_unstranded
-                           str(data[1][7]): element[7],  # fpkm_unstranded
-                           str(data[1][8]): element[8]})  # fpkm_uq_unstranded
-            '''
+                dict_buffer[str(element[0])] = [element[1],                                     # gene_name
+                                                element[2],                                     # gene_type
+                                                element[3],                                     # unstranded
+                                                element[4],                                     # stranded_first
+                                                element[5],                                     # stranded_second
+                                                element[6],                                     # tpm_unstranded
+                                                element[7],                                     # fpkm_unstranded
+                                                element[8],                                     # fpkm_uq_unstranded
+                                                None]                                           # TSS
 
     return dict_buffer
 
