@@ -1,3 +1,5 @@
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
@@ -15,6 +17,28 @@ OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
 LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & METHYLATION & OS - Dataset.txt'
+
+
+## FUNCTIONS
+def process_patient(ge_patient, meth_datastore, os_datastore, ge_keys, meth_keys):
+    for methylation_patient in meth_datastore:
+        for patient in os_datastore:
+            if (ge_patient['info']['case_id'] == methylation_patient['info']['case_id'] and
+                    ge_patient['info']['case_id'] == patient['info']['case_id']):
+                buffer = []
+                # Gene Expression
+                for key in ge_keys:
+                    buffer.append(ge_patient[key][7])  # Adding each feature
+                # Methylation
+                for key in meth_keys:
+                    buffer.append(methylation_patient[key])  # Adding each feature
+                # Label
+                if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
+                    buffer.append(patient['last_check']['days_to_death'])  # Adding label
+                else:  # ALIVE cases
+                    buffer.append(patient['last_check']['days_to_last_followup'])  # Adding label
+                return buffer
+    return None
 
 
 ## MAIN
@@ -35,33 +59,33 @@ if __name__ == "__main__":
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with GENE EXPRESSION and METHYLATION as feature vector and OVERALL SURVIVAL as label
-    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
-    gene_expression_keys = gene_expression_keys[1:]
-    methylation_keys = [key for key in methylation_datastore[0].keys()]
-    methylation_keys = methylation_keys[1:]
-    i = 0
+    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()][1:]
+    methylation_keys = [key for key in methylation_datastore[0].keys()][1:]
+    num_patients = len(gene_expression_datastore)
     dataset = []
-    for ge_patient in gene_expression_datastore:
-        for meth_patient in methylation_datastore:
-            for case in overall_survival_datastore:
-                if (ge_patient['info']['case_id'] == meth_patient['info']['case_id'] and
-                        ge_patient['info']['case_id'] == case['info']['case_id']):
-                    buffer = []
-                    for key in gene_expression_keys:  # Gene Expression
-                        buffer.append(ge_patient[key][7])  # Adding each feature
-                    for key in methylation_keys:  # Methylation
-                        buffer.append(meth_patient[key])  # Adding each feature
-                    if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
-                        buffer.append(case['last_check']['days_to_death'])  # Adding label
-                    else:  # ALIVE cases
-                        buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
-                    dataset.append(buffer)
-                    i += 1
-                    break
-    gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
-    print(f"Loaded {i} samples")
+
+    # Using ThreadPoolExecutor for parallel processing
+    with ThreadPoolExecutor() as executor:
+        futures = []
+        with tqdm(total=num_patients, desc="Processing cases") as pbar:  # Progress bar
+            for gene_expression_patient in gene_expression_datastore:
+                futures.append(executor.submit(process_patient,
+                                               gene_expression_patient,
+                                               methylation_datastore,
+                                               overall_survival_datastore,
+                                               gene_expression_keys,
+                                               methylation_keys))
+
+            # Process each future as it completes
+            for future in as_completed(futures):
+                result = future.result()
+                if result:
+                    dataset.append(result)
+                pbar.update(1)  # Update the progress bar for each completed task
+    print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
+    gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
     csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION], dataset)
     json_storer(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES], gene_expression_and_methylation_keys)
 

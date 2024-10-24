@@ -23,3 +23,4 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     gene_expression_dataframe.to_csv(table_paths[OVERALL_SURVIVAL], index=False)
+    print(f"Data has been correctly saved inside {table_paths[OVERALL_SURVIVAL]} file")

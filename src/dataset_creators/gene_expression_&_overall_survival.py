@@ -1,3 +1,5 @@
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
@@ -13,6 +15,21 @@ GENE_EXPRESSION = 'gene_expression'
 OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
 LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & OS - Dataset.txt'
+
+
+## FUNCTIONS
+def process_patient(ge_patient, os_datastore, ge_keys):
+    for patient in os_datastore:
+        if ge_patient['info']['case_id'] == patient['info']['case_id']:
+            buffer = []
+            for key in ge_keys:
+                buffer.append(ge_patient[key][7])  # Adding each feature
+            if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
+                buffer.append(patient['last_check']['days_to_death'])  # Adding label
+            else:  # ALIVE cases
+                buffer.append(patient['last_check']['days_to_last_followup'])  # Adding label
+            return buffer
+    return None
 
 
 ## MAIN
@@ -32,24 +49,27 @@ if __name__ == "__main__":
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
-    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()]
-    gene_expression_keys = gene_expression_keys[1:]
-    i = 0
+    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()][1:]
+    num_patients = len(gene_expression_datastore)
     dataset = []
-    for patient in gene_expression_datastore:
-        for case in overall_survival_datastore:
-            if patient['info']['case_id'] == case['info']['case_id']:
-                buffer = []
-                for key in gene_expression_keys:
-                    buffer.append(patient[key][7])  # Adding each feature
-                if case['last_check']['vital_status'] == 'Dead':  # DEAD cases
-                    buffer.append(case['last_check']['days_to_death'])  # Adding label
-                else:  # ALIVE cases
-                    buffer.append(case['last_check']['days_to_last_followup'])  # Adding label
-                dataset.append(buffer)
-                i += 1
-                break
-    print(f"Loaded {i} samples")
+
+    # Using ThreadPoolExecutor for parallel processing
+    with ThreadPoolExecutor() as executor:
+        futures = []
+        with tqdm(total=num_patients, desc="Processing cases") as pbar:  # Progress bar
+            for gene_expression_patient in gene_expression_datastore:
+                futures.append(executor.submit(process_patient,
+                                               gene_expression_patient,
+                                               overall_survival_datastore,
+                                               gene_expression_keys))
+
+            # Process each future as it completes
+            for future in as_completed(futures):
+                result = future.result()
+                if result:
+                    dataset.append(result)
+                pbar.update(1)  # Update the progress bar for each completed task
+    print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
     csv_storer(dataset_paths[GENE_EXPRESSION], dataset)

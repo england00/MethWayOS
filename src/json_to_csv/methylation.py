@@ -24,3 +24,4 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     methylation_dataframe.to_csv(table_paths[METHYLATION], index=False)
+    print(f"Data has been correctly saved inside {table_paths[METHYLATION]} file")

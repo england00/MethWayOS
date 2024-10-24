@@ -23,3 +23,4 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     gene_expression_dataframe.to_csv(table_paths[CPG950_CODING_GENES], index=False)
+    print(f"Data has been correctly saved inside {table_paths[CPG950_CODING_GENES]} file")
