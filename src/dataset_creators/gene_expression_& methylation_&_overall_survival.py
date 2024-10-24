@@ -6,7 +6,6 @@ from json_dir.methods.json_storer import *
 from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
 
-
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
@@ -58,6 +57,16 @@ if __name__ == "__main__":
     methylation_datastore = json_loader(datastore_paths[METHYLATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
+    # Changing 'gene_id' with 'gene_name' as key in each dictionary
+    for gene_expression_patient in gene_expression_datastore:
+        new_item = {'info': gene_expression_patient['info']}
+        for gene_key, value in gene_expression_patient.items():
+            if gene_key != 'info':
+                new_key = value[0]
+                new_item[new_key] = [gene_key] + value[1:]
+        gene_expression_patient.clear()
+        gene_expression_patient.update(new_item)
+        
     # Creating the dataset with GENE EXPRESSION and METHYLATION as feature vector and OVERALL SURVIVAL as label
     gene_expression_keys = [key for key in gene_expression_datastore[0].keys()][1:]
     methylation_keys = [key for key in methylation_datastore[0].keys()][1:]

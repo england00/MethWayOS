@@ -2,44 +2,86 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from config.methods.configuration_loader import *
+from data.methods.csv_dataset_loader import csv_loader
 from data.methods.csv_dataset_storer import csv_storer
+from json_dir.methods.json_loader import json_loader
 from logs.methods.log_storer import *
-
 
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
-METHYLATION = 'methylation'
-OVERALL_SURVIVAL = 'overall_survival'
-CPG950_CODING_GENES = 'cpg950_coding_genes'
+GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
+GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
+GENE_EXPRESSION_GENE_NAME = 'gene_expression_gene_name'
+CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
 GENE_EXPRESSION_WITH_ASSOCIATED_METHYLATION = 'gene_expression_with_associated_methylation'
 GENE_EXPRESSION_WITH_ASSOCIATED_METHYLATION_NAMES = 'gene_expression_with_associated_methylation_names'
 LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & ASSOCIATED METHYLATION & OS - Dataset.txt'
-
 
 ## MAIN
 if __name__ == "__main__":
 
     # Open LOG file
+
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
     # Loading YAML files
     json_paths = yaml_loader(JSON_PATHS_YAML)
-    table_paths = yaml_loader(TABLE_PATHS_YAML)
+    datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
+    table_paths = yaml_loader(TABLE_PATHS_YAML)
 
-    # Storing data from JSON datastores
-    gene_expression_dataframe = pd.read_csv(table_paths[GENE_EXPRESSION])
-    print(f"Data has been correctly loaded from {table_paths[GENE_EXPRESSION]} file")
-    methylation_dataframe = pd.read_csv(table_paths[METHYLATION])
-    print(f"Data has been correctly loaded from {table_paths[METHYLATION]} file")
-    overall_survival_dataframe = pd.read_csv(table_paths[OVERALL_SURVIVAL])
-    print(f"Data has been correctly loaded from {table_paths[OVERALL_SURVIVAL]} file")
-    cpg950_coding_genes_dataframe = pd.read_csv(table_paths[CPG950_CODING_GENES])
-    print(f"Data has been correctly loaded from {table_paths[CPG950_CODING_GENES]} file")
+    # Loading data from JSON files and CSV dataset
+    gene_expression_and_methylation_columns = json_loader(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES])
+    gene_expression_columns = [element for element in gene_expression_and_methylation_columns if not element.startswith('cg')]
+    methylation_columns = [element for element in gene_expression_and_methylation_columns if element.startswith('cg')]
+    del gene_expression_and_methylation_columns
+    ge_meth_os_dataframe, ge_meth_os_dataframe_columns = csv_loader(dataset_paths[GENE_EXPRESSION_AND_METHYLATION],
+                                                                    JSON_PATHS_YAML,
+                                                                    GENE_EXPRESSION_AND_METHYLATION_NAMES)
+
+
+    # Selecting only GENES with specified TSS
+    gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION_GENE_NAME])
+    for gene in gene_expression_columns:
+        if gene_expression_datastore[0][gene][8] is None:
+            gene_expression_columns.remove(gene)
+    del gene_expression_datastore
+    gene_expression_columns.append('y')  # Appending label column
+    gene_expression_dataframe = ge_meth_os_dataframe[gene_expression_columns]
+    gene_expression_columns.remove('y')
+
+    # Loading JSON file for METHYLATION mapping and Organizing the dataset
+
+    # Selecting only ISLAND present inside CPG950 file
+    cpg950_coding_genes_dictionary = json_loader(datastore_paths[CPG950_CODING_GENES_ORIGINAL])
+    methylation_dataframe = pd.DataFrame()
+    for gene in gene_expression_columns:
+        buffer = []
+
+        cpg950_coding_genes_dictionary[gene]['site_id']
+
+        # methylation_dataframe[gene] =
+
+
+
+    '''
+    for gene in gene_expression_columns:
+        for island in methylation_columns:
+        buffer = []
+
+        cpg950_coding_genes_dictionary[gene]['site_id']
+
+    print(gene_expression_dataframe)
+    '''
+
+
+
+
+
 
 
 
@@ -108,7 +150,6 @@ if __name__ == "__main__":
     logfile.close()
     '''
 
-
 '''
     gene_expression_path = 'C:/Users/lucai/Downloads/df_gx_lungs.csv'
     df_fpkm_uq = pd.read_csv(gene_expression_path)
@@ -131,7 +172,6 @@ if __name__ == "__main__":
 
     print(data_meth)
 '''
-
 
 '''
 def extract_methylation_vectors(methylation_dataframe,
