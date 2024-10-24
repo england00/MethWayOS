@@ -1,3 +1,4 @@
+'''
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 from config.methods.configuration_loader import *
@@ -115,12 +116,13 @@ if __name__ == "__main__":
     # Close LOG file
     sys.stdout = sys.__stdout__
     logfile.close()
+    '''
 
-'''
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from config.methods.configuration_loader import *
+from data.methods.csv_dataset_storer import csv_storer
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
 from data.methods.csv_storer import *
@@ -153,6 +155,9 @@ if __name__ == "__main__":
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
 
     # Storing data from JSON datastores
+
+    # covertire tutto nella lettura di df
+
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
     methylation_datastore = json_loader(datastore_paths[METHYLATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
@@ -214,7 +219,7 @@ if __name__ == "__main__":
     # Close LOG file
     sys.stdout = sys.__stdout__
     logfile.close()
-    '''
+
 
 '''
     gene_expression_path = 'C:/Users/lucai/Downloads/df_gx_lungs.csv'
