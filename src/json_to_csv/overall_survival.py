@@ -7,8 +7,7 @@ from json_dir.methods.json_loader import *
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
-GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
-METHYLATION = 'methylation'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## MAIN
@@ -19,8 +18,8 @@ if __name__ == "__main__":
     table_paths = yaml_loader(TABLE_PATHS_YAML)
 
     # Loading data from JSON datastore and giving DataFrame format
-    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION])
-    methylation_dataframe = pd.DataFrame(methylation_datastore)
+    gene_expression_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
+    gene_expression_dataframe = pd.DataFrame(gene_expression_datastore)
 
     # Storing dataset inside a CSV file
-    methylation_dataframe.to_csv(table_paths[METHYLATION], index=False)
+    gene_expression_dataframe.to_csv(table_paths[OVERALL_SURVIVAL], index=False)
