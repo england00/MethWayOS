@@ -1,6 +1,7 @@
+import pandas as pd
 from json_dir.methods.json_storer import *
 from data.methods.directory_loader import *
-from data.methods.csv_loader import *
+from data.methods.csv_dataset_loader import *
 from data.methods.tsv_loader import *
 from logs.methods.log_storer import *
 
@@ -38,7 +39,7 @@ def dictionary_format(file_path, data_dictionary, tss_dictionary):
                                                 element[6],                                     # tpm_unstranded
                                                 element[7],                                     # fpkm_unstranded
                                                 element[8],                                     # fpkm_uq_unstranded
-                                                tss_dictionary[str(element[0]).split('.')[0]]]  # TSS
+                                                str(tss_dictionary[str(element[0]).split('.')[0]])]  # TSS
             else:
                 dict_buffer[str(element[0])] = [element[1],                                     # gene_name
                                                 element[2],                                     # gene_type
@@ -73,9 +74,8 @@ if __name__ == "__main__":
         case_ids.append(dictionary['info']['case_id'])
 
     # Loading GENE EXPRESSION TSS data from CSV file
-    gene_expression_tss_dataframe, column_names = csv_loader(table_paths[GENE_EXPRESSION_TSS], JSON_PATHS_YAML,
-                                                             GENE_EXPRESSION_TSS_NAMES, delimiter=',')
-    gene_expression_tss_dictionary = gene_expression_tss_dataframe.iloc[1:].set_index('gene_id')['TSS'].to_dict()
+    gene_expression_tss_dataframe = pd.read_csv(table_paths[GENE_EXPRESSION_TSS])
+    gene_expression_tss_dictionary = gene_expression_tss_dataframe.set_index('gene_id')['TSS'].to_dict()
 
     # Loading GENE EXPRESSION data from JSON file with 'case_id', 'file_name' and 'file_id' only for interested cases
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])

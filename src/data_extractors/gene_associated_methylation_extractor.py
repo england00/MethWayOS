@@ -4,7 +4,8 @@ from json_dir.methods.json_storer import *
 from data.methods.tsv_loader import *
 from logs.methods.log_storer import *
 import concurrent.futures
-from tqdm import tqdm  # Importa tqdm per la barra di progresso
+from tqdm import tqdm
+
 
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
@@ -34,12 +35,12 @@ def dictionary_format(file_path, data_dictionary):
     return dict_buffer
 
 
-def filtered_dictionary(dictionary, allowed_keys):
-    return {key: dictionary[key] for key in allowed_keys if key in dictionary}
+def filtered_dictionary(dictionary, keys):
+    return {key: dictionary[key] for key in keys if key in dictionary}
 
 
-def process_dictionary(dictionary, allowed_keys):
-    return filtered_dictionary(dictionary, allowed_keys)
+def process_dictionary(dictionary, keys):
+    return filtered_dictionary(dictionary, keys)
 
 
 ## MAIN

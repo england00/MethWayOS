@@ -1,10 +1,11 @@
-from concurrent.futures import ProcessPoolExecutor
 from tqdm import tqdm
+from concurrent.futures import ProcessPoolExecutor
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
-from data.methods.csv_storer import *
+from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
+
 
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
@@ -19,6 +20,7 @@ GENE_EXPRESSION_WITH_ASSOCIATED_METHYLATION_NAMES = 'gene_expression_with_associ
 LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & ASSOCIATED METHYLATION & OS - Dataset.txt'
 
 
+## FUNCTIONS
 def process_patient(ge_patient, methylation_datastore, overall_survival_datastore, cpg950_coding_genes,
                     gene_expression_keys, methylation_keys):
     dataset = []

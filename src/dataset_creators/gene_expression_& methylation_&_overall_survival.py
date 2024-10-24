@@ -1,7 +1,7 @@
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
 from json_dir.methods.json_storer import *
-from data.methods.csv_storer import *
+from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
 
 

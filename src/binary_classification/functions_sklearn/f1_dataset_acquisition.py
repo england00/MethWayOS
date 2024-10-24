@@ -1,4 +1,4 @@
-from data.methods.csv_loader import csv_loader
+from data.methods.csv_dataset_loader import csv_loader
 
 
 def dataset_acquisition(path, json_paths_yaml, names):
