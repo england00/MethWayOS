@@ -1,3 +1,4 @@
+import os
 from collections import Counter
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
@@ -9,7 +10,7 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
-LOG_PATH = '../../logs/files/0 - CASE ID Extractor.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS

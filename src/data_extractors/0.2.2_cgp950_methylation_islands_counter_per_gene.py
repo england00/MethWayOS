@@ -1,3 +1,4 @@
+import os
 import sys
 import numpy as np
 from config.methods.configuration_loader import yaml_loader
@@ -9,7 +10,7 @@ from logs.methods.log_storer import DualOutput
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
-LOG_PATH = '../../logs/files/0 - METHYLATION ISLAND Counter per GENE.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS

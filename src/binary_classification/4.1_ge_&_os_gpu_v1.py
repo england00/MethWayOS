@@ -1,3 +1,4 @@
+import os
 from colorama import Fore
 from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions_torch.f1_dataset_acquisition_and_splitting import dataset_acquisition_and_splitting
@@ -18,7 +19,7 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
-LOG_PATH = '../../logs/files/4 - GENE EXPRESSION & OS - (GPU) V1.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 SHUFFLE = True
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 LOWER_THRESHOLD = 1000  # 730 (2 years)

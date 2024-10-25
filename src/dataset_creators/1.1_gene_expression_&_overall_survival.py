@@ -1,3 +1,4 @@
+import os
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
@@ -14,7 +15,7 @@ DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_NAMES = 'gene_expression_names'
-LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & OS - Dataset.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS
@@ -22,8 +23,10 @@ def process_patient(ge_patient, os_datastore, ge_keys):
     for patient in os_datastore:
         if ge_patient['info']['case_id'] == patient['info']['case_id']:
             buffer = []
+            # Gene Expression
             for key in ge_keys:
                 buffer.append(ge_patient[key][7])  # Adding each feature
+            # Label
             if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
                 buffer.append(patient['last_check']['days_to_death'])  # Adding label
             else:  # ALIVE cases

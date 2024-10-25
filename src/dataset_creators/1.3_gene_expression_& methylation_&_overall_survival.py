@@ -1,3 +1,4 @@
+import os
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
@@ -6,16 +7,18 @@ from json_dir.methods.json_storer import *
 from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
 
+
 ## CONFIGURATION
 JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
+GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
 GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
-LOG_PATH = '../../logs/files/1 - GENE EXPRESSION & METHYLATION & OS - Dataset.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS
@@ -54,7 +57,7 @@ if __name__ == "__main__":
 
     # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
-    methylation_datastore = json_loader(datastore_paths[METHYLATION])
+    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Changing 'gene_id' with 'gene_name' as key in each dictionary

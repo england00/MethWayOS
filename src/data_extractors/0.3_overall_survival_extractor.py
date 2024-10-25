@@ -13,7 +13,7 @@ DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
-LOG_PATH = '../../logs/files/0 - OVERALL SURVIVAL Extractor.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## MAIN

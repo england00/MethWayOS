@@ -1,0 +1,1036 @@
+[36m 
+############################### DATA ACQUISITION ############################### [39m
+Data has been correctly loaded from ../../config/files/dataset_paths.yaml file
+Data has been correctly loaded from ../../config/files/json_paths.yaml file
+Data has been correctly loaded from ../../json_dir/indexes/methylation_names.json file
+Data has been correctly loaded from ../../data/datasets/methylation_and_overall_survival_dataset.csv file
+ADMITTED SAMPLES VALUES:
+	--> 33 samples with a label lower than 1000
+	--> 47 samples with a label bigger than 3000
+DIMENSIONS:
+	--> Training Set: 64
+	--> Testing Set: 16
+[36m 
+########################### TRAINING SET MANAGEMENT ############################ [39m
+[36m 
+################### EXPLORATORY DATA ANALYSIS with RAW DATA #################### [39m
+[36m 
+############################ FEATURES PREPROCESSING ############################ [39m
+[36m 
+############################## FEATURES SELECTION ############################## [39m
+VARIANCE SELECTION:
+	--> New Feature Space Dimension: 2000
+CORRELATION FILTER:
+	--> New Feature Space Dimension: 200
+Index(['cg12123879', 'cg07080358', 'cg12325507', 'cg05380503', 'cg07520649',
+       'cg04716261', 'cg06192555', 'cg09829319', 'cg03934354', 'cg14046986',
+       ...
+       'cg10423830', 'cg19165274', 'cg10127275', 'cg01675953', 'cg26266703',
+       'cg17018464', 'cg18880319', 'cg04704856', 'cg15186181', 'cg05140079'],
+      dtype='object', length=200)
+[36m 
+############################ TESTING SET MANAGEMENT ############################ [39m
+[36m 
+################### EXPLORATORY DATA ANALYSIS with RAW DATA #################### [39m
+[36m 
+############################ FEATURES PREPROCESSING ############################ [39m
+[36m 
+############################## FEATURES SELECTION ############################## [39m
+TOP FEATURES SELECTION:
+	--> New Feature Space Dimension: 200
+[36m 
+############################### SKLEARN TO TORCH ############################### [39m
+[36m 
+################################# GRID SEARCH ################################## [39m
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7500, Validation Loss: 0.5585,  Current Best Accuracy: 0.7500,  Current Best Validation Loss: 0.5585
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.3842, Validation Loss: 0.5554
+	--> Epoch [2/500], Loss: 0.3801, Validation Loss: 0.4883
+	--> Epoch [3/500], Loss: 0.3340, Validation Loss: 0.3389
+	--> Epoch [4/500], Loss: 0.2682, Validation Loss: 0.3144
+	--> Epoch [5/500], Loss: 0.2008, Validation Loss: 0.3003
+	--> Epoch [6/500], Loss: 0.0663, Validation Loss: 0.2914
+	--> Epoch [7/500], Loss: 0.2542, Validation Loss: 0.3450
+	--> Epoch [8/500], Loss: 0.1141, Validation Loss: 0.3394
+	--> Epoch [9/500], Loss: 0.3786, Validation Loss: 0.3593
+Early stopping
+	--> Training for Fold 1 took 0.09993124008178711 sec, using 9 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.9569, Validation Loss: 0.5822
+	--> Epoch [2/500], Loss: 0.3715, Validation Loss: 0.4090
+	--> Epoch [3/500], Loss: 0.3296, Validation Loss: 0.3394
+	--> Epoch [4/500], Loss: 0.2423, Validation Loss: 0.3367
+	--> Epoch [5/500], Loss: 0.3383, Validation Loss: 0.3363
+	--> Epoch [6/500], Loss: 0.0585, Validation Loss: 0.3523
+	--> Epoch [7/500], Loss: 0.0763, Validation Loss: 0.3628
+	--> Epoch [8/500], Loss: 0.0855, Validation Loss: 0.3824
+Early stopping
+	--> Training for Fold 2 took 0.08995723724365234 sec, using 8 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.3690, Validation Loss: 0.6817
+	--> Epoch [2/500], Loss: 0.6855, Validation Loss: 0.6022
+	--> Epoch [3/500], Loss: 0.3697, Validation Loss: 0.5955
+	--> Epoch [4/500], Loss: 0.2085, Validation Loss: 0.5955
+	--> Epoch [5/500], Loss: 0.5388, Validation Loss: 0.5755
+	--> Epoch [6/500], Loss: 0.1347, Validation Loss: 0.5643
+	--> Epoch [7/500], Loss: 0.2660, Validation Loss: 0.5502
+	--> Epoch [8/500], Loss: 0.1141, Validation Loss: 0.5456
+	--> Epoch [9/500], Loss: 0.2353, Validation Loss: 0.5725
+	--> Epoch [10/500], Loss: 0.2166, Validation Loss: 0.5802
+	--> Epoch [11/500], Loss: 0.2007, Validation Loss: 0.5839
+Early stopping
+	--> Training for Fold 3 took 0.16392159461975098 sec, using 11 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.6152, Validation Loss: 0.5559
+	--> Epoch [2/500], Loss: 0.2587, Validation Loss: 0.4317
+	--> Epoch [3/500], Loss: 0.1048, Validation Loss: 0.3563
+	--> Epoch [4/500], Loss: 0.3181, Validation Loss: 0.3564
+	--> Epoch [5/500], Loss: 0.3767, Validation Loss: 0.3491
+	--> Epoch [6/500], Loss: 0.3322, Validation Loss: 0.3800
+	--> Epoch [7/500], Loss: 0.2132, Validation Loss: 0.4051
+	--> Epoch [8/500], Loss: 0.0259, Validation Loss: 0.4078
+Early stopping
+	--> Training for Fold 4 took 0.11986517906188965 sec, using 8 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.2547, Validation Loss: 0.5790
+	--> Epoch [2/500], Loss: 0.6224, Validation Loss: 0.5984
+	--> Epoch [3/500], Loss: 0.4646, Validation Loss: 0.6656
+	--> Epoch [4/500], Loss: 0.0444, Validation Loss: 0.7721
+Early stopping
+	--> Training for Fold 5 took 0.062490224838256836 sec, using 4 epochs
+
+TESTING:
+	--> Testing took 0.0147 sec
+	--> Final Accuracy: 0.3750
+	--> Final Loss: 1.4388
+	--> Final Precision: 0.4286
+	--> Final Recall: 0.3333
+	--> Final F1 Score: 0.3750
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7500, Validation Loss: 0.5585,  Current Best Accuracy: 0.7500,  Current Best Validation Loss: 0.5585
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.8269, Validation Loss: 0.4798,  Current Best Accuracy: 0.8269,  Current Best Validation Loss: 0.4798
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.4107, Validation Loss: 0.5175
+	--> Epoch [2/500], Loss: 0.1616, Validation Loss: 0.5736
+	--> Epoch [3/500], Loss: 0.2571, Validation Loss: 0.3903
+	--> Epoch [4/500], Loss: 0.4117, Validation Loss: 0.5318
+	--> Epoch [5/500], Loss: 0.0464, Validation Loss: 0.4186
+	--> Epoch [6/500], Loss: 0.0273, Validation Loss: 0.4258
+Early stopping
+	--> Training for Fold 1 took 0.06374621391296387 sec, using 6 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.2661, Validation Loss: 0.4032
+	--> Epoch [2/500], Loss: 0.0812, Validation Loss: 0.3860
+	--> Epoch [3/500], Loss: 0.0303, Validation Loss: 0.4038
+	--> Epoch [4/500], Loss: 0.1798, Validation Loss: 0.4265
+	--> Epoch [5/500], Loss: 0.1453, Validation Loss: 0.4395
+Early stopping
+	--> Training for Fold 2 took 0.05279827117919922 sec, using 5 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.4731, Validation Loss: 0.6658
+	--> Epoch [2/500], Loss: 0.2501, Validation Loss: 0.6588
+	--> Epoch [3/500], Loss: 0.0695, Validation Loss: 0.6618
+	--> Epoch [4/500], Loss: 0.0108, Validation Loss: 0.6967
+	--> Epoch [5/500], Loss: 0.4395, Validation Loss: 0.7034
+Early stopping
+	--> Training for Fold 3 took 0.0530247688293457 sec, using 5 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.7487, Validation Loss: 0.6098
+	--> Epoch [2/500], Loss: 0.7229, Validation Loss: 0.5034
+	--> Epoch [3/500], Loss: 0.2941, Validation Loss: 0.4633
+	--> Epoch [4/500], Loss: 0.1623, Validation Loss: 0.4370
+	--> Epoch [5/500], Loss: 0.1104, Validation Loss: 0.4402
+	--> Epoch [6/500], Loss: 0.3218, Validation Loss: 0.4515
+	--> Epoch [7/500], Loss: 0.4916, Validation Loss: 0.4377
+Early stopping
+	--> Training for Fold 4 took 0.11159348487854004 sec, using 7 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.8700, Validation Loss: 0.7191
+	--> Epoch [2/500], Loss: 0.6483, Validation Loss: 0.7268
+	--> Epoch [3/500], Loss: 0.2758, Validation Loss: 0.7132
+	--> Epoch [4/500], Loss: 0.3887, Validation Loss: 0.7139
+	--> Epoch [5/500], Loss: 0.3633, Validation Loss: 0.6946
+	--> Epoch [6/500], Loss: 0.6141, Validation Loss: 0.6756
+	--> Epoch [7/500], Loss: 0.1375, Validation Loss: 0.6217
+	--> Epoch [8/500], Loss: 0.4849, Validation Loss: 0.6266
+	--> Epoch [9/500], Loss: 0.4814, Validation Loss: 0.6294
+	--> Epoch [10/500], Loss: 0.5680, Validation Loss: 0.6351
+Early stopping
+	--> Training for Fold 5 took 0.11585640907287598 sec, using 10 epochs
+
+TESTING:
+	--> Testing took 0.0074 sec
+	--> Final Accuracy: 0.3750
+	--> Final Loss: 1.2221
+	--> Final Precision: 0.4444
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4444
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.8269, Validation Loss: 0.4798,  Current Best Accuracy: 0.8269,  Current Best Validation Loss: 0.4798
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.8115, Validation Loss: 0.5066,  Current Best Accuracy: 0.8115,  Current Best Validation Loss: 0.5066
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.3912, Validation Loss: 0.5611
+	--> Epoch [2/500], Loss: 0.4496, Validation Loss: 0.4248
+	--> Epoch [3/500], Loss: 0.5990, Validation Loss: 0.3889
+	--> Epoch [4/500], Loss: 0.0672, Validation Loss: 0.3642
+	--> Epoch [5/500], Loss: 0.0372, Validation Loss: 0.3366
+	--> Epoch [6/500], Loss: 0.2916, Validation Loss: 0.3520
+	--> Epoch [7/500], Loss: 0.2512, Validation Loss: 0.3466
+	--> Epoch [8/500], Loss: 0.0103, Validation Loss: 0.3868
+Early stopping
+	--> Training for Fold 1 took 0.08611726760864258 sec, using 8 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.7013, Validation Loss: 0.5703
+	--> Epoch [2/500], Loss: 0.5925, Validation Loss: 0.4029
+	--> Epoch [3/500], Loss: 0.3200, Validation Loss: 0.3584
+	--> Epoch [4/500], Loss: 0.4168, Validation Loss: 0.3468
+	--> Epoch [5/500], Loss: 0.0366, Validation Loss: 0.3009
+	--> Epoch [6/500], Loss: 0.2809, Validation Loss: 0.3178
+	--> Epoch [7/500], Loss: 0.3119, Validation Loss: 0.3460
+	--> Epoch [8/500], Loss: 0.0227, Validation Loss: 0.3319
+Early stopping
+	--> Training for Fold 2 took 0.0847630500793457 sec, using 8 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.6468, Validation Loss: 0.6673
+	--> Epoch [2/500], Loss: 0.5112, Validation Loss: 0.6862
+	--> Epoch [3/500], Loss: 0.3614, Validation Loss: 0.7626
+	--> Epoch [4/500], Loss: 0.3285, Validation Loss: 0.7397
+Early stopping
+	--> Training for Fold 3 took 0.05134749412536621 sec, using 4 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.4678, Validation Loss: 0.5271
+	--> Epoch [2/500], Loss: 0.4968, Validation Loss: 0.3843
+	--> Epoch [3/500], Loss: 0.3343, Validation Loss: 0.3445
+	--> Epoch [4/500], Loss: 0.2289, Validation Loss: 0.3597
+	--> Epoch [5/500], Loss: 0.0494, Validation Loss: 0.3800
+	--> Epoch [6/500], Loss: 0.0148, Validation Loss: 0.3695
+Early stopping
+	--> Training for Fold 4 took 0.09922313690185547 sec, using 6 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.7652, Validation Loss: 0.5708
+	--> Epoch [2/500], Loss: 0.6193, Validation Loss: 0.6347
+	--> Epoch [3/500], Loss: 0.5734, Validation Loss: 0.5892
+	--> Epoch [4/500], Loss: 0.1771, Validation Loss: 0.6767
+Early stopping
+	--> Training for Fold 5 took 0.04579734802246094 sec, using 4 epochs
+
+TESTING:
+	--> Testing took 0.0084 sec
+	--> Final Accuracy: 0.4375
+	--> Final Loss: 1.1876
+	--> Final Precision: 0.5000
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4706
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.01, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.8115, Validation Loss: 0.5066,  Current Best Accuracy: 0.8115,  Current Best Validation Loss: 0.5066
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7949, Validation Loss: 0.5197,  Current Best Accuracy: 0.7949,  Current Best Validation Loss: 0.5197
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.6822, Validation Loss: 0.6118
+	--> Epoch [2/500], Loss: 0.6419, Validation Loss: 0.5653
+	--> Epoch [3/500], Loss: 0.4150, Validation Loss: 0.5261
+	--> Epoch [4/500], Loss: 0.5146, Validation Loss: 0.4878
+	--> Epoch [5/500], Loss: 0.2543, Validation Loss: 0.4753
+	--> Epoch [6/500], Loss: 0.2349, Validation Loss: 0.4469
+	--> Epoch [7/500], Loss: 0.5076, Validation Loss: 0.4344
+	--> Epoch [8/500], Loss: 0.1969, Validation Loss: 0.4180
+	--> Epoch [9/500], Loss: 0.5036, Validation Loss: 0.3918
+	--> Epoch [10/500], Loss: 0.1006, Validation Loss: 0.4105
+	--> Epoch [11/500], Loss: 0.0311, Validation Loss: 0.4068
+	--> Epoch [12/500], Loss: 0.2644, Validation Loss: 0.3962
+Early stopping
+	--> Training for Fold 1 took 0.12996315956115723 sec, using 12 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.5778, Validation Loss: 0.7011
+	--> Epoch [2/500], Loss: 0.6704, Validation Loss: 0.6597
+	--> Epoch [3/500], Loss: 0.8326, Validation Loss: 0.6300
+	--> Epoch [4/500], Loss: 0.2542, Validation Loss: 0.6358
+	--> Epoch [5/500], Loss: 0.4379, Validation Loss: 0.6396
+	--> Epoch [6/500], Loss: 0.0078, Validation Loss: 0.6223
+	--> Epoch [7/500], Loss: 0.6078, Validation Loss: 0.5917
+	--> Epoch [8/500], Loss: 0.3264, Validation Loss: 0.5843
+	--> Epoch [9/500], Loss: 0.2977, Validation Loss: 0.5624
+	--> Epoch [10/500], Loss: 0.0243, Validation Loss: 0.5573
+	--> Epoch [11/500], Loss: 0.1152, Validation Loss: 0.5502
+	--> Epoch [12/500], Loss: 0.3664, Validation Loss: 0.5498
+	--> Epoch [13/500], Loss: 0.4001, Validation Loss: 0.5696
+	--> Epoch [14/500], Loss: 0.2185, Validation Loss: 0.5791
+	--> Epoch [15/500], Loss: 0.3490, Validation Loss: 0.5502
+Early stopping
+	--> Training for Fold 2 took 0.20730280876159668 sec, using 15 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.4198, Validation Loss: 0.5724
+	--> Epoch [2/500], Loss: 0.3629, Validation Loss: 0.5481
+	--> Epoch [3/500], Loss: 0.3948, Validation Loss: 0.7413
+	--> Epoch [4/500], Loss: 0.0576, Validation Loss: 0.6729
+	--> Epoch [5/500], Loss: 0.2895, Validation Loss: 0.5688
+Early stopping
+	--> Training for Fold 3 took 0.05489468574523926 sec, using 5 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.3617, Validation Loss: 0.3713
+	--> Epoch [2/500], Loss: 0.4423, Validation Loss: 0.3163
+	--> Epoch [3/500], Loss: 0.1052, Validation Loss: 0.2909
+	--> Epoch [4/500], Loss: 0.0399, Validation Loss: 0.2751
+	--> Epoch [5/500], Loss: 0.3332, Validation Loss: 0.2991
+	--> Epoch [6/500], Loss: 0.0525, Validation Loss: 0.2745
+	--> Epoch [7/500], Loss: 0.0240, Validation Loss: 0.2721
+	--> Epoch [8/500], Loss: 0.2320, Validation Loss: 0.2617
+	--> Epoch [9/500], Loss: 0.0236, Validation Loss: 0.2704
+	--> Epoch [10/500], Loss: 0.0119, Validation Loss: 0.2704
+	--> Epoch [11/500], Loss: 0.2363, Validation Loss: 0.2713
+Early stopping
+	--> Training for Fold 4 took 0.1626584529876709 sec, using 11 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.2576, Validation Loss: 0.6068
+	--> Epoch [2/500], Loss: 0.6645, Validation Loss: 0.5962
+	--> Epoch [3/500], Loss: 0.4449, Validation Loss: 0.6111
+	--> Epoch [4/500], Loss: 0.2736, Validation Loss: 0.6036
+	--> Epoch [5/500], Loss: 0.5048, Validation Loss: 0.6327
+Early stopping
+	--> Training for Fold 5 took 0.055611610412597656 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0076 sec
+	--> Final Accuracy: 0.3750
+	--> Final Loss: 1.2263
+	--> Final Precision: 0.4286
+	--> Final Recall: 0.3333
+	--> Final F1 Score: 0.3750
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7949, Validation Loss: 0.5197,  Current Best Accuracy: 0.7949,  Current Best Validation Loss: 0.5197
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.7962, Validation Loss: 0.4921,  Current Best Accuracy: 0.7962,  Current Best Validation Loss: 0.4921
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.7671, Validation Loss: 0.4432
+	--> Epoch [2/500], Loss: 0.1648, Validation Loss: 0.4775
+	--> Epoch [3/500], Loss: 0.5236, Validation Loss: 0.4411
+	--> Epoch [4/500], Loss: 0.8967, Validation Loss: 0.4553
+	--> Epoch [5/500], Loss: 0.1588, Validation Loss: 0.4323
+	--> Epoch [6/500], Loss: 0.1993, Validation Loss: 0.4790
+	--> Epoch [7/500], Loss: 0.5310, Validation Loss: 0.4866
+	--> Epoch [8/500], Loss: 0.2896, Validation Loss: 0.4618
+Early stopping
+	--> Training for Fold 1 took 0.08625483512878418 sec, using 8 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.7816, Validation Loss: 0.6111
+	--> Epoch [2/500], Loss: 0.4354, Validation Loss: 0.5175
+	--> Epoch [3/500], Loss: 0.5382, Validation Loss: 0.4163
+	--> Epoch [4/500], Loss: 0.3686, Validation Loss: 0.4470
+	--> Epoch [5/500], Loss: 0.0478, Validation Loss: 0.4124
+	--> Epoch [6/500], Loss: 0.2740, Validation Loss: 0.4414
+	--> Epoch [7/500], Loss: 0.4913, Validation Loss: 0.4836
+	--> Epoch [8/500], Loss: 0.0244, Validation Loss: 0.4792
+Early stopping
+	--> Training for Fold 2 took 0.08622884750366211 sec, using 8 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.7750, Validation Loss: 0.7166
+	--> Epoch [2/500], Loss: 0.5152, Validation Loss: 0.6994
+	--> Epoch [3/500], Loss: 0.2027, Validation Loss: 0.6294
+	--> Epoch [4/500], Loss: 0.3714, Validation Loss: 0.6294
+	--> Epoch [5/500], Loss: 0.5912, Validation Loss: 0.5864
+	--> Epoch [6/500], Loss: 0.3535, Validation Loss: 0.5377
+	--> Epoch [7/500], Loss: 0.3169, Validation Loss: 0.4921
+	--> Epoch [8/500], Loss: 0.2565, Validation Loss: 0.6540
+	--> Epoch [9/500], Loss: 0.4037, Validation Loss: 0.6358
+	--> Epoch [10/500], Loss: 0.2209, Validation Loss: 0.6343
+Early stopping
+	--> Training for Fold 3 took 0.152388334274292 sec, using 10 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.9082, Validation Loss: 0.5679
+	--> Epoch [2/500], Loss: 0.6296, Validation Loss: 0.4269
+	--> Epoch [3/500], Loss: 0.3582, Validation Loss: 0.3140
+	--> Epoch [4/500], Loss: 0.0559, Validation Loss: 0.2665
+	--> Epoch [5/500], Loss: 0.2024, Validation Loss: 0.2556
+	--> Epoch [6/500], Loss: 0.0637, Validation Loss: 0.2789
+	--> Epoch [7/500], Loss: 0.0155, Validation Loss: 0.2840
+	--> Epoch [8/500], Loss: 0.0300, Validation Loss: 0.2908
+Early stopping
+	--> Training for Fold 4 took 0.08618664741516113 sec, using 8 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.4382, Validation Loss: 0.6791
+	--> Epoch [2/500], Loss: 0.1871, Validation Loss: 0.7758
+	--> Epoch [3/500], Loss: 0.5166, Validation Loss: 0.6303
+	--> Epoch [4/500], Loss: 0.1698, Validation Loss: 0.6763
+	--> Epoch [5/500], Loss: 0.1940, Validation Loss: 0.6762
+	--> Epoch [6/500], Loss: 0.1743, Validation Loss: 0.7293
+Early stopping
+	--> Training for Fold 5 took 0.11422204971313477 sec, using 6 epochs
+
+TESTING:
+	--> Testing took 0.0072 sec
+	--> Final Accuracy: 0.5625
+	--> Final Loss: 1.5788
+	--> Final Precision: 0.6000
+	--> Final Recall: 0.6667
+	--> Final F1 Score: 0.6316
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.7962, Validation Loss: 0.4921,  Current Best Accuracy: 0.7962,  Current Best Validation Loss: 0.4921
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 1e-05, Accuracy: 0.7487, Validation Loss: 0.4827,  Current Best Accuracy: 0.7487,  Current Best Validation Loss: 0.4827
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.6093, Validation Loss: 0.6162
+	--> Epoch [2/500], Loss: 0.7317, Validation Loss: 0.5657
+	--> Epoch [3/500], Loss: 0.2087, Validation Loss: 0.5302
+	--> Epoch [4/500], Loss: 0.2747, Validation Loss: 0.5043
+	--> Epoch [5/500], Loss: 0.4590, Validation Loss: 0.4468
+	--> Epoch [6/500], Loss: 0.5457, Validation Loss: 0.4172
+	--> Epoch [7/500], Loss: 0.4486, Validation Loss: 0.4162
+	--> Epoch [8/500], Loss: 0.2040, Validation Loss: 0.4081
+	--> Epoch [9/500], Loss: 0.1906, Validation Loss: 0.3912
+	--> Epoch [10/500], Loss: 0.3120, Validation Loss: 0.3827
+	--> Epoch [11/500], Loss: 0.2880, Validation Loss: 0.3732
+	--> Epoch [12/500], Loss: 0.3601, Validation Loss: 0.4143
+	--> Epoch [13/500], Loss: 0.0082, Validation Loss: 0.4198
+	--> Epoch [14/500], Loss: 0.2427, Validation Loss: 0.4226
+Early stopping
+	--> Training for Fold 1 took 0.14785099029541016 sec, using 14 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 1.0201, Validation Loss: 0.6818
+	--> Epoch [2/500], Loss: 0.4041, Validation Loss: 0.6208
+	--> Epoch [3/500], Loss: 0.8182, Validation Loss: 0.5762
+	--> Epoch [4/500], Loss: 0.6702, Validation Loss: 0.5408
+	--> Epoch [5/500], Loss: 0.6029, Validation Loss: 0.5140
+	--> Epoch [6/500], Loss: 0.7381, Validation Loss: 0.4890
+	--> Epoch [7/500], Loss: 0.3993, Validation Loss: 0.4768
+	--> Epoch [8/500], Loss: 0.6936, Validation Loss: 0.4669
+	--> Epoch [9/500], Loss: 0.2774, Validation Loss: 0.4394
+	--> Epoch [10/500], Loss: 0.3006, Validation Loss: 0.3994
+	--> Epoch [11/500], Loss: 0.4156, Validation Loss: 0.3540
+	--> Epoch [12/500], Loss: 0.3665, Validation Loss: 0.3807
+	--> Epoch [13/500], Loss: 0.1870, Validation Loss: 0.3528
+	--> Epoch [14/500], Loss: 0.4141, Validation Loss: 0.3322
+	--> Epoch [15/500], Loss: 0.1625, Validation Loss: 0.3174
+	--> Epoch [16/500], Loss: 0.2697, Validation Loss: 0.3041
+	--> Epoch [17/500], Loss: 0.2528, Validation Loss: 0.2935
+	--> Epoch [18/500], Loss: 0.1427, Validation Loss: 0.2885
+	--> Epoch [19/500], Loss: 0.1296, Validation Loss: 0.2815
+	--> Epoch [20/500], Loss: 0.1212, Validation Loss: 0.2745
+	--> Epoch [21/500], Loss: 0.2030, Validation Loss: 0.2688
+	--> Epoch [22/500], Loss: 0.1923, Validation Loss: 0.3088
+	--> Epoch [23/500], Loss: 0.0042, Validation Loss: 0.2934
+	--> Epoch [24/500], Loss: 0.5552, Validation Loss: 0.2831
+Early stopping
+	--> Training for Fold 2 took 0.34501147270202637 sec, using 24 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.3216, Validation Loss: 0.6157
+	--> Epoch [2/500], Loss: 0.1328, Validation Loss: 0.5845
+	--> Epoch [3/500], Loss: 0.1293, Validation Loss: 0.5575
+	--> Epoch [4/500], Loss: 0.0442, Validation Loss: 0.6610
+	--> Epoch [5/500], Loss: 0.0190, Validation Loss: 0.6856
+	--> Epoch [6/500], Loss: 0.5437, Validation Loss: 0.5712
+Early stopping
+	--> Training for Fold 3 took 0.07407569885253906 sec, using 6 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.7676, Validation Loss: 0.5346
+	--> Epoch [2/500], Loss: 0.4121, Validation Loss: 0.5452
+	--> Epoch [3/500], Loss: 0.0658, Validation Loss: 0.5760
+	--> Epoch [4/500], Loss: 0.2777, Validation Loss: 0.5915
+Early stopping
+	--> Training for Fold 4 took 0.04363560676574707 sec, using 4 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.3404, Validation Loss: 0.5234
+	--> Epoch [2/500], Loss: 0.4673, Validation Loss: 0.4882
+	--> Epoch [3/500], Loss: 0.0898, Validation Loss: 0.5269
+	--> Epoch [4/500], Loss: 0.1698, Validation Loss: 0.5311
+	--> Epoch [5/500], Loss: 0.4024, Validation Loss: 0.5637
+Early stopping
+	--> Training for Fold 5 took 0.08607721328735352 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0087 sec
+	--> Final Accuracy: 0.4375
+	--> Final Loss: 1.6430
+	--> Final Precision: 0.5000
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4706
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.001, Dropout: 0.0, Weight Decay: 1e-05, Accuracy: 0.7487, Validation Loss: 0.4827,  Current Best Accuracy: 0.7487,  Current Best Validation Loss: 0.4827
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7808, Validation Loss: 0.5027,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5027
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.4268, Validation Loss: 0.5822
+	--> Epoch [2/500], Loss: 0.5701, Validation Loss: 0.5586
+	--> Epoch [3/500], Loss: 0.9180, Validation Loss: 0.6390
+	--> Epoch [4/500], Loss: 0.4358, Validation Loss: 0.5013
+	--> Epoch [5/500], Loss: 0.2468, Validation Loss: 0.4690
+	--> Epoch [6/500], Loss: 0.3682, Validation Loss: 0.4398
+	--> Epoch [7/500], Loss: 0.3181, Validation Loss: 0.5371
+	--> Epoch [8/500], Loss: 0.4874, Validation Loss: 0.4963
+	--> Epoch [9/500], Loss: 0.1819, Validation Loss: 0.4936
+Early stopping
+	--> Training for Fold 1 took 0.09816527366638184 sec, using 9 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 1.2820, Validation Loss: 0.6584
+	--> Epoch [2/500], Loss: 0.4501, Validation Loss: 0.6321
+	--> Epoch [3/500], Loss: 0.5746, Validation Loss: 0.6004
+	--> Epoch [4/500], Loss: 0.5084, Validation Loss: 0.5856
+	--> Epoch [5/500], Loss: 0.4328, Validation Loss: 0.5650
+	--> Epoch [6/500], Loss: 0.1790, Validation Loss: 0.5466
+	--> Epoch [7/500], Loss: 0.4499, Validation Loss: 0.5507
+	--> Epoch [8/500], Loss: 0.4592, Validation Loss: 0.5683
+	--> Epoch [9/500], Loss: 0.1439, Validation Loss: 0.5392
+	--> Epoch [10/500], Loss: 0.3004, Validation Loss: 0.5314
+	--> Epoch [11/500], Loss: 0.1642, Validation Loss: 0.5438
+	--> Epoch [12/500], Loss: 0.4078, Validation Loss: 0.5687
+	--> Epoch [13/500], Loss: 0.5127, Validation Loss: 0.5233
+	--> Epoch [14/500], Loss: 0.0995, Validation Loss: 0.5195
+	--> Epoch [15/500], Loss: 0.7118, Validation Loss: 0.5273
+	--> Epoch [16/500], Loss: 0.0104, Validation Loss: 0.5201
+	--> Epoch [17/500], Loss: 0.0864, Validation Loss: 0.5247
+Early stopping
+	--> Training for Fold 2 took 0.24933934211730957 sec, using 17 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.7120, Validation Loss: 0.6983
+	--> Epoch [2/500], Loss: 0.3379, Validation Loss: 0.8138
+	--> Epoch [3/500], Loss: 0.4212, Validation Loss: 0.7591
+	--> Epoch [4/500], Loss: 0.2520, Validation Loss: 0.7647
+Early stopping
+	--> Training for Fold 3 took 0.048514604568481445 sec, using 4 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.6780, Validation Loss: 0.4963
+	--> Epoch [2/500], Loss: 0.4121, Validation Loss: 0.4084
+	--> Epoch [3/500], Loss: 0.3265, Validation Loss: 0.3435
+	--> Epoch [4/500], Loss: 0.4565, Validation Loss: 0.3598
+	--> Epoch [5/500], Loss: 0.2104, Validation Loss: 0.3713
+	--> Epoch [6/500], Loss: 0.2041, Validation Loss: 0.4077
+Early stopping
+	--> Training for Fold 4 took 0.12360358238220215 sec, using 6 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.3549, Validation Loss: 0.5540
+	--> Epoch [2/500], Loss: 0.5791, Validation Loss: 0.5517
+	--> Epoch [3/500], Loss: 0.0848, Validation Loss: 0.5822
+	--> Epoch [4/500], Loss: 0.3679, Validation Loss: 0.5496
+	--> Epoch [5/500], Loss: 0.0435, Validation Loss: 0.6309
+	--> Epoch [6/500], Loss: 0.1923, Validation Loss: 0.5710
+	--> Epoch [7/500], Loss: 0.0471, Validation Loss: 0.7540
+Early stopping
+	--> Training for Fold 5 took 0.09166836738586426 sec, using 7 epochs
+
+TESTING:
+	--> Testing took 0.0092 sec
+	--> Final Accuracy: 0.4375
+	--> Final Loss: 1.6110
+	--> Final Precision: 0.5000
+	--> Final Recall: 0.5556
+	--> Final F1 Score: 0.5263
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7808, Validation Loss: 0.5027,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5027
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.8269, Validation Loss: 0.5387,  Current Best Accuracy: 0.8269,  Current Best Validation Loss: 0.5387
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.8241, Validation Loss: 0.6865
+	--> Epoch [2/500], Loss: 0.4195, Validation Loss: 0.5019
+	--> Epoch [3/500], Loss: 0.0712, Validation Loss: 0.4683
+	--> Epoch [4/500], Loss: 0.2598, Validation Loss: 0.4646
+	--> Epoch [5/500], Loss: 0.1674, Validation Loss: 0.4606
+	--> Epoch [6/500], Loss: 0.0219, Validation Loss: 0.4917
+	--> Epoch [7/500], Loss: 0.3175, Validation Loss: 0.4849
+	--> Epoch [8/500], Loss: 0.3409, Validation Loss: 0.4589
+	--> Epoch [9/500], Loss: 0.0836, Validation Loss: 0.4388
+	--> Epoch [10/500], Loss: 0.3174, Validation Loss: 0.4495
+	--> Epoch [11/500], Loss: 0.0041, Validation Loss: 0.4579
+	--> Epoch [12/500], Loss: 0.0635, Validation Loss: 0.4630
+Early stopping
+	--> Training for Fold 1 took 0.14144492149353027 sec, using 12 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 1.3373, Validation Loss: 0.8321
+	--> Epoch [2/500], Loss: 0.1678, Validation Loss: 0.6880
+	--> Epoch [3/500], Loss: 0.6189, Validation Loss: 0.6606
+	--> Epoch [4/500], Loss: 0.2390, Validation Loss: 0.6174
+	--> Epoch [5/500], Loss: 0.8935, Validation Loss: 0.6300
+	--> Epoch [6/500], Loss: 0.8216, Validation Loss: 0.5683
+	--> Epoch [7/500], Loss: 0.6631, Validation Loss: 0.5124
+	--> Epoch [8/500], Loss: 0.4079, Validation Loss: 0.4882
+	--> Epoch [9/500], Loss: 0.5688, Validation Loss: 0.5126
+	--> Epoch [10/500], Loss: 0.3178, Validation Loss: 0.4731
+	--> Epoch [11/500], Loss: 0.0104, Validation Loss: 0.4935
+	--> Epoch [12/500], Loss: 0.2714, Validation Loss: 0.4275
+	--> Epoch [13/500], Loss: 0.4252, Validation Loss: 0.3963
+	--> Epoch [14/500], Loss: 0.4032, Validation Loss: 0.5006
+	--> Epoch [15/500], Loss: 0.3630, Validation Loss: 0.4794
+	--> Epoch [16/500], Loss: 0.4529, Validation Loss: 0.4293
+Early stopping
+	--> Training for Fold 2 took 0.21685338020324707 sec, using 16 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.4872, Validation Loss: 0.6304
+	--> Epoch [2/500], Loss: 0.4480, Validation Loss: 0.5930
+	--> Epoch [3/500], Loss: 0.0936, Validation Loss: 0.6265
+	--> Epoch [4/500], Loss: 0.1725, Validation Loss: 0.7138
+	--> Epoch [5/500], Loss: 0.0913, Validation Loss: 0.8929
+Early stopping
+	--> Training for Fold 3 took 0.05659627914428711 sec, using 5 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.4526, Validation Loss: 0.4850
+	--> Epoch [2/500], Loss: 0.5566, Validation Loss: 0.4176
+	--> Epoch [3/500], Loss: 0.4204, Validation Loss: 0.4165
+	--> Epoch [4/500], Loss: 0.3350, Validation Loss: 0.3713
+	--> Epoch [5/500], Loss: 0.1654, Validation Loss: 0.3495
+	--> Epoch [6/500], Loss: 0.3957, Validation Loss: 0.3709
+	--> Epoch [7/500], Loss: 0.2452, Validation Loss: 0.3310
+	--> Epoch [8/500], Loss: 0.1386, Validation Loss: 0.3377
+	--> Epoch [9/500], Loss: 0.2039, Validation Loss: 0.3020
+	--> Epoch [10/500], Loss: 0.2252, Validation Loss: 0.3051
+	--> Epoch [11/500], Loss: 0.5590, Validation Loss: 0.3131
+	--> Epoch [12/500], Loss: 0.1678, Validation Loss: 0.3076
+Early stopping
+	--> Training for Fold 4 took 0.16954994201660156 sec, using 12 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.4878, Validation Loss: 0.5376
+	--> Epoch [2/500], Loss: 0.6702, Validation Loss: 0.4904
+	--> Epoch [3/500], Loss: 0.3931, Validation Loss: 0.5263
+	--> Epoch [4/500], Loss: 0.2553, Validation Loss: 0.5710
+	--> Epoch [5/500], Loss: 0.2219, Validation Loss: 0.6112
+Early stopping
+	--> Training for Fold 5 took 0.07076358795166016 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0086 sec
+	--> Final Accuracy: 0.3125
+	--> Final Loss: 1.3656
+	--> Final Precision: 0.3750
+	--> Final Recall: 0.3333
+	--> Final F1 Score: 0.3529
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.8269, Validation Loss: 0.5387,  Current Best Accuracy: 0.8269,  Current Best Validation Loss: 0.5387
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.7808, Validation Loss: 0.5000,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5000
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.4198, Validation Loss: 0.4884
+	--> Epoch [2/500], Loss: 0.6792, Validation Loss: 0.4031
+	--> Epoch [3/500], Loss: 0.1252, Validation Loss: 0.3957
+	--> Epoch [4/500], Loss: 0.0494, Validation Loss: 0.3462
+	--> Epoch [5/500], Loss: 0.2477, Validation Loss: 0.2679
+	--> Epoch [6/500], Loss: 0.0656, Validation Loss: 0.3330
+	--> Epoch [7/500], Loss: 0.2485, Validation Loss: 0.2926
+	--> Epoch [8/500], Loss: 0.0208, Validation Loss: 0.2999
+Early stopping
+	--> Training for Fold 1 took 0.08393549919128418 sec, using 8 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.7867, Validation Loss: 0.5339
+	--> Epoch [2/500], Loss: 0.5424, Validation Loss: 0.4290
+	--> Epoch [3/500], Loss: 0.3624, Validation Loss: 0.3867
+	--> Epoch [4/500], Loss: 0.1881, Validation Loss: 0.3807
+	--> Epoch [5/500], Loss: 0.2982, Validation Loss: 0.3613
+	--> Epoch [6/500], Loss: 0.1875, Validation Loss: 0.3678
+	--> Epoch [7/500], Loss: 0.3884, Validation Loss: 0.3600
+	--> Epoch [8/500], Loss: 0.2838, Validation Loss: 0.3840
+	--> Epoch [9/500], Loss: 0.1992, Validation Loss: 0.4248
+	--> Epoch [10/500], Loss: 0.4394, Validation Loss: 0.4259
+Early stopping
+	--> Training for Fold 2 took 0.10753178596496582 sec, using 10 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.5320, Validation Loss: 0.5963
+	--> Epoch [2/500], Loss: 0.5287, Validation Loss: 0.5406
+	--> Epoch [3/500], Loss: 0.5769, Validation Loss: 0.5290
+	--> Epoch [4/500], Loss: 0.3516, Validation Loss: 0.5280
+	--> Epoch [5/500], Loss: 0.2460, Validation Loss: 0.5757
+	--> Epoch [6/500], Loss: 0.2293, Validation Loss: 0.5737
+	--> Epoch [7/500], Loss: 0.2812, Validation Loss: 0.6407
+Early stopping
+	--> Training for Fold 3 took 0.11828851699829102 sec, using 7 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.5503, Validation Loss: 0.5506
+	--> Epoch [2/500], Loss: 0.4596, Validation Loss: 0.5000
+	--> Epoch [3/500], Loss: 0.3436, Validation Loss: 0.5531
+	--> Epoch [4/500], Loss: 0.5859, Validation Loss: 0.4183
+	--> Epoch [5/500], Loss: 0.2611, Validation Loss: 0.4045
+	--> Epoch [6/500], Loss: 0.4858, Validation Loss: 0.3933
+	--> Epoch [7/500], Loss: 0.2658, Validation Loss: 0.4049
+	--> Epoch [8/500], Loss: 0.4130, Validation Loss: 0.3628
+	--> Epoch [9/500], Loss: 0.2647, Validation Loss: 0.3361
+	--> Epoch [10/500], Loss: 0.3508, Validation Loss: 0.3309
+	--> Epoch [11/500], Loss: 0.5166, Validation Loss: 0.3157
+	--> Epoch [12/500], Loss: 0.1541, Validation Loss: 0.3174
+	--> Epoch [13/500], Loss: 0.1224, Validation Loss: 0.3381
+	--> Epoch [14/500], Loss: 0.1117, Validation Loss: 0.3284
+Early stopping
+	--> Training for Fold 4 took 0.18739748001098633 sec, using 14 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.1396, Validation Loss: 0.8000
+	--> Epoch [2/500], Loss: 0.9182, Validation Loss: 0.7645
+	--> Epoch [3/500], Loss: 0.5919, Validation Loss: 0.7435
+	--> Epoch [4/500], Loss: 0.5144, Validation Loss: 0.7433
+	--> Epoch [5/500], Loss: 0.7382, Validation Loss: 0.7304
+	--> Epoch [6/500], Loss: 0.5142, Validation Loss: 0.8011
+	--> Epoch [7/500], Loss: 0.6320, Validation Loss: 0.6901
+	--> Epoch [8/500], Loss: 0.3107, Validation Loss: 0.7002
+	--> Epoch [9/500], Loss: 0.5691, Validation Loss: 0.7614
+	--> Epoch [10/500], Loss: 0.2883, Validation Loss: 0.7728
+Early stopping
+	--> Training for Fold 5 took 0.11962175369262695 sec, using 10 epochs
+
+TESTING:
+	--> Testing took 0.0097 sec
+	--> Final Accuracy: 0.3750
+	--> Final Loss: 1.4818
+	--> Final Precision: 0.4286
+	--> Final Recall: 0.3333
+	--> Final F1 Score: 0.3750
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 0.0001, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.7808, Validation Loss: 0.5000,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5000
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7333, Validation Loss: 0.5502,  Current Best Accuracy: 0.7333,  Current Best Validation Loss: 0.5502
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.6468, Validation Loss: 0.5184
+	--> Epoch [2/500], Loss: 0.3399, Validation Loss: 0.4893
+	--> Epoch [3/500], Loss: 0.3954, Validation Loss: 0.4455
+	--> Epoch [4/500], Loss: 0.5041, Validation Loss: 0.3971
+	--> Epoch [5/500], Loss: 0.1495, Validation Loss: 0.4106
+	--> Epoch [6/500], Loss: 0.2397, Validation Loss: 0.3663
+	--> Epoch [7/500], Loss: 0.2158, Validation Loss: 0.3276
+	--> Epoch [8/500], Loss: 0.4967, Validation Loss: 0.3413
+	--> Epoch [9/500], Loss: 0.2432, Validation Loss: 0.3214
+	--> Epoch [10/500], Loss: 0.1261, Validation Loss: 0.3012
+	--> Epoch [11/500], Loss: 0.0046, Validation Loss: 0.3334
+	--> Epoch [12/500], Loss: 0.1515, Validation Loss: 0.3205
+	--> Epoch [13/500], Loss: 0.0142, Validation Loss: 0.3118
+Early stopping
+	--> Training for Fold 1 took 0.17312884330749512 sec, using 13 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.6362, Validation Loss: 0.4733
+	--> Epoch [2/500], Loss: 0.3539, Validation Loss: 0.3865
+	--> Epoch [3/500], Loss: 0.1265, Validation Loss: 0.3476
+	--> Epoch [4/500], Loss: 0.2181, Validation Loss: 0.3795
+	--> Epoch [5/500], Loss: 0.5121, Validation Loss: 0.3125
+	--> Epoch [6/500], Loss: 0.1662, Validation Loss: 0.2909
+	--> Epoch [7/500], Loss: 0.2304, Validation Loss: 0.3649
+	--> Epoch [8/500], Loss: 0.1154, Validation Loss: 0.3060
+	--> Epoch [9/500], Loss: 0.1804, Validation Loss: 0.2818
+	--> Epoch [10/500], Loss: 0.0090, Validation Loss: 0.2792
+	--> Epoch [11/500], Loss: 0.0879, Validation Loss: 0.2615
+	--> Epoch [12/500], Loss: 0.0078, Validation Loss: 0.2519
+	--> Epoch [13/500], Loss: 0.0802, Validation Loss: 0.2439
+	--> Epoch [14/500], Loss: 0.1243, Validation Loss: 0.2560
+	--> Epoch [15/500], Loss: 0.1161, Validation Loss: 0.2426
+	--> Epoch [16/500], Loss: 0.1121, Validation Loss: 0.2369
+	--> Epoch [17/500], Loss: 0.0601, Validation Loss: 0.2388
+	--> Epoch [18/500], Loss: 0.0566, Validation Loss: 0.2352
+	--> Epoch [19/500], Loss: 0.0070, Validation Loss: 0.2453
+	--> Epoch [20/500], Loss: 0.0897, Validation Loss: 0.2428
+	--> Epoch [21/500], Loss: 0.0476, Validation Loss: 0.2373
+Early stopping
+	--> Training for Fold 2 took 0.3276386260986328 sec, using 21 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.5831, Validation Loss: 0.6465
+	--> Epoch [2/500], Loss: 0.1056, Validation Loss: 0.6736
+	--> Epoch [3/500], Loss: 0.0425, Validation Loss: 0.7382
+	--> Epoch [4/500], Loss: 0.0291, Validation Loss: 0.6750
+Early stopping
+	--> Training for Fold 3 took 0.05314779281616211 sec, using 4 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.6574, Validation Loss: 0.6662
+	--> Epoch [2/500], Loss: 0.3812, Validation Loss: 0.4361
+	--> Epoch [3/500], Loss: 0.3077, Validation Loss: 0.3546
+	--> Epoch [4/500], Loss: 0.3686, Validation Loss: 0.3386
+	--> Epoch [5/500], Loss: 0.1268, Validation Loss: 0.3495
+	--> Epoch [6/500], Loss: 0.0314, Validation Loss: 0.3609
+	--> Epoch [7/500], Loss: 0.0997, Validation Loss: 0.3832
+Early stopping
+	--> Training for Fold 4 took 0.10916519165039062 sec, using 7 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.6380, Validation Loss: 0.6143
+	--> Epoch [2/500], Loss: 0.5658, Validation Loss: 0.5557
+	--> Epoch [3/500], Loss: 0.3531, Validation Loss: 0.5626
+	--> Epoch [4/500], Loss: 0.1189, Validation Loss: 0.6049
+	--> Epoch [5/500], Loss: 0.3702, Validation Loss: 0.6508
+Early stopping
+	--> Training for Fold 5 took 0.08845210075378418 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0082 sec
+	--> Final Accuracy: 0.4375
+	--> Final Loss: 1.6122
+	--> Final Precision: 0.5000
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4706
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.01, Accuracy: 0.7333, Validation Loss: 0.5502,  Current Best Accuracy: 0.7333,  Current Best Validation Loss: 0.5502
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.7654, Validation Loss: 0.5993,  Current Best Accuracy: 0.7654,  Current Best Validation Loss: 0.5993
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.4578, Validation Loss: 0.5896
+	--> Epoch [2/500], Loss: 0.2584, Validation Loss: 0.5391
+	--> Epoch [3/500], Loss: 0.1620, Validation Loss: 0.4330
+	--> Epoch [4/500], Loss: 0.3627, Validation Loss: 0.4911
+	--> Epoch [5/500], Loss: 0.1893, Validation Loss: 0.4555
+	--> Epoch [6/500], Loss: 0.4502, Validation Loss: 0.4526
+Early stopping
+	--> Training for Fold 1 took 0.07265877723693848 sec, using 6 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.9258, Validation Loss: 0.5221
+	--> Epoch [2/500], Loss: 0.3260, Validation Loss: 0.4788
+	--> Epoch [3/500], Loss: 0.1568, Validation Loss: 0.4913
+	--> Epoch [4/500], Loss: 0.1952, Validation Loss: 0.4988
+	--> Epoch [5/500], Loss: 0.2166, Validation Loss: 0.5041
+Early stopping
+	--> Training for Fold 2 took 0.054361820220947266 sec, using 5 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.5588, Validation Loss: 0.6463
+	--> Epoch [2/500], Loss: 0.3082, Validation Loss: 0.6543
+	--> Epoch [3/500], Loss: 0.3616, Validation Loss: 0.6796
+	--> Epoch [4/500], Loss: 0.0983, Validation Loss: 0.8471
+Early stopping
+	--> Training for Fold 3 took 0.04259467124938965 sec, using 4 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.8462, Validation Loss: 0.4538
+	--> Epoch [2/500], Loss: 0.5381, Validation Loss: 0.3797
+	--> Epoch [3/500], Loss: 0.3466, Validation Loss: 0.3260
+	--> Epoch [4/500], Loss: 0.6307, Validation Loss: 0.3041
+	--> Epoch [5/500], Loss: 0.0559, Validation Loss: 0.2915
+	--> Epoch [6/500], Loss: 0.0286, Validation Loss: 0.2770
+	--> Epoch [7/500], Loss: 0.1891, Validation Loss: 0.2281
+	--> Epoch [8/500], Loss: 0.0295, Validation Loss: 0.2400
+	--> Epoch [9/500], Loss: 0.7384, Validation Loss: 0.2544
+	--> Epoch [10/500], Loss: 0.0318, Validation Loss: 0.2517
+Early stopping
+	--> Training for Fold 4 took 0.1605081558227539 sec, using 10 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.6139, Validation Loss: 0.5749
+	--> Epoch [2/500], Loss: 0.4287, Validation Loss: 0.5568
+	--> Epoch [3/500], Loss: 0.1159, Validation Loss: 0.6599
+	--> Epoch [4/500], Loss: 0.0552, Validation Loss: 0.7333
+	--> Epoch [5/500], Loss: 0.1111, Validation Loss: 0.7218
+Early stopping
+	--> Training for Fold 5 took 0.055938720703125 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0084 sec
+	--> Final Accuracy: 0.3750
+	--> Final Loss: 1.6255
+	--> Final Precision: 0.4444
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4444
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.001, Accuracy: 0.7654, Validation Loss: 0.5993,  Current Best Accuracy: 0.7654,  Current Best Validation Loss: 0.5993
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.7808, Validation Loss: 0.5146,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5146
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.6257, Validation Loss: 0.5220
+	--> Epoch [2/500], Loss: 0.3320, Validation Loss: 0.4659
+	--> Epoch [3/500], Loss: 0.1674, Validation Loss: 0.5232
+	--> Epoch [4/500], Loss: 0.2048, Validation Loss: 0.5212
+	--> Epoch [5/500], Loss: 0.0196, Validation Loss: 0.4435
+	--> Epoch [6/500], Loss: 0.2439, Validation Loss: 0.4522
+	--> Epoch [7/500], Loss: 0.2458, Validation Loss: 0.4559
+	--> Epoch [8/500], Loss: 0.0267, Validation Loss: 0.4619
+Early stopping
+	--> Training for Fold 1 took 0.08417820930480957 sec, using 8 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.5676, Validation Loss: 0.6396
+	--> Epoch [2/500], Loss: 0.6140, Validation Loss: 0.5914
+	--> Epoch [3/500], Loss: 0.3167, Validation Loss: 0.5857
+	--> Epoch [4/500], Loss: 0.0372, Validation Loss: 0.5723
+	--> Epoch [5/500], Loss: 0.6609, Validation Loss: 0.5943
+	--> Epoch [6/500], Loss: 0.3368, Validation Loss: 0.5999
+	--> Epoch [7/500], Loss: 0.0589, Validation Loss: 0.5921
+Early stopping
+	--> Training for Fold 2 took 0.07458090782165527 sec, using 7 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.9650, Validation Loss: 0.7154
+	--> Epoch [2/500], Loss: 0.7130, Validation Loss: 0.6438
+	--> Epoch [3/500], Loss: 0.4119, Validation Loss: 0.6193
+	--> Epoch [4/500], Loss: 0.2319, Validation Loss: 0.5967
+	--> Epoch [5/500], Loss: 0.3254, Validation Loss: 0.5652
+	--> Epoch [6/500], Loss: 0.3557, Validation Loss: 0.5308
+	--> Epoch [7/500], Loss: 0.3115, Validation Loss: 0.5306
+	--> Epoch [8/500], Loss: 0.4399, Validation Loss: 0.5785
+	--> Epoch [9/500], Loss: 0.4039, Validation Loss: 0.5487
+	--> Epoch [10/500], Loss: 0.2162, Validation Loss: 0.5764
+Early stopping
+	--> Training for Fold 3 took 0.16275262832641602 sec, using 10 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.6321, Validation Loss: 0.4784
+	--> Epoch [2/500], Loss: 0.3186, Validation Loss: 0.5172
+	--> Epoch [3/500], Loss: 0.3174, Validation Loss: 0.5118
+	--> Epoch [4/500], Loss: 0.4385, Validation Loss: 0.5428
+Early stopping
+	--> Training for Fold 4 took 0.051566362380981445 sec, using 4 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.6006, Validation Loss: 0.6114
+	--> Epoch [2/500], Loss: 1.0268, Validation Loss: 0.5904
+	--> Epoch [3/500], Loss: 0.4012, Validation Loss: 0.6626
+	--> Epoch [4/500], Loss: 0.4317, Validation Loss: 0.6866
+	--> Epoch [5/500], Loss: 0.5446, Validation Loss: 0.6480
+Early stopping
+	--> Training for Fold 5 took 0.06963062286376953 sec, using 5 epochs
+
+TESTING:
+	--> Testing took 0.0101 sec
+	--> Final Accuracy: 0.4375
+	--> Final Loss: 1.1375
+	--> Final Precision: 0.5000
+	--> Final Recall: 0.4444
+	--> Final F1 Score: 0.4706
+HYPERPARAMETERS:
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 0.0001, Accuracy: 0.7808, Validation Loss: 0.5146,  Current Best Accuracy: 0.7808,  Current Best Validation Loss: 0.5146
+
+
+CURRENT BEST MODEL
+	--> Hidden Size: [2], Learning Rate: 0.01, Batch Size: 8, Alpha: 1e-05, Dropout: 0.0, Weight Decay: 1e-05, Accuracy: 0.7962, Validation Loss: 0.5265,  Current Best Accuracy: 0.7962,  Current Best Validation Loss: 0.5265
+
+TRAINING:
+
+Fold 1/5
+	--> Epoch [1/500], Loss: 0.2966, Validation Loss: 0.4636
+	--> Epoch [2/500], Loss: 0.2188, Validation Loss: 0.3790
+	--> Epoch [3/500], Loss: 0.3062, Validation Loss: 0.3702
+	--> Epoch [4/500], Loss: 0.3694, Validation Loss: 0.3150
+	--> Epoch [5/500], Loss: 0.0606, Validation Loss: 0.3146
+	--> Epoch [6/500], Loss: 0.0131, Validation Loss: 0.3101
+	--> Epoch [7/500], Loss: 0.0162, Validation Loss: 0.3143
+	--> Epoch [8/500], Loss: 0.0061, Validation Loss: 0.3379
+	--> Epoch [9/500], Loss: 0.5503, Validation Loss: 0.3324
+Early stopping
+	--> Training for Fold 1 took 0.09734058380126953 sec, using 9 epochs
+
+Fold 2/5
+	--> Epoch [1/500], Loss: 0.4928, Validation Loss: 0.3852
+	--> Epoch [2/500], Loss: 1.0750, Validation Loss: 0.3817
+	--> Epoch [3/500], Loss: 0.5393, Validation Loss: 0.3760
+	--> Epoch [4/500], Loss: 0.0779, Validation Loss: 0.3868
+	--> Epoch [5/500], Loss: 0.0947, Validation Loss: 0.3798
+	--> Epoch [6/500], Loss: 0.0445, Validation Loss: 0.3873
+Early stopping
+	--> Training for Fold 2 took 0.06818985939025879 sec, using 6 epochs
+
+Fold 3/5
+	--> Epoch [1/500], Loss: 0.4557, Validation Loss: 0.5962
+	--> Epoch [2/500], Loss: 0.4604, Validation Loss: 0.5593
+	--> Epoch [3/500], Loss: 0.2370, Validation Loss: 0.5015
+	--> Epoch [4/500], Loss: 0.1496, Validation Loss: 0.5015
+	--> Epoch [5/500], Loss: 0.2570, Validation Loss: 0.4894
+	--> Epoch [6/500], Loss: 0.5336, Validation Loss: 0.4927
+	--> Epoch [7/500], Loss: 0.2342, Validation Loss: 0.4904
+	--> Epoch [8/500], Loss: 0.0933, Validation Loss: 0.4851
+	--> Epoch [9/500], Loss: 0.1869, Validation Loss: 0.4836
+	--> Epoch [10/500], Loss: 0.0037, Validation Loss: 0.5268
+	--> Epoch [11/500], Loss: 0.1641, Validation Loss: 0.5274
+	--> Epoch [12/500], Loss: 0.2614, Validation Loss: 0.5327
+Early stopping
+	--> Training for Fold 3 took 0.19179153442382812 sec, using 12 epochs
+
+Fold 4/5
+	--> Epoch [1/500], Loss: 0.3668, Validation Loss: 0.7380
+	--> Epoch [2/500], Loss: 0.5184, Validation Loss: 0.4526
+	--> Epoch [3/500], Loss: 0.3863, Validation Loss: 0.3658
+	--> Epoch [4/500], Loss: 0.1936, Validation Loss: 0.3481
+	--> Epoch [5/500], Loss: 0.1284, Validation Loss: 0.3237
+	--> Epoch [6/500], Loss: 0.3373, Validation Loss: 0.3450
+	--> Epoch [7/500], Loss: 0.0234, Validation Loss: 0.3424
+	--> Epoch [8/500], Loss: 0.0336, Validation Loss: 0.3398
+Early stopping
+	--> Training for Fold 4 took 0.13338923454284668 sec, using 8 epochs
+
+Fold 5/5
+	--> Epoch [1/500], Loss: 0.4487, Validation Loss: 0.6242

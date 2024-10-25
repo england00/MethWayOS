@@ -15,7 +15,7 @@ GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_TSS = 'gene_expression_tss'
 GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
 OVERALL_SURVIVAL = 'overall_survival'
-LOG_PATH = '../../logs/files/0 - GENE EXPRESSION Extractor.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS

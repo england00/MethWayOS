@@ -1,3 +1,4 @@
+import os
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
@@ -12,9 +13,10 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 METHYLATION = 'methylation'
+GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 METHYLATION_NAMES = 'methylation_names'
-LOG_PATH = '../../logs/files/1 - METHYLATION & OS - Dataset.txt'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 ## FUNCTIONS
@@ -45,7 +47,7 @@ if __name__ == "__main__":
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
 
     # Storing data from JSON datastores
-    methylation_datastore = json_loader(datastore_paths[METHYLATION])
+    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with METHYLATION as feature vector and OVERALL SURVIVAL as label
