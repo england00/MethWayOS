@@ -29,6 +29,10 @@ def dictionary_format(file_path, data_dictionary, tss_dictionary):
     for element in genes_list:
 
         # Selecting only the coding genes with only 'tpm_unstranded', 'fpkm_unstranded' and	'fpkm_uq_unstranded'
+        '''
+        NOTE: by swapping the positions of the variables `element[0]` and `element[1]` in this function, it is possible 
+              to obtain the datastore with genes keyed by `gene_name` rather than `gene_id`.
+        '''
         if element[2] == 'protein_coding':
             if str(element[0]).split('.')[0] in tss_dictionary:                                 # gene_id
                 dict_buffer[str(element[0])] = [element[1],                                     # gene_name

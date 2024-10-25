@@ -36,13 +36,13 @@ if __name__ == "__main__":
 
     # Loading data from JSON files and CSV dataset
     gene_expression_and_methylation_columns = json_loader(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES])
-    gene_expression_columns = [element for element in gene_expression_and_methylation_columns if not element.startswith('cg')]
+    gene_expression_columns = [element for element in gene_expression_and_methylation_columns if
+                               not element.startswith('cg')]
     methylation_columns = [element for element in gene_expression_and_methylation_columns if element.startswith('cg')]
     del gene_expression_and_methylation_columns
     ge_meth_os_dataframe, ge_meth_os_dataframe_columns = csv_loader(dataset_paths[GENE_EXPRESSION_AND_METHYLATION],
                                                                     JSON_PATHS_YAML,
                                                                     GENE_EXPRESSION_AND_METHYLATION_NAMES)
-
 
     # Selecting only GENES with specified TSS
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION_GENE_NAME])
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     gene_expression_columns.remove('y')
 
     # Loading JSON file for METHYLATION mapping and Organizing the dataset
-
+    '''
     # Selecting only ISLAND present inside CPG950 file
     cpg950_coding_genes_dictionary = json_loader(datastore_paths[CPG950_CODING_GENES_ORIGINAL])
     methylation_dataframe = pd.DataFrame()
@@ -65,8 +65,8 @@ if __name__ == "__main__":
         cpg950_coding_genes_dictionary[gene]['site_id']
 
         # methylation_dataframe[gene] =
-
-
+        
+        '''
 
     '''
     for gene in gene_expression_columns:
@@ -77,13 +77,6 @@ if __name__ == "__main__":
 
     print(gene_expression_dataframe)
     '''
-
-
-
-
-
-
-
 
     '''
 
