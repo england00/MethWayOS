@@ -22,11 +22,11 @@ METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 SHUFFLE = True
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1500  # 730 (2 years)
-UPPER_THRESHOLD = 2500  # 2920 (8 years)
+LOWER_THRESHOLD = 1000  # 730 (2 years)
+UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
-INTERMEDIATE_CORRELATION_THRESHOLD = 0.9
-SECOND_FEATURES_SELECTION = 50
+INTERMEDIATE_CORRELATION_THRESHOLD = 0.45
+SECOND_FEATURES_SELECTION = 200
 VERBOSE = False
 PLOT = False
 
