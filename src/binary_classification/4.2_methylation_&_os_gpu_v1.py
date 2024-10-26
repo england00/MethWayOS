@@ -22,12 +22,13 @@ METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 SHUFFLE = True
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
-LOWER_THRESHOLD = 1000  # 730 (2 years)
-UPPER_THRESHOLD = 3000  # 2920 (8 years)
+LOWER_THRESHOLD = 1500  # 730 (2 years)
+UPPER_THRESHOLD = 2500  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
-SECOND_FEATURES_SELECTION = 200
-VERBOSE = True
-PLOT = True
+INTERMEDIATE_CORRELATION_THRESHOLD = 0.9
+SECOND_FEATURES_SELECTION = 50
+VERBOSE = False
+PLOT = False
 
 
 ## FUNCTIONS
@@ -67,6 +68,7 @@ if __name__ == "__main__":
     training_set, selected_columns = features_selection_for_training(
         dataframe=training_set,
         variance_selection_dimension=FIRST_FEATURES_SELECTION,
+        intermediate_correlation_threshold=INTERMEDIATE_CORRELATION_THRESHOLD,
         correlation_filter_dimension=SECOND_FEATURES_SELECTION)
 
     # Testing Set Management
