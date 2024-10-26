@@ -13,11 +13,11 @@ def general_hyperparameters():
         "max_epochs_number": 500}
         '''
     return {
-        "alpha": [1e-2, 1e-3],
+        "alpha": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
         "batch_size": [4, 8, 16, 32, 64],
         "dropout": [0.0, 0.25, 0.5],
-        "hidden_layers_configuration": [[4], [8], [16], [64], [5, 3], [8, 4], [10, 5]],
-        "learning_rate": [1e-2, 1e-3, 1e-4],
+        "hidden_layers_configuration": [[2], [4], [5], [8], [4, 2], [5, 3], [8, 4]],
+        "learning_rate": [1e-1, 1e-2, 1e-3, 1e-4],
         "weight_decay": [1e-2, 1e-3, 1e-4, 1e-5],
         "max_epochs_number": 500}
 
