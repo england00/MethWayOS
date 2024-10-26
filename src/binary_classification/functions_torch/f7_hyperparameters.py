@@ -11,23 +11,15 @@ def general_hyperparameters():
         "learning_rate": [1e-2, 1e-3],
         "weight_decay": [1e-2, 1e-3, 1e-4, 1e-5],
         "max_epochs_number": 500}
-        ''''''
+        '''
     return {
-        "alpha": [1e-2, 1e-3, 1e-4, 1e-5],
+        "alpha": [1e-2, 1e-3],
         "batch_size": [4, 8, 16, 32, 64],
-        "dropout": [0.0],
-        "hidden_layers_configuration": [[5, 3], [8, 4], [10, 5]],
-        "learning_rate": [1e-2, 1e-3, 1e-4],
-        "weight_decay": [1e-2, 1e-3, 1e-4, 1e-5],
-        "max_epochs_number": 500}'''
-    return {
-        "alpha": [1e-3, 1e-4],
-        "batch_size": [8, 16, 32, 64],
         "dropout": [0.0, 0.25, 0.5],
-        "hidden_layers_configuration": [[8], [16], [64]],
+        "hidden_layers_configuration": [[4], [8], [16], [64], [5, 3], [8, 4], [10, 5]],
         "learning_rate": [1e-2, 1e-3, 1e-4],
         "weight_decay": [1e-2, 1e-3, 1e-4, 1e-5],
-        "max_epochs_number": 200}
+        "max_epochs_number": 500}
 
 
 def single_layer_hyperparameters():
