@@ -4,7 +4,7 @@
 #SBATCH --mem=8G
 #SBATCH --job-name="prod_terra"
 #SBATCH --array=1
-#SBATCH --time=0:02:00
+#SBATCH --time=0:10:00
 #SBATCH --output=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
 #SBATCH --error=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
 #SBATCH --cpus-per-task=8

@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --partition=all_usr_prod
 #SBATCH --gres=gpu:1
-#SBATCH --mem=8G
+#SBATCH --mem=16G
 #SBATCH --job-name="prod_terra"
 #SBATCH --array=1
-#SBATCH --time=0:02:00
+#SBATCH --time=8:00:00
 #SBATCH --output=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
 #SBATCH --error=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
 #SBATCH --cpus-per-task=8
@@ -24,4 +24,4 @@ conda activate MachineLearning
 export PYTHONPATH=/work/tesi_linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Esegui lo script Python
-python /work/tesi_linghilterra/AIforBioinformatics/src/data_extractors/4.3_ge_\&_methylation_\&_os_gpu_v1.py
+python /work/tesi_linghilterra/AIforBioinformatics/src/binary_classification/4.3_ge_\&_methylation_\&_os_gpu_v1.py

@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --partition=all_usr_prod
 #SBATCH --gres=gpu:1
-#SBATCH --mem=8G
+#SBATCH --mem=16G
 #SBATCH --job-name="prod_terra"
 #SBATCH --array=1
-#SBATCH --time=0:02:00
+#SBATCH --time=0:30:00
 #SBATCH --output=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
 #SBATCH --error=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
 #SBATCH --cpus-per-task=8
