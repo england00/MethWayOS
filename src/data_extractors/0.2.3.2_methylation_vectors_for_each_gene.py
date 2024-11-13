@@ -22,15 +22,13 @@ DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
 GENE_EXPRESSION_ALE = 'gene_expression_lungs'
-METHYLATION_ALE = 'methylation_lungs'
 METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
 def extract_methylation_vectors(df_gene_expression,
-                                dict_cpg, vector_size,
-                                gene_expression_filter='median'):
+                                dict_cpg, vector_size):
     tss_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)
     list_methylation_vectors = []
     chosen_methylation_islands = defaultdict(list)
@@ -55,13 +53,11 @@ def extract_methylation_vectors(df_gene_expression,
                 if gene_info['genomic_strand'] == '+':  # With a POSITIVE STRAND, the promoter is upstream
                     if start_index <= index <= center_index:
                         vector[index - start_index] = island['site_id']
-                        chosen_methylation_islands[island['site_id']].append(
-                            [gene_info['gene_id'], gene_info['gene_name']])
+                        chosen_methylation_islands[island['site_id']].append(gene_info['gene_name'])
                 elif gene_info['genomic_strand'] == '-':  # With a NEGATIVE STRAND, the promoter is downstream
                     if center_index <= index <= end_index:
                         vector[index - center_index] = island['site_id']
-                        chosen_methylation_islands[island['site_id']].append(
-                            [gene_info['gene_id'], gene_info['gene_name']])
+                        chosen_methylation_islands[island['site_id']].append(gene_info['gene_name'])
                 '''
                 if start_index <= index <= end_index and site_id in dict_values_df_methylation:  # Original operation
                     # vector[index - start_index_vect] = df_meth_val_dict[site_id] 
@@ -71,12 +67,11 @@ def extract_methylation_vectors(df_gene_expression,
         # Appending each row to the data list
         list_methylation_vectors.append([gene_info['gene_name'],
                                          gene_info['gene_id'],
-                                         gene_info[gene_expression_filter],
                                          vector])
 
     # Converting the list into a DataFrame
     df_methylation_vectors = pd.DataFrame(list_methylation_vectors,
-                                          columns=['gene_name', 'gene_id', 'gene_expression', 'beta_values'])
+                                          columns=['gene_name', 'gene_id', 'beta_values'])
 
     return df_methylation_vectors, chosen_methylation_islands
 
