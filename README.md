@@ -110,6 +110,7 @@
             - [4.1 - GENE EXPRESSION & OS - (GPU) V1](./src/binary_classification/4.1_ge_&_os_gpu_v1.py)
             - [4.2 - METHYLATION & OS - (GPU) V1](./src/binary_classification/4.2_methylation_&_os_gpu_v1.py)
             - [4.3 - GENE EXPRESSION & METHYLATION & OS - (GPU) V1](./src/binary_classification/4.3_ge_&_methylation_&_os_gpu_v1.py)
+            - [5 - GENE EXPRESSION & METHYLATION STATISTICS & OS - (GPU)](./src/binary_classification/5_ge_&_methylation_statistics_&_os_gpu.py)
     - [GitIgnore](.gitignore)
     - [LICENCE](LICENSE)
     - [Requirements](requirements.txt)
