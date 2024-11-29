@@ -12,7 +12,7 @@ DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 METHYLATION = 'methylation'
 GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
-SELECTED_METHYLATION_ISLANDS = 'selected_methylation_islands'
+SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 OVERALL_SURVIVAL = 'overall_survival'
 METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     methylation_list = buffer
 
     # Searching only TXT files with the right 'case_id', also selecting some chosen islands to store
-    dictionary_selected_methylation_islands = json_loader(datastore_paths[SELECTED_METHYLATION_ISLANDS])
+    dictionary_selected_methylation_islands = json_loader(datastore_paths[SELECTED_METHYLATION_ISLANDS_FULL])
     i = 0
     methylation_datastore = []
     for path in directory_loader(directories_paths[METHYLATION]):

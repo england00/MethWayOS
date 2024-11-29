@@ -13,7 +13,7 @@ JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
-GENE_ASSOCIATED_METHYLATION_FULL =  'gene_associated_methylation_full'
+GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
 OVERALL_SURVIVAL = 'overall_survival'
 GENE_EXPRESSION_AND_METHYLATION_STATISTICS = 'gene_expression_and_methylation_statistics'
 GENE_EXPRESSION_AND_METHYLATION_STATISTICS_NAMES = 'gene_expression_and_methylation_statistics_names'
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
-    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_FULL])
+    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_STATISTICS])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Changing 'gene_id' with 'gene_name' as key in each dictionary

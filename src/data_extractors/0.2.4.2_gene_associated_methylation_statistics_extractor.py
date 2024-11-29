@@ -16,7 +16,7 @@ DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 METHYLATION = 'methylation'
-GENE_ASSOCIATED_METHYLATION_FULL = 'gene_associated_methylation_full'
+GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
 METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 OVERALL_SURVIVAL = 'overall_survival'
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     print(f"Loaded {i} files")
 
     # Storing the datastore inside a JSON file
-    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_FULL], methylation_datastore)
+    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_STATISTICS], methylation_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
