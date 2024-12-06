@@ -30,6 +30,6 @@ def print_match_per_accuracy(file_path, accuracy_target):
 
 ## MAIN
 if __name__ == "__main__":
-    file_path = './GENE EXPRESSION & METHYLATION STATISTICS & OS - Binary Classification/Torch Trials/MLP (GPU) - 93,75 - 48 features.txt'
+    file_path = '../GENE EXPRESSION & METHYLATION STATISTICS & OS - Binary Classification/Torch Trials/MLP (GPU) - 93,75 - 48 features.txt'
     accuracy_target = 0.8125
     print_match_per_accuracy(file_path, accuracy_target)
