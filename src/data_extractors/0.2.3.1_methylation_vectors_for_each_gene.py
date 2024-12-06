@@ -15,17 +15,18 @@ NOTA: qui viene utilizzato lo  script di Alessandro Monteleone  adattato per res
       gene ed in  colonna, tra  i vari dati, anche  la lista delle isole  di metilazione presenti  all'interno della suo 
       promotore (che si  trova a monte del TSS nei  geni a strand positivo ed a valle per i geni a  strand negativo). In 
       particolare, la variabile "EXTRACTED_SEQUENCE_DIMENSION" mostra la dimensione della sequenza di ogni gene estratta 
-      a tale scopo, incentrata sul TSS indicato tra i dati nel datastore "gene_expression_data.json"'''
-EXTRACTED_SEQUENCE_DIMENSION = 131328
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+      a tale scopo, incentrata sul TSS indicato tra i dati nel datastore "gene_expression_data.json"
+'''
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
+EXTRACTED_SEQUENCE_DIMENSION = 131328
 GENE_EXPRESSION_ALE = 'gene_expression_lungs'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION_ALE = 'methylation_lungs'
 METHYLATION_VECTORS_FOR_EACH_GENE = 'methylation_vectors_for_each_gene'
 SELECTED_METHYLATION_ISLANDS = 'selected_methylation_islands'
-LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 
 
 def extract_methylation_vectors(df_methylation,
@@ -33,13 +34,13 @@ def extract_methylation_vectors(df_methylation,
                                 dict_cpg, vector_size,
                                 methylation_filter='median',
                                 gene_expression_filter='median'):
-    TSS_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)
+    tss_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)
     dict_values_df_methylation = df_methylation.set_index('ID_site')[methylation_filter].to_dict()
     list_methylation_vectors = []
     chosen_methylation_islands = defaultdict(list)
 
     # Indexing Vectors around Sequence Coordinates (based on TSS)
-    center_index = TSS_index
+    center_index = tss_index
     start_index = int(center_index - (vector_size / 2) + 1)
     end_index = int(center_index + (vector_size / 2))
 

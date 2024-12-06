@@ -2,11 +2,9 @@ from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import train_test_split
 
 
-def dataset_acquisition_and_splitting(path, json_paths_yaml, names, shuffle, rand_state, lower_threshold=None, upper_threshold=None):
+def dataset_acquisition_and_splitting(path, shuffle, rand_state, lower_threshold=None, upper_threshold=None):
     """
         :param path: dataset directory
-        :param json_paths_yaml: YAML file path to load
-        :param names: features name list
         :param lower_threshold: threshold for DEAD cases
         :param upper_threshold: threshold for ALIVE cases
         :param shuffle: shuffle flag
@@ -16,7 +14,7 @@ def dataset_acquisition_and_splitting(path, json_paths_yaml, names, shuffle, ran
         :return dataframe_columns: columns of the obtained dataframe
     """
     # Acquiring data from CSV file
-    dataframe, dataframe_columns = csv_loader(path, json_paths_yaml, names)
+    dataframe, dataframe_columns = csv_loader(path)
 
     # Managing imposed thresholds
     if lower_threshold is not None and upper_threshold is not None:

@@ -6,10 +6,11 @@ from json_dir.methods.json_loader import json_loader
 from json_dir.methods.json_storer import json_storer
 from logs.methods.log_storer import DualOutput
 
+
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 

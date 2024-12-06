@@ -7,13 +7,13 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-METHYLATION = 'methylation'
-OVERALL_SURVIVAL = 'overall_survival'
-METHYLATION_NAMES = 'methylation_names'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+METHYLATION = 'methylation'
+METHYLATION_NAMES = 'methylation_names'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS

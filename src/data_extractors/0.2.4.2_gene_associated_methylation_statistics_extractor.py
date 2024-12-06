@@ -11,17 +11,17 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
-METHYLATION = 'methylation'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
-METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
-SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
-OVERALL_SURVIVAL = 'overall_survival'
-METHYLATION_NAMES = 'methylation_names'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+METHYLATION = 'methylation'
+METHYLATION_NAMES = 'methylation_names'
+METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
+OVERALL_SURVIVAL = 'overall_survival'
+SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
+TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 
 
 ## FUNCTIONS
@@ -78,6 +78,13 @@ def dictionary_format(file_path, patient_dictionary, selected_islands_dictionary
     del buffer_dictionary
 
     return datastore_item
+
+
+def common_keys_filter(data):
+    # Finding common keys among all dictionaries
+    common_keys = set.intersection(*(set(dictionary.keys()) for dictionary in data))
+
+    return [{key: dictionary[key] for key in common_keys} for dictionary in data]
 
 
 ## MAIN
@@ -143,6 +150,9 @@ if __name__ == "__main__":
                                                                    methylation_vectors_dictionary_filtered))
                     break
     print(f"Loaded {i} files")
+
+    # Filtering only common keys
+    methylation_datastore = common_keys_filter(methylation_datastore)
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_STATISTICS], methylation_datastore)

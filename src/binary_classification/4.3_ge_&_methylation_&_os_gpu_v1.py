@@ -15,20 +15,19 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
-GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
+GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
+GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-SHUFFLE = True
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
+SHUFFLE = True
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
 INTERMEDIATE_CORRELATION_THRESHOLD = 0.45
 SECOND_FEATURES_SELECTION = 200
-VERBOSE = False
 PLOT = False
+VERBOSE = False
 
 
 ## FUNCTIONS
@@ -46,9 +45,7 @@ if __name__ == "__main__":
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
     training_set, testing_set, dataset_columns = dataset_acquisition_and_splitting(
-        path=dataset_paths[GENE_EXPRESSION_AND_METHYLATION],
-        json_paths_yaml=JSON_PATHS_YAML,
-        names=GENE_EXPRESSION_AND_METHYLATION_NAMES,
+        path=dataset_paths[GENE_EXPRESSION_AND_METHYLATION_27],
         shuffle=SHUFFLE,
         rand_state=RANDOM_STATE,
         lower_threshold=LOWER_THRESHOLD,

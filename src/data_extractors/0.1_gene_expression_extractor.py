@@ -7,15 +7,15 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_TSS = 'gene_expression_tss'
 GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
-OVERALL_SURVIVAL = 'overall_survival'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+OVERALL_SURVIVAL = 'overall_survival'
+TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
 
 
 ## FUNCTIONS

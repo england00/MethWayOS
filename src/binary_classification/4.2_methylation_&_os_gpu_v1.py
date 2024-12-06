@@ -15,20 +15,19 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-METHYLATION = 'methylation'
-METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-SHUFFLE = True
+METHYLATION_27 = 'methylation27'
+METHYLATION_450 = 'methylation450'  # only with 450 methylation island
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
+SHUFFLE = True
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 FIRST_FEATURES_SELECTION = 2000
 INTERMEDIATE_CORRELATION_THRESHOLD = 0.45
 SECOND_FEATURES_SELECTION = 200
-VERBOSE = False
 PLOT = False
+VERBOSE = False
 
 
 ## FUNCTIONS
@@ -46,9 +45,7 @@ if __name__ == "__main__":
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
     training_set, testing_set, dataset_columns = dataset_acquisition_and_splitting(
-        path=dataset_paths[METHYLATION],
-        json_paths_yaml=JSON_PATHS_YAML,
-        names=METHYLATION_NAMES,
+        path=dataset_paths[METHYLATION_27],
         shuffle=SHUFFLE,
         rand_state=RANDOM_STATE,
         lower_threshold=LOWER_THRESHOLD,

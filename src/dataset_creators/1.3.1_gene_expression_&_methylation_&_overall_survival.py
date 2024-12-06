@@ -3,22 +3,20 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
-from json_dir.methods.json_storer import *
 from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
-METHYLATION = 'methylation'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
-OVERALL_SURVIVAL = 'overall_survival'
-GENE_EXPRESSION_AND_METHYLATION = 'gene_expression_and_methylation'
-GENE_EXPRESSION_AND_METHYLATION_NAMES = 'gene_expression_and_methylation_names'
+GENE_EXPRESSION = 'gene_expression'
+GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
+GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS
@@ -71,8 +69,8 @@ if __name__ == "__main__":
         gene_expression_patient.update(new_item)
         
     # Creating the dataset with GENE EXPRESSION and METHYLATION as feature vector and OVERALL SURVIVAL as label
-    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()][1:]
-    methylation_keys = [key for key in methylation_datastore[0].keys()][1:]
+    gene_expression_keys = [key for key in gene_expression_datastore[0].keys() if key != 'info']
+    methylation_keys = [key for key in methylation_datastore[0].keys() if key != 'info']
     num_patients = len(gene_expression_datastore)
     dataset = []
 
@@ -98,8 +96,7 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
-    csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION], dataset)
-    json_storer(json_paths[GENE_EXPRESSION_AND_METHYLATION_NAMES], gene_expression_and_methylation_keys)
+    csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION_27], dataset, gene_expression_and_methylation_keys)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

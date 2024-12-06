@@ -3,19 +3,17 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.methods.configuration_loader import *
 from json_dir.methods.json_loader import *
-from json_dir.methods.json_storer import *
 from data.methods.csv_dataset_storer import *
 from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
-OVERALL_SURVIVAL = 'overall_survival'
-GENE_EXPRESSION_NAMES = 'gene_expression_names'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS
@@ -52,7 +50,7 @@ if __name__ == "__main__":
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
-    gene_expression_keys = [key for key in gene_expression_datastore[0].keys()][1:]
+    gene_expression_keys = [key for key in gene_expression_datastore[0].keys() if key != 'info']
     num_patients = len(gene_expression_datastore)
     dataset = []
 
@@ -75,8 +73,7 @@ if __name__ == "__main__":
     print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
-    csv_storer(dataset_paths[GENE_EXPRESSION], dataset)
-    json_storer(json_paths[GENE_EXPRESSION_NAMES], gene_expression_keys)
+    csv_storer(dataset_paths[GENE_EXPRESSION], dataset, gene_expression_keys)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

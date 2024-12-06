@@ -7,15 +7,15 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-METHYLATION = 'methylation'
+DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
 GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
-SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
-OVERALL_SURVIVAL = 'overall_survival'
-METHYLATION_NAMES = 'methylation_names'
+JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+METHYLATION = 'methylation'
+METHYLATION_NAMES = 'methylation_names'
+OVERALL_SURVIVAL = 'overall_survival'
+SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 
 
 ## FUNCTIONS
@@ -33,6 +33,13 @@ def dictionary_format(file_path, patient_dictionary, selected_islands_dictionary
                 dict_buffer[str(element[0])] = 0.0
 
     return dict_buffer
+
+
+def common_keys_filter(data):
+    # Finding common keys among all dictionaries
+    common_keys = set.intersection(*(set(dictionary.keys()) for dictionary in data))
+
+    return [{key: dictionary[key] for key in common_keys} for dictionary in data]
 
 
 ## MAIN
@@ -87,6 +94,9 @@ if __name__ == "__main__":
                     methylation_datastore.append(dictionary_format(path, patient, dictionary_selected_methylation_islands))
                     break
     print(f"Loaded {i} files")
+
+    # Filtering only common keys
+    methylation_datastore = common_keys_filter(methylation_datastore)
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION], methylation_datastore)

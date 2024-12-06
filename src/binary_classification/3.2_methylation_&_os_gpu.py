@@ -15,18 +15,17 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
 DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-METHYLATION = 'methylation'
-METHYLATION_NAMES = 'methylation_names'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-SHUFFLE = True
+METHYLATION_27 = 'methylation27'
+METHYLATION_450 = 'methylation450'  # only with 450 methylation island
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
+SHUFFLE = True
 LOWER_THRESHOLD = 1000  # 730 (2 years)
 UPPER_THRESHOLD = 3000  # 2920 (8 years)
 PCA_DIMENSION = 80
-VERBOSE = False
 PLOT = False
+VERBOSE = False
 
 
 ## FUNCTIONS
@@ -43,10 +42,7 @@ if __name__ == "__main__":
     # Data Acquisition
     title('DATA ACQUISITION')
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
-    dataset, dataset_columns = dataset_acquisition(
-        path=dataset_paths[METHYLATION],
-        json_paths_yaml=JSON_PATHS_YAML,
-        names=METHYLATION_NAMES)
+    dataset, dataset_columns = dataset_acquisition(path=dataset_paths[METHYLATION_27])
 
     # Exploratory Data Analysis
     title('EXPLORATORY DATA ANALYSIS with RAW DATA')
