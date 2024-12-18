@@ -22,8 +22,8 @@ To perform the procedure, you must be connected to the UNIMORE network. This can
 To establish an SSH connection, open the terminal (CMD or BASH) and type one of the following commands (__NOTE__: 
 *change the **username** in commands with yours*):
 ```
-ssh username@ailb-login-02.ing.unimore.it
-ssh username@ailb-login-03.ing.unimore.it
+ssh <username>@ailb-login-02.ing.unimore.it
+ssh <username>@ailb-login-03.ing.unimore.it
 ```
 Then enter your UNIMORE password.
  
@@ -42,8 +42,8 @@ button shown selecting the SSH bar;
 - Enter **one of the following commands** based on which part of the server you want to use (__NOTE__: *change the 
 **username** in commands with yours*):
 ```
-ssh username@ailb-login-02.ing.unimore.it
-ssh username@ailb-login-03.ing.unimore.it
+ssh <username>@ailb-login-02.ing.unimore.it
+ssh <username>@ailb-login-03.ing.unimore.it
 ```
 - Select **Linux** as the machine type;
 - Enter your password (the same as your UNIMORE account password);
@@ -51,7 +51,7 @@ ssh username@ailb-login-03.ing.unimore.it
 terminal and create your Conda environment using the following command(__NOTE__: *change **EnvironmentName** in commands 
 with yours and specify a different **python version** dependently on which you need*):
 ```
-conda create --name EnvironmentName python=3.10.12
+conda create --name <EnvironmentName> python=3.10.12
 ```
 - Check the available CUDA modules on the server, then install the required version of PyTorch for your project 
 (__NOTE__: *change **EnvironmentName** in commands with yours*):
@@ -60,7 +60,7 @@ module avail
 module unload cuda/12.1
 module load cuda/11.8
 . /usr/local/anaconda3/etc/profile.d/conda.sh
-conda activate EnvironmentName
+conda activate <EnvironmentName>
 pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu118
 ```
 __NOTE__: *each time a Conda command needs to be executed after the initial connection, it is necessary to source Conda 
@@ -91,10 +91,10 @@ module load cuda/11.8
 
 # Sourcing Conda and Activating Environment
 . /usr/local/anaconda3/etc/profile.d/conda.sh
-conda activate EnvironmentName
+conda activate <EnvironmentName>
 
 # Execution command
-srun -Q -wailb-login-02 --immediate=10 --mem=8G --partition=all_serial --gres=gpu:1 --nodes=1 --time 1:00:00 --pty --account=your_project bash
+srun -Q -wailb-login-02 --immediate=10 --mem=8G --partition=all_serial --gres=gpu:1 --nodes=1 --time 1:00:00 --pty --account=<your_project> bash
 ```
 __NOTE__: *all available options for SRUN command are described on the Slurm page at this link 
 (https://slurm.schedmd.com/srun.html)*.
@@ -103,7 +103,7 @@ __NOTE__: *all available options for SRUN command are described on the Slurm pag
 In this shell, you must activate your environment again using (__NOTE__: *change **EnvironmentName** in commands with yours*):
 ```
 . /usr/local/anaconda3/etc/profile.d/conda.sh
-conda activate EnvironmentName
+conda activate <EnvironmentName>
 ```
 At this point, everything executed within this shell will run on the allocated node and GPU. To exit, you can type exit 
 or simply wait for the automatic shutdown, which will occur once the allocated time specified in the initial srun command 
@@ -116,7 +116,7 @@ It's possible to automate the procedure by configuring two files within a /work/
 ```
 { 
     "terminal.integrated.automationProfile.linux": { 
-        "path": "/work/your_project/bash.sh" 
+        "path": "/work/<your_project>/bash.sh" 
     }, 
 }
 ```
@@ -131,8 +131,8 @@ It's possible to automate the procedure by configuring two files within a /work/
             "program": "${file}", 
             "console": "integratedTerminal", 
             "justMyCode": false, 
-            "env": {"PYTHONPATH":"${your_project}"}, 
-            "cwd":"${your_project}" 
+            "env": {"PYTHONPATH":"${<your_project>}"}, 
+            "cwd":"${<your_project>}" 
         },
     ]
 }
@@ -155,26 +155,27 @@ directory /work/**your_project** (__NOTE__: ***your_project** must be yours. Fur
 #SBATCH --partition=all_usr_prod 
 #SBATCH --gres=gpu:1 
 #SBATCH --mem=8G 
-#SBATCH --job-name="your_name" 
+#SBATCH --job-name="<your_name>" 
 #SBATCH --array=1 
 #SBATCH --time=0:02:00 
-#SBATCH --output=/work/your_project/slurm/slurm_out/%x_%j.out 
-#SBATCH --error=/work/your_project/slurm/slurm_err/%x_%j.out 
+#SBATCH --output=/work/<your_project>/slurm/slurm_out/%x_%j.out 
+#SBATCH --error=/work/<your_project>/slurm/slurm_err/%x_%j.out 
 #SBATCH --cpus-per-task=8 
-#SBATCH --account=your_project 
+#SBATCH --account=<your_project>
 #SBATCH --constraint="gpu_1080_8G|gpu_2080Ti_11G|gpu_A40_48G|gpu_RTX5000_16G|gpu_RTX6000_24G|gpu_RTXA5000_24G" 
 #SBATCH --mail-type=ALL 
-#SBATCH --mail-user=your_email 
-#SBATCH --chdir=/work/your_project/src/your_code 
+#SBATCH --mail-user=<your_email>
+#SBATCH --chdir=/work/<your_project>/src/<your_code>
 
 module unload cuda/12.1 
 module load cuda/11.8 
-. /usr/local/anaconda3/etc/profile.d/conda.sh conda activate EnvironmentName 
+. /usr/local/anaconda3/etc/profile.d/conda.sh 
+conda activate <EnvironmentName>
 
 # Set PYTHONPATH to include the project's main directory (needed if env and cwd paths don’t coincide)
-export PYTHONPATH=/work/your_project:$PYTHONPATH 
+export PYTHONPATH=/work/<your_project>:$PYTHONPATH 
 
-python /work/your_project/src/your_code.py
+python /work/<your_project>/src/<your_code>.py
 ```
 
 __NOTE__: *all available **#SBATCH** options are described on the Slurm page at this link
@@ -183,7 +184,7 @@ __NOTE__: *all available **#SBATCH** options are described on the Slurm page at 
 So for running **your_code**.py script (__NOTE__: *chande **your_code.py** with yours) specified in the sbatch file you 
 had to type the command:
 ```
-sbatch your_prod.sbatch
+sbatch <your_prod>.sbatch
 ```
 
 Moreover, with the following last command it is possible to see the status of the requested execution:
