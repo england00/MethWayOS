@@ -8,14 +8,14 @@
 
 First, after submitting  the request for server resource allocation, it is necessary to have received the access
 credentials, which include:   
- - the **username** provided in the welcome email sent to your institutional UNIMORE mailbox;  
- - the **password**, which matches the one used to access the same mailbox.
+ - The **username** provided in the welcome email sent to your institutional UNIMORE mailbox;  
+ - The **password**, which matches the one used to access the same mailbox.
 
  
 ### 2 - Connecting to the UNIMORE network
 To perform the procedure, you must be connected to the UNIMORE network. This can be done:
-- by being physically present within the department; 
-- by remotely connecting to the network via the university VPN, following  the guide available at this link 
+- Being physically present within the department; 
+- Remotely connecting to the network via the university VPN, following  the guide available at this link 
 (https://www.sba.unimore.it/site/home/risorse/condizioni-di-accesso-e-vpn.html). 
  
 ### 3 - Connecting to the server using credentials  
@@ -26,7 +26,40 @@ ssh <username>@ailb-login-02.ing.unimore.it
 ssh <username>@ailb-login-03.ing.unimore.it
 ```
 Then enter your UNIMORE password.
- 
+
+### Optional:
+If desired, it is now possible to create SSH access using an OpenSSH key. To do this:
+- (**On your local machine**) Open a new terminal and create your key pair by running this command, following after all the given steps:
+```
+ssh-keygen -t rsa -b 4096 -C "<your_email@example.com>"
+```
+<p align="center">
+  <img src="img_4.png" width="60%" />
+</p>
+
+- (**On your local machine**) Navigate to the path you specified during the creation of the key pair to locate your **private** 
+and **public key** (*.pub*) and open the second one, copying the content to your clipboard;
+- (**On remote server**) By connecting to the VPN network and establishing an SSH connection as specified earlier, 
+access the server and verify that you are inside **/homes/username** directory. After, execute the following commands:
+```
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+nano ~/.ssh/authorized_keys
+```
+- (**On remote server**) Paste the public key previously copied to the clipboard into the file you just opened, saving it. 
+After, execute the following command:
+```
+chmod 600 ~/.ssh/authorized_keys
+```
+- (**On your local machine**) Now, disconnect from the VPN and open a new terminal to test the connection by running one 
+of the following commands, entering your password when prompted:
+```
+ssh -i <C:\Users\lucai\.ssh\id_rsa\your_example> <username>@ailb-login-02.ing.unimore.it
+ssh -i <C:\Users\lucai\.ssh\id_rsa\your_example> <username>@ailb-login-03.ing.unimore.it
+```
+- If the procedure was successful, you can now connect to the server using only your password, without needing to access
+the VPN.
+
 ### 4 - Setting up environment with Visual Studio Code  
 - Open Visual Studio Code and install the extensions **Remote-SSH** and **Remote-SSH: Editing Configuration Files**;
 <p align="center">
@@ -39,12 +72,20 @@ button shown selecting the SSH bar;
   <img src="img_2.png" width="20%" />
 </p>
 
-- Enter **one of the following commands** based on which part of the server you want to use (__NOTE__: *change the 
+- (**CASE**: *connecting via VPN*) After activating the VPN, enter **one of the following commands** based on which part of the server you want to use (__NOTE__: *change the 
 **username** in commands with yours*):
 ```
 ssh <username>@ailb-login-02.ing.unimore.it
 ssh <username>@ailb-login-03.ing.unimore.it
 ```
+- (**CASE**: *connecting via SSH key pair*) Enter **one of the following commands** based on which part of the server you want to use 
+(__NOTE__: *change **private key path** and **username** in commands with yours*):
+```
+ssh -i <C:\Users\lucai\.ssh\id_rsa\your_example> <username>@ailb-login-02.ing.unimore.it
+ssh -i <C:\Users\lucai\.ssh\id_rsa\your_example> <username>@ailb-login-03.ing.unimore.it
+
+```
+
 - Select **Linux** as the machine type;
 - Enter your password (the same as your UNIMORE account password);
 - Ensure you are inside the **/homes/username** directory (__NOTE__: ***username** must be yours*), then open inside a new
@@ -75,7 +116,7 @@ pip freeze > requirements.txt
 __NOTE__: *check inside this file if certain libraries are present with their relative path. 
 If they are, they must be deleted. Furthermore, every 'torch' package must also be deleted*.
 
-- after transferring this file to VSCode in the /homes/**username** directory (__NOTE__: ***username** must be yours*)
+- After transferring this file to VSCode in the /homes/**username** directory (__NOTE__: ***username** must be yours*)
 on the server (just dragging it) you can add the requirements to the new environment using:
 ```
 pip install -r requirements.txt
