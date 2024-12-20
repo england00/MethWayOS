@@ -7,15 +7,15 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_TSS = 'gene_expression_tss'
 GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 OVERALL_SURVIVAL = 'overall_survival'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 
 
 ## FUNCTIONS
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
             file_names.append(dictionary['file_name'])
     gene_expression_list = buffer
 
-    # Searching only TSV files with the right 'case_id'
+    # Searching only TSV paths with the right 'case_id'
     i = 0
     gene_expression_datastore = []
     for path in directory_loader(directories_paths[GENE_EXPRESSION]):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
                     gene_expression_datastore.append(
                         dictionary_format(path, dictionary, gene_expression_tss_dictionary))
                     break
-    print(f"Loaded {i} files")
+    print(f"Loaded {i} paths")
 
     # Storing the datastore inside a JSON file
     json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)

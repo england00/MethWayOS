@@ -11,17 +11,17 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
 OVERALL_SURVIVAL = 'overall_survival'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 
 
 ## FUNCTIONS
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     methylation_vectors_dictionary = methylation_vectors_list.set_index('gene_name')['beta_values'].to_dict()
     methylation_vectors_dictionary_filtered = {key: [x for x in vector if x != 0] for key, vector in methylation_vectors_dictionary.items() if any(x != 0 for x in vector)}
 
-    # Searching only TXT files with the right 'case_id', also selecting some chosen islands to store
+    # Searching only TXT paths with the right 'case_id', also selecting some chosen islands to store
     dictionary_selected_methylation_islands = json_loader(datastore_paths[SELECTED_METHYLATION_ISLANDS_FULL])
     i = 0
     methylation_datastore = []
@@ -149,7 +149,7 @@ if __name__ == "__main__":
                                                                    dictionary_selected_methylation_islands,
                                                                    methylation_vectors_dictionary_filtered))
                     break
-    print(f"Loaded {i} files")
+    print(f"Loaded {i} paths")
 
     # Filtering only common keys
     methylation_datastore = common_keys_filter(methylation_datastore)

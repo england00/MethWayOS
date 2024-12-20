@@ -15,7 +15,7 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
+DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION_27 = 'methylation27'
 METHYLATION_450 = 'methylation450'  # only with 450 methylation island

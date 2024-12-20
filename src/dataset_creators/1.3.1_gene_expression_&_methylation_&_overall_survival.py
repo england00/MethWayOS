@@ -8,13 +8,13 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
+DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
 GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 OVERALL_SURVIVAL = 'overall_survival'
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     dataset_paths = yaml_loader(DATASET_PATH_YAML)

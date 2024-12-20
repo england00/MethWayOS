@@ -9,8 +9,8 @@ from logs.methods.log_storer import DualOutput
 
 ## CONFIGURATION
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
 

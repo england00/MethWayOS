@@ -15,7 +15,7 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASET_PATH_YAML = '../../config/files/dataset_paths.yaml'
+DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 GENE_EXPRESSION_AND_METHYLATION_27_STATISTICS = 'gene_expression_and_methylation27_statistics'
 GENE_EXPRESSION_AND_METHYLATION_450_STATISTICS = 'gene_expression_and_methylation450_statistics'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'

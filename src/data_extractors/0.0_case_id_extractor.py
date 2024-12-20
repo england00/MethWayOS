@@ -8,7 +8,7 @@ from logs.methods.log_storer import *
 ## CONFIGURATION
 GENE_EXPRESSION = 'gene_expression'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 

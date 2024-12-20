@@ -7,10 +7,10 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
-DIRECTORIES_PATHS_YAML = '../../config/files/directories_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
+DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     directories_paths = yaml_loader(DIRECTORIES_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
             {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
     overall_survival_list = buffer
 
-    # Loading all the XML files
+    # Loading all the XML paths
     file_paths = directory_loader(directories_paths[OVERALL_SURVIVAL])
     i = 0
     overall_survival_datastore = []
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         if xml_loader(path) is not None:
             i += 1
             overall_survival_datastore.append(xml_loader(path))
-    print(f"Loaded {i} files")
+    print(f"Loaded {i} paths")
 
     # Selecting only DEAD cases
     buffer = []

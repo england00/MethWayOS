@@ -18,15 +18,15 @@ NOTA: qui viene utilizzato lo  script di Alessandro Monteleone  adattato per res
       a tale scopo, incentrata sul TSS indicato tra i dati nel datastore "gene_expression_data.json"
 '''
 CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
-DATASTORE_PATHS_YAML = '../../config/files/datastore_paths.yaml'
+DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 EXTRACTED_SEQUENCE_DIMENSION = 131328
 GENE_EXPRESSION_ALE = 'gene_expression_lungs'
-JSON_PATHS_YAML = '../../config/files/json_paths.yaml'
+JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION_ALE = 'methylation_lungs'
 METHYLATION_VECTORS_FOR_EACH_GENE = 'methylation_vectors_for_each_gene'
 SELECTED_METHYLATION_ISLANDS = 'selected_methylation_islands'
-TABLE_PATHS_YAML = '../../config/files/table_paths.yaml'
+TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 
 
 def extract_methylation_vectors(df_methylation,
@@ -91,12 +91,12 @@ if __name__ == "__main__":
     logfile = open(LOG_PATH, 'w')
     sys.stdout = DualOutput(sys.stdout, logfile)
 
-    # Loading YAML files
+    # Loading YAML paths
     json_paths = yaml_loader(JSON_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     table_paths = yaml_loader(TABLE_PATHS_YAML)
 
-    # Loading data from JSON and CSV files
+    # Loading data from JSON and CSV paths
     cpg950_coding_genes_dictionary = json_loader(datastore_paths[CPG950_CODING_GENES_ORIGINAL])
     dataframe_gene_expression = pd.read_csv(table_paths[GENE_EXPRESSION_ALE])
     dataframe_methylation = pd.read_csv(table_paths[METHYLATION_ALE])[['ID_site', 'mean', 'median']]
