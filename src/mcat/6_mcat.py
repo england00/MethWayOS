@@ -1,19 +1,30 @@
-import torch.cuda
-import yaml
-import os
-import time
 import datetime
+import os
+import sys
+import time
 import wandb
+import yaml
 import numpy as np
+import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
-
-from torch.utils.data import DataLoader
+import warnings
+from logs.methods.log_storer import DualOutput
 from sksurv.metrics import concordance_index_censored
 from src.mcat.modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.mcat.modules.utils import l1_reg
 from src.mcat.modules.mcat import MultimodalCoAttentionTransformer
 from src.mcat.modules.dataset import MultimodalDataset
+from torch.utils.data import DataLoader
+
+
+## CONFIGURATION
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+
+## FUNCTIONS
+def title(text):
+    print('\n' + f' {text} '.center(80, '#'))
 
 
 def train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function):
@@ -215,33 +226,43 @@ def wandb_init(config):
     )
 
 
+''' Main definition '''
 def main(config_path: str):
+    # Loading Configuration file
     with open(config_path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
 
+    # W&B
+    print('')
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
-        print('Setting up wandb for report')
+        print('WANDB: setting up for report')
         os.environ['WANDB__SERVICE_WAIT'] = '300'
         wandb_init(config)
+    else:
+        print('WANDB: disabled')
 
+    # CUDA
+    print('')
+    warnings.filterwarnings("ignore", category=UserWarning, module="torch")
     device = config['device']
     if device == 'cuda' and not torch.cuda.is_available():
-        print('CUDA not available')
+        print('CUDA: not available')
         device = 'cpu'
     elif device == 'cuda' and torch.cuda.is_available():
-        print('CUDA is available!')
-        print(f'Device count: {torch.cuda.device_count()}')
+        print('CUDA: available')
+        print(f'--> Device count: {torch.cuda.device_count()}')
         for device_index in range(torch.cuda.device_count()):
-            print(f'Using device: {torch.cuda.get_device_name(device_index)}')
-    print(f'Running on {device.upper()}')
+            print(f'--> Using device: {torch.cuda.get_device_name(device_index)}')
+    print(f'--> Running on {device.upper()}')
 
-    # Dataset
+    # Loading Dataset
+    print('')
     file_csv = config['dataset']['file']
     dataset = MultimodalDataset(file_csv, config, use_signatures=True)
     leave_one_out = config['training']['leave_one_out'] is not None
     train_size = config['training']['train_size']
-    print(f'Using {int(train_size * 100)}% train, {100 - int(train_size * 100)}% validation')
+    print(f'--> Using {int(train_size * 100)}% train, {100 - int(train_size * 100)}% validation')
     test_patient = config['training']['leave_one_out']
     train_dataset, val_dataset, test_dataset = dataset.split(train_size, test=leave_one_out, patient=test_patient)
     print(f'Samples in train: {len(train_dataset)}, Samples in validation: {len(val_dataset)}')
@@ -251,6 +272,7 @@ def main(config_path: str):
     val_loader = DataLoader(val_dataset, batch_size=1, shuffle=True, num_workers=2, pin_memory=True)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
     output_attn_epoch = config['training']['output_attn_epoch']
+
     # Model
     model_size = config['model']['model_size']
     omics_sizes = dataset.signature_sizes
@@ -340,15 +362,17 @@ def main(config_path: str):
         wandb.finish()
 
 
+## MAIN
 if __name__ == '__main__':
-    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] MCAT main started')
+    # Open LOG file
+    logfile = open(LOG_PATH, 'w')
+    sys.stdout = DualOutput(sys.stdout, logfile)
+
+    # Execution
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - MCAT started')
     main('../../config/files/mcat.yaml')
-    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] MCAT main finished')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - MCAT finished')
 
-
-def test_main():
-    print('Testing MCAT main...')
-
-    main('config/config_test.yaml')
-
-    print('Test successful')
+    # Close LOG file
+    sys.stdout = sys.__stdout__
+    logfile.close()

@@ -1,46 +1,48 @@
-import torch
 import os
-import pandas as pd
-import numpy as np
-import time
 import h5py
-
+import numpy as np
+import pandas as pd
+import time
+import torch
 from torch.utils.data import Dataset, DataLoader
-from scipy import stats
 
 
+## CLASSES
 class MultimodalDataset(Dataset):
     def __init__(self, file: str, config, use_signatures=False, remove_incomplete_samples=True):
+        # Managing CSV Dataset
         self.data = pd.read_csv(file)
-
         if config['dataset']['decider_only']:
-            print('Using DECIDER data only')
+            print('DATASET: DECIDER data only')
             self.data = self.data.loc[self.data['is_decider'] == 1.0]
             self.data.reset_index(drop=True, inplace=True)
         if config['dataset']['tcga_only']:
-            print('Using TCGA data only')
+            print('DATASET: TCGA data only')
             # self.data = self.data.loc[self.data['is_decider'] == 0.0]
             self.data.reset_index(drop=True, inplace=True)
         if config['dataset']['diagnostic_only']:
-            print('Using only diagnostic slides')
+            print('DATASET: diagnostic slides only')
             self.data = self.data.loc[self.data['source'] == 'diagnostic_slide']
             self.data.reset_index(drop=True, inplace=True)
 
+        # Managing Patches Directory
         self.patches_dir = config['dataset']['patches_dir']
         if self.patches_dir is None:
             self.patches_dir = ''
 
+        # Managing H5 Dataset
         self.use_h5_dataset = False
         try:
             self.use_h5_dataset = config['dataset']['h5_dataset'] is not None
         except KeyError:
             pass
 
+        # Managing incomplete examples (only sample with both Gene Expression and WSI)
         if remove_incomplete_samples:
             slide_index = 0
             complete_data_only = []
             if not self.use_h5_dataset:
-                for slide in self.data['slide_id']:
+                for slide in self.data['slide_id']:  # WSI
                     slide_name = slide.replace('.svs', '.pt')
                     if os.path.exists(os.path.join(self.patches_dir, slide_name)):
                         complete_data_only.append(self.data.iloc[slide_index])
@@ -48,27 +50,28 @@ class MultimodalDataset(Dataset):
             else:
                 self.h5_dataset = config['dataset']['h5_dataset']
                 self.h5_file = h5py.File(self.h5_dataset, 'r')
-                for slide in self.data['slide_id']:
+                for slide in self.data['slide_id']:  # WSI
                     slide_name = slide.replace('.svs', '')
                     if slide_name in self.h5_file:
                         complete_data_only.append(self.data.iloc[slide_index])
                     slide_index += 1
-
+            # Saving only complete samples inside a new dataframe
             self.data = pd.DataFrame(complete_data_only)
             self.data.reset_index(drop=True, inplace=True)
-            print(f'Remaining samples after removing incomplete: {len(self.data)}')
+            print(f'--> Remaining samples after removing incomplete: {len(self.data)}')
 
-        n_classes = 4
-        survival_class, class_intervals = pd.qcut(self.data['survival_months'], q=n_classes, retbins=True, labels=False)
+        # Managing Classes creation
+        classes_number = 6
+        survival_class, class_intervals = pd.qcut(self.data['survival_months'], q=classes_number, retbins=True, labels=False)
         self.data['survival_class'] = survival_class
-        print('Class intervals: [')
-        for i in range(0, 4):
+        print('--> Class intervals: [')
+        for i in range(0, classes_number):
             print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
-        print(']')
-
+        print('    ]')
         self.survival_months = self.data['survival_months'].values
         self.survival_class = self.data['survival_class'].values
         self.censorship = self.data['censorship'].values
+
 
         rnaseq_columns = [col for col in self.data.columns if col.endswith('_rnaseq')]
         if config['dataset']['standardize']:
@@ -247,6 +250,7 @@ class MultimodalDataset(Dataset):
             self.h5_file.close()
 
 
+## FUNCTIONS
 def test_multimodal_dataset():
     print('Testing MultimodalDataset...')
 

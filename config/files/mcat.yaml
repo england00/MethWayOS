@@ -13,9 +13,9 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA
   # CSV dataset file
-  file: /work/h2020deciderficarra_shared/mgualtieri/brca/brca.csv
+  file: F:/Bioinformatica/brca/brca.csv
   # Directory containing slides embeddings
-  patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
+  patches_dir: F:/Bioinformatica/brca/slides/
   # Signature of genes to use
   signatures: ../../data/tables/mcat_signatures.csv
   # Whether to use only Decider data or not
@@ -47,7 +47,7 @@ model:
 # Training configuration
 training:
   # ID of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: ~
+  leave_one_out: dbb2da92-99dd-400c-bc05-e87d7273656c
   # At which epoch write the attention file
   output_attn_epoch: 20
   # Directory in which attention outputs will be saved

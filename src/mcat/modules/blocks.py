@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 import torch
 import torch.nn as nn
 from torch import softmax, dropout
-from torch.nn.functional import _in_projection_packed, linear
+from torch.nn.functional import linear
 
 from torch.nn.modules.linear import NonDynamicallyQuantizableLinear
 from torch.nn.init import xavier_uniform_, constant_, xavier_normal_
@@ -111,6 +111,17 @@ class PreGatingContextualAttention(nn.Module):
         return attn_output + c, attn_output_weights
 
 
+def in_projection_packed(query, key, value, in_proj_weight, in_proj_bias=None):
+    embed_dim = query.size(-1)
+    q_proj_weight, k_proj_weight, v_proj_weight = in_proj_weight.chunk(3, dim=0)
+
+    q = linear(query, q_proj_weight, in_proj_bias[:embed_dim] if in_proj_bias is not None else None)
+    k = linear(key, k_proj_weight, in_proj_bias[embed_dim:2*embed_dim] if in_proj_bias is not None else None)
+    v = linear(value, v_proj_weight, in_proj_bias[2*embed_dim:] if in_proj_bias is not None else None)
+
+    return q, k, v
+
+
 def multi_head_attention_forward(
     query: torch.Tensor,
     key: torch.Tensor,
@@ -153,7 +164,7 @@ def multi_head_attention_forward(
     # compute in-projection
     #
     assert in_proj_weight is not None, "use_separate_proj_weight is False but in_proj_weight is None"
-    q, k, v = _in_projection_packed(query, key, value, in_proj_weight, in_proj_bias)
+    q, k, v = in_projection_packed(query, key, value, in_proj_weight, in_proj_bias)
 
     assert bias_k is None
     assert bias_v is None

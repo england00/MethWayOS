@@ -1,5 +1,4 @@
 import os
-from colorama import Fore
 from config.methods.configuration_loader import yaml_loader
 from src.binary_classification.functions_torch.f1_dataset_acquisition_and_splitting import dataset_acquisition_and_splitting
 from src.binary_classification.functions_sklearn.f2_exploratory_data_analysis import exploratory_data_analysis
@@ -32,7 +31,7 @@ VERBOSE = False
 
 ## FUNCTIONS
 def title(text):
-    print(Fore.CYAN, '\n' + f' {text} '.center(80, '#'), Fore.RESET)
+    print('\n' + f' {text} '.center(80, '#'))
 
 
 ## MAIN
