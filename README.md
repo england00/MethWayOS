@@ -81,7 +81,6 @@
             - [Slurm Error](./logs/slurm/slurm_err)
         - [Test](./logs/tests)
     - [Slurm Debug Setting](bash.sh)
-    - [Slurm Production Settings](./production)
     - [Source Files](./src)
         - [Data Extractors](./src/data_extractors)
             - [0.0 - CASE ID Extractor](./src/data_extractors/0.0_case_id_extractor.py)
