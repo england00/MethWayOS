@@ -359,11 +359,11 @@ def main(config_path: str):
         reg_function = None
 
     # Training
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - Training started')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
     model.train()
     epochs = config['training']['epochs']
     for epoch in range(starting_epoch, epochs):
-        print(f'Epoch: {epoch + 1}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
         start_time = time.time()
         train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function)
         validate(epoch, config, device, val_loader, model, loss_function, reg_function)
@@ -374,8 +374,8 @@ def main(config_path: str):
             test_patient = config['training']['leave_one_out']
             test(config, device, epoch + 1, test_loader, model, test_patient, save=save)
         end_time = time.time()
-        print('Time elapsed for epoch {}: {:.0f}s'.format(epoch + 1, end_time - start_time))
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - Training started')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
 
     # Validation
     validate('final validation', config, device, val_loader, model, loss_function, reg_function)
@@ -392,9 +392,9 @@ if __name__ == '__main__':
     sys.stdout = DualOutput(sys.stdout, logfile)
 
     # Execution
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - MCAT started')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
     main('../../config/files/mcat.yaml')
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - MCAT finished')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT finished')
 
     # Close LOG file
     sys.stdout = sys.__stdout__
