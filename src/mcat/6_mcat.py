@@ -305,21 +305,19 @@ def main(config_path: str):
     alpha = config['training']['alpha']
 
     # Loss function
-    print('')
     if config['training']['loss'] == 'ce':
-        print('LOSS FUNCTION: CrossEntropyLoss')
+        print('--> Loss function: CrossEntropyLoss')
         loss_function = nn.CrossEntropyLoss()
     elif config['training']['loss'] == 'ces':
-        print('LOSS FUNCTION: CrossEntropySurvivalLoss')
+        print('--> Loss function: CrossEntropySurvivalLoss')
         loss_function = CrossEntropySurvivalLoss(alpha=alpha)
     elif config['training']['loss'] == 'sct':
-        print('LOSS FUNCTION: SurvivalClassificationTobitLoss')
+        print('--> Loss function: SurvivalClassificationTobitLoss')
         loss_function = SurvivalClassificationTobitLoss()
     else:
-        raise RuntimeError(f'LOSS FUNCTION: "{config["training"]["loss"]}" not implemented')
+        raise RuntimeError(f'--> Loss function: "{config["training"]["loss"]}" not implemented')
 
     # Optimizer
-    print('')
     learning_rate = config['training']['lr']
     weight_decay = config['training']['weight_decay']
     optimizer_name = config['training']['optimizer']
@@ -336,7 +334,7 @@ def main(config_path: str):
         optimizer_name = 'adam'
         optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
                                      lr=learning_rate, weight_decay=weight_decay)
-    print(f'OPTIMIZER: {optimizer_name}')
+    print(f'--> Optimizer: {optimizer_name}')
 
     # Scheduler for variable learning rate
     scheduler = config['training']['scheduler']
