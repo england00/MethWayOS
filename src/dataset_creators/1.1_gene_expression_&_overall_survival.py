@@ -11,9 +11,11 @@ from logs.methods.log_storer import *
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 GENE_EXPRESSION = 'gene_expression'
+GENE_EXPRESSION_KEYS = 'gene_expression_keys'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 OVERALL_SURVIVAL = 'overall_survival'
+TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 
 
 ## FUNCTIONS
@@ -44,10 +46,21 @@ if __name__ == "__main__":
     json_paths = yaml_loader(JSON_PATHS_YAML)
     datastore_paths = yaml_loader(DATASTORE_PATHS_YAML)
     dataset_paths = yaml_loader(DATASET_PATH_YAML)
+    table_paths = yaml_loader(TABLE_PATHS_YAML)
 
     # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
+
+    # Changing 'gene_id' with 'gene_name' as key in each dictionary
+    for gene_expression_patient in gene_expression_datastore:
+        new_item = {'info': gene_expression_patient['info']}
+        for gene_key, value in gene_expression_patient.items():
+            if gene_key != 'info':
+                new_key = value[0]
+                new_item[new_key] = [gene_key] + value[1:]
+        gene_expression_patient.clear()
+        gene_expression_patient.update(new_item)
 
     # Creating the dataset with GENE EXPRESSION as feature vector and OVERALL SURVIVAL as label
     gene_expression_keys = [key for key in gene_expression_datastore[0].keys() if key != 'info']
@@ -73,6 +86,7 @@ if __name__ == "__main__":
     print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
+    csv_storer(table_paths[GENE_EXPRESSION_KEYS], gene_expression_keys, ["gene"], keys_mode=True)
     csv_storer(dataset_paths[GENE_EXPRESSION], dataset, gene_expression_keys)
 
     # Close LOG file

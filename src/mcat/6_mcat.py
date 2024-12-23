@@ -41,6 +41,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(
             train_loader):
 
+        # print(survival_class)
         survival_months = survival_months.to(device, non_blocking=True)
         survival_class = survival_class.to(device, non_blocking=True)
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
@@ -49,6 +50,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
         omics_data = [omic_data.to(device) for omic_data in omics_data]
         hazards, survs, Y, attention_scores = model(wsi=patches_embeddings, omics=omics_data)
 
+        # Choosing Loss Function
         if config['training']['loss'] == 'ce':
             loss = loss_function(Y, survival_class.long())
         elif config['training']['loss'] == 'ces':
@@ -259,15 +261,15 @@ def main(config_path: str):
     # Loading Dataset
     print('')
     file_csv = config['dataset']['file']
-    dataset = MultimodalDataset(file_csv, config, use_signatures=True)
-    leave_one_out = config['training']['leave_one_out'] is not None
+    dataset = MultimodalDataset(file_csv, config, use_signatures=True)  # Dataset object
     train_size = config['training']['train_size']
     print(f'--> Using {int(train_size * 100)}% train, {100 - int(train_size * 100)}% validation')
+    leave_one_out = config['training']['leave_one_out'] is not None  # Managing Leave One Out
     test_patient = config['training']['leave_one_out']
     train_dataset, val_dataset, test_dataset = dataset.split(train_size, test=leave_one_out, patient=test_patient)
-    print(f'Samples in train: {len(train_dataset)}, Samples in validation: {len(val_dataset)}')
+    print(f'--> Training Set: [{len(train_dataset)}], Validation Set: [{len(val_dataset)}]')
     if test_dataset is not None:
-        print(f'Testing patient {test_patient}')
+        print(f'--> Leave One Out available: testing patient {test_patient}')
     train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=2, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=1, shuffle=True, num_workers=2, pin_memory=True)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
@@ -290,6 +292,7 @@ def main(config_path: str):
         model = nn.DataParallel(model)
     model.to(device=device)
     alpha = config['training']['alpha']
+
     # Loss function
     if config['training']['loss'] == 'ce':
         print('Using CrossEntropyLoss during training')
@@ -302,6 +305,7 @@ def main(config_path: str):
         loss_function = SurvivalClassificationTobitLoss()
     else:
         raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+
     # Optimizer
     lr = config['training']['lr']
     weight_decay = config['training']['weight_decay']

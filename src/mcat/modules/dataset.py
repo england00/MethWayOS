@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import time
 import torch
+from pandas.io.formats.printing import pprint_thing
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -61,7 +62,7 @@ class MultimodalDataset(Dataset):
             print(f'--> Remaining samples after removing incomplete: {len(self.data)}')
 
         # Managing Classes creation
-        classes_number = 6
+        classes_number = 4
         survival_class, class_intervals = pd.qcut(self.data['survival_months'], q=classes_number, retbins=True, labels=False)
         self.data['survival_class'] = survival_class
         print('--> Class intervals: [')
@@ -72,14 +73,14 @@ class MultimodalDataset(Dataset):
         self.survival_class = self.data['survival_class'].values
         self.censorship = self.data['censorship'].values
 
-
+        # Managing Gene Expression Columns (Standardization or Normalization)
         rnaseq_columns = [col for col in self.data.columns if col.endswith('_rnaseq')]
         if config['dataset']['standardize']:
-            print('Standardizing RNA-seq data')
+            print('--> Standardizing RNA-seq data')
             for col in rnaseq_columns:
                 self.data[col] = (self.data[col] - self.data[col].mean()) / self.data[col].std()
-        if config['dataset']['normalize']:
-            print('Normalizing RNA-seq data')
+        elif config['dataset']['normalize']:
+            print('--> Normalizing RNA-seq data')
             for col in rnaseq_columns:
                 self.data[col] = 2 * (self.data[col] - self.data[col].min()) / (self.data[col].max() - self.data[col].min()) - 1
 
@@ -98,7 +99,7 @@ class MultimodalDataset(Dataset):
         self.mut_size = len(self.mut.columns)
         self.mut = torch.tensor(self.mut.values, dtype=torch.float32)
 
-        # Signatures
+        # Managing Signatures
         self.use_signatures = use_signatures
         if self.use_signatures:
             self.signature_sizes = []
@@ -114,7 +115,7 @@ class MultimodalDataset(Dataset):
                         columns[gene] = self.data[gene]
                 self.signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
                 self.signature_sizes.append(self.signature_data[signature_name].shape[1])
-            print(f'Signatures size: {self.signature_sizes}')
+            print(f'--> Signatures size: {self.signature_sizes}')
 
     def __len__(self):
         return len(self.data)
