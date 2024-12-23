@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#SBATCH --job-name=6_mcat
+#SBATCH --job-name=lucas_job
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=271539@studenti.unimore.it
 #SBATCH --account=tesi_linghilterra
 
 #SBATCH --partition=all_usr_prod
-#SBATCH --time=360
-#SBATCH --mem=16G
+#SBATCH --time=24:00:00
+#SBATCH --mem=24G
 #SBATCH --array=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1

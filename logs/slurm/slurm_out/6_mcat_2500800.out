@@ -1,0 +1,265 @@
+Environment conda activated
+Job 2500800 started
+
+#################### [23/12/2024 - 12:52:54] - MCAT started ####################
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: NVIDIA GeForce GTX 1080 Ti
+--> Running on CUDA
+
+DATASET: TCGA data only
+--> Remaining samples after removing incomplete: 1017
+--> Class intervals: [
+	0: [0.03 - 2.97]
+	1: [2.97 - 9.92]
+	2: [9.92 - 12.17]
+	3: [12.17 - 13.28]
+	4: [13.28 - 15.14]
+	5: [15.14 - 17.17]
+	6: [17.17 - 18.83]
+	7: [18.83 - 20.37]
+	8: [20.37 - 23.46]
+	9: [23.46 - 26.48]
+	10: [26.48 - 31.95]
+	11: [31.95 - 35.70]
+	12: [35.70 - 40.41]
+	13: [40.41 - 48.22]
+	14: [48.22 - 54.96]
+	15: [54.96 - 65.91]
+	16: [65.91 - 77.65]
+	17: [77.65 - 93.78]
+	18: [93.78 - 109.23]
+	19: [109.23 - 282.69]
+    ]
+--> Standardizing RNA-seq data
+--> Signatures size: [16638]
+--> Using 80% train, 20% validation
+--> Training Set: [810], Validation Set: [207]
+
+MODEL: MCAT
+--> Trainable parameters of MCAT: 7556886
+
+LOSS FUNCTION: CrossEntropySurvivalLoss
+
+OPTIMIZER: adam
+
+################## [23/12/2024 - 12:53:44] - Training started ##################
+[23/12/2024 - 12:53:44] - Epoch: 1
+	batch: 49, loss: 1.9970, label: 11, survival_months: 32.52, risk: -0.9500
+		average speed: 0.66s per batch
+	batch: 99, loss: 2.9502, label: 17, survival_months: 81.67, risk: -1.0322
+		average speed: 0.64s per batch
+	batch: 149, loss: 0.1699, label: 0, survival_months: 0.33, risk: -1.0940
+		average speed: 0.55s per batch
+	batch: 199, loss: 2.9360, label: 18, survival_months: 97.77, risk: -1.1789
+		average speed: 0.90s per batch
+	batch: 249, loss: 1.6627, label: 11, survival_months: 32.00, risk: -1.3474
+		average speed: 0.81s per batch
+	batch: 299, loss: 1.2376, label: 9, survival_months: 25.26, risk: -1.5065
+		average speed: 0.79s per batch
+	batch: 349, loss: 1.4126, label: 11, survival_months: 31.96, risk: -1.6359
+		average speed: 0.48s per batch
+	batch: 399, loss: 0.1978, label: 1, survival_months: 8.51, risk: -1.9345
+		average speed: 0.57s per batch
+	batch: 449, loss: 1.8956, label: 18, survival_months: 105.26, risk: -2.6697
+		average speed: 0.56s per batch
+	batch: 499, loss: 0.2541, label: 3, survival_months: 12.45, risk: -3.3442
+		average speed: 0.73s per batch
+	batch: 549, loss: 1.0962, label: 15, survival_months: 55.39, risk: -3.9993
+		average speed: 0.69s per batch
+	batch: 599, loss: 0.3503, label: 8, survival_months: 23.03, risk: -5.1896
+		average speed: 0.83s per batch
+	batch: 649, loss: 3.3291, label: 15, survival_months: 57.79, risk: -6.4163
+		average speed: 0.80s per batch
+	batch: 699, loss: 0.0637, label: 3, survival_months: 13.24, risk: -8.7274
+		average speed: 0.51s per batch
+	batch: 749, loss: 0.0188, label: 1, survival_months: 8.28, risk: -9.8473
+		average speed: 0.49s per batch
+	batch: 799, loss: 0.2599, label: 14, survival_months: 49.01, risk: -11.6251
+		average speed: 0.31s per batch
+Epoch: 1, train_loss: 1.4598, train_c_index: 0.4592
+Epoch: 1, val_loss: 0.4561, val_c_index: 0.4877
+[23/12/2024 - 13:01:18] - Time elapsed for epoch 1: 455s
+[23/12/2024 - 13:01:18] - Epoch: 2
+	batch: 49, loss: 0.0273, label: 8, survival_months: 23.32, risk: -15.3117
+		average speed: 0.54s per batch
+	batch: 99, loss: 0.0456, label: 12, survival_months: 36.17, risk: -16.3102
+		average speed: 0.63s per batch
+	batch: 149, loss: 0.0161, label: 8, survival_months: 21.62, risk: -16.3175
+		average speed: 0.41s per batch
+	batch: 199, loss: 0.0086, label: 6, survival_months: 17.67, risk: -17.1309
+		average speed: 0.79s per batch
+	batch: 249, loss: 0.0006, label: 0, survival_months: 0.99, risk: -17.3930
+		average speed: 0.82s per batch
+	batch: 299, loss: 0.0115, label: 9, survival_months: 26.02, risk: -17.5069
+		average speed: 0.56s per batch
+	batch: 349, loss: 2.9967, label: 15, survival_months: 55.45, risk: -17.4125
+		average speed: 0.71s per batch
+	batch: 399, loss: 0.0318, label: 15, survival_months: 61.63, risk: -17.9489
+		average speed: 0.75s per batch
+	batch: 449, loss: 0.1298, label: 18, survival_months: 106.67, risk: -17.3670
+		average speed: 0.52s per batch
+	batch: 499, loss: 4.8875, label: 3, survival_months: 12.39, risk: -16.8572
+		average speed: 0.63s per batch
+	batch: 549, loss: 0.1883, label: 18, survival_months: 101.91, risk: -15.9843
+		average speed: 0.52s per batch
+	batch: 599, loss: 0.0309, label: 5, survival_months: 17.02, risk: -14.9841
+		average speed: 0.76s per batch
+	batch: 649, loss: 0.0319, label: 3, survival_months: 12.52, risk: -14.2242
+		average speed: 0.81s per batch
+	batch: 699, loss: 0.5069, label: 19, survival_months: 113.53, risk: -13.7163
+		average speed: 0.79s per batch
+	batch: 749, loss: 0.0463, label: 4, survival_months: 13.90, risk: -13.2568
+		average speed: 0.74s per batch
+	batch: 799, loss: 0.3433, label: 18, survival_months: 97.77, risk: -12.8446
+		average speed: 0.94s per batch
+Epoch: 2, train_loss: 0.4796, train_c_index: 0.4999
+Epoch: 2, val_loss: 0.4200, val_c_index: 0.4635
+[23/12/2024 - 13:09:09] - Time elapsed for epoch 2: 471s
+[23/12/2024 - 13:09:09] - Epoch: 3
+	batch: 49, loss: 0.3864, label: 18, survival_months: 98.85, risk: -11.9316
+		average speed: 0.75s per batch
+	batch: 99, loss: 3.1546, label: 11, survival_months: 32.06, risk: -12.9003
+		average speed: 0.45s per batch
+	batch: 149, loss: 0.0595, label: 6, survival_months: 18.66, risk: -12.6433
+		average speed: 0.46s per batch
+	batch: 199, loss: 0.0311, label: 2, survival_months: 11.33, risk: -13.2965
+		average speed: 0.60s per batch
+	batch: 249, loss: 0.0295, label: 2, survival_months: 9.99, risk: -13.0830
+		average speed: 0.42s per batch
+	batch: 299, loss: 0.0318, label: 4, survival_months: 15.14, risk: -14.1052
+		average speed: 0.53s per batch
+	batch: 349, loss: 2.1300, label: 15, survival_months: 55.45, risk: -13.9478
+		average speed: 0.89s per batch
+	batch: 399, loss: 0.0149, label: 1, survival_months: 9.46, risk: -14.0982
+		average speed: 0.51s per batch
+	batch: 449, loss: 3.1212, label: 1, survival_months: 5.19, risk: -14.0814
+		average speed: 0.83s per batch
+	batch: 499, loss: 0.1124, label: 15, survival_months: 61.63, risk: -15.3671
+		average speed: 0.71s per batch
+	batch: 549, loss: 0.0017, label: 0, survival_months: 0.33, risk: -14.3400
+		average speed: 0.55s per batch
+	batch: 599, loss: 0.2122, label: 18, survival_months: 98.92, risk: -15.2872
+		average speed: 1.48s per batch
+	batch: 649, loss: 0.2302, label: 18, survival_months: 95.93, risk: -15.0619
+		average speed: 0.71s per batch
+	batch: 699, loss: 0.0451, label: 10, survival_months: 28.75, risk: -15.5552
+		average speed: 0.86s per batch
+	batch: 749, loss: 0.0139, label: 2, survival_months: 9.99, risk: -15.0671
+		average speed: 0.55s per batch
+	batch: 799, loss: 0.5223, label: 19, survival_months: 169.38, risk: -14.6696
+		average speed: 0.73s per batch
+Epoch: 3, train_loss: 0.4371, train_c_index: 0.5166
+Epoch: 3, val_loss: 0.4249, val_c_index: 0.4483
+[23/12/2024 - 13:16:43] - Time elapsed for epoch 3: 453s
+[23/12/2024 - 13:16:43] - Epoch: 4
+	batch: 49, loss: 0.0365, label: 7, survival_months: 20.24, risk: -14.8121
+		average speed: 0.84s per batch
+	batch: 99, loss: 0.0208, label: 2, survival_months: 12.02, risk: -14.0331
+		average speed: 0.69s per batch
+	batch: 149, loss: 0.0878, label: 12, survival_months: 37.39, risk: -14.4805
+		average speed: 0.81s per batch
+	batch: 199, loss: 0.0515, label: 8, survival_months: 22.08, risk: -13.8787
+		average speed: 0.43s per batch
+	batch: 249, loss: 0.0330, label: 3, survival_months: 12.35, risk: -13.8734
+		average speed: 0.70s per batch
+	batch: 299, loss: 3.2578, label: 11, survival_months: 32.06, risk: -14.7178
+		average speed: 0.47s per batch
+	batch: 349, loss: 0.0435, label: 6, survival_months: 17.77, risk: -14.1570
+		average speed: 0.82s per batch
+	batch: 399, loss: 0.0610, label: 11, survival_months: 34.79, risk: -15.1303
+		average speed: 0.76s per batch
+	batch: 449, loss: 0.0456, label: 8, survival_months: 21.42, risk: -14.3679
+		average speed: 0.89s per batch
+	batch: 499, loss: 2.7640, label: 6, survival_months: 17.21, risk: -11.4379
+		average speed: 0.39s per batch
+	batch: 549, loss: 0.0147, label: 1, survival_months: 9.92, risk: -14.7347
+		average speed: 0.51s per batch
+	batch: 599, loss: 0.0593, label: 10, survival_months: 29.83, risk: -14.9154
+		average speed: 0.69s per batch
+	batch: 649, loss: 0.0421, label: 2, survival_months: 9.99, risk: -11.7096
+		average speed: 0.44s per batch
+	batch: 699, loss: 0.0373, label: 7, survival_months: 19.02, risk: -14.8404
+		average speed: 0.77s per batch
+	batch: 749, loss: 0.0011, label: 0, survival_months: 0.33, risk: -14.3635
+		average speed: 0.71s per batch
+	batch: 799, loss: 0.5715, label: 19, survival_months: 136.63, risk: -12.9666
+		average speed: 0.63s per batch
+Epoch: 4, train_loss: 0.4195, train_c_index: 0.6080
+Epoch: 4, val_loss: 0.4277, val_c_index: 0.4412
+[23/12/2024 - 13:24:21] - Time elapsed for epoch 4: 458s
+[23/12/2024 - 13:24:21] - Epoch: 5
+	batch: 49, loss: 0.0396, label: 8, survival_months: 22.31, risk: -14.5897
+		average speed: 0.68s per batch
+	batch: 99, loss: 0.2622, label: 18, survival_months: 98.59, risk: -14.7810
+		average speed: 0.73s per batch
+	batch: 149, loss: 0.0098, label: 2, survival_months: 11.99, risk: -16.0459
+		average speed: 0.80s per batch
+	batch: 199, loss: 0.0008, label: 0, survival_months: 0.99, risk: -14.7767
+		average speed: 0.51s per batch
+	batch: 249, loss: 0.0688, label: 13, survival_months: 40.70, risk: -15.3445
+		average speed: 0.87s per batch
+	batch: 299, loss: 0.0321, label: 9, survival_months: 24.80, risk: -15.6021
+		average speed: 0.98s per batch
+	batch: 349, loss: 0.3754, label: 19, survival_months: 134.03, risk: -16.2825
+		average speed: 0.79s per batch
+	batch: 399, loss: 0.0415, label: 10, survival_months: 29.96, risk: -15.5936
+		average speed: 0.99s per batch
+	batch: 449, loss: 2.1608, label: 15, survival_months: 55.45, risk: -16.4566
+		average speed: 0.55s per batch
+	batch: 499, loss: 0.1493, label: 17, survival_months: 92.41, risk: -16.2199
+		average speed: 0.62s per batch
+	batch: 549, loss: 0.0353, label: 10, survival_months: 30.98, risk: -15.8609
+		average speed: 0.43s per batch
+	batch: 599, loss: 0.1412, label: 18, survival_months: 99.54, risk: -16.6971
+		average speed: 0.76s per batch
+	batch: 649, loss: 2.9237, label: 10, survival_months: 30.26, risk: -14.6602
+		average speed: 0.46s per batch
+	batch: 699, loss: 0.0443, label: 13, survival_months: 41.00, risk: -16.7717
+		average speed: 0.74s per batch
+	batch: 749, loss: 0.0117, label: 2, survival_months: 10.61, risk: -15.3220
+		average speed: 0.47s per batch
+	batch: 799, loss: 0.0712, label: 13, survival_months: 42.74, risk: -15.6652
+		average speed: 0.68s per batch
+Epoch: 5, train_loss: 0.3974, train_c_index: 0.7134
+Epoch: 5, val_loss: 0.4472, val_c_index: 0.5166
+[23/12/2024 - 13:31:54] - Time elapsed for epoch 5: 453s
+[23/12/2024 - 13:31:54] - Epoch: 6
+	batch: 49, loss: 2.3592, label: 18, survival_months: 97.40, risk: -15.3337
+		average speed: 0.88s per batch
+	batch: 99, loss: 0.1277, label: 8, survival_months: 21.65, risk: -9.8998
+		average speed: 0.48s per batch
+	batch: 149, loss: 0.0862, label: 13, survival_months: 43.00, risk: -15.0283
+		average speed: 1.10s per batch
+	batch: 199, loss: 0.0005, label: 0, survival_months: 0.99, risk: -15.2972
+		average speed: 0.45s per batch
+	batch: 249, loss: 0.2311, label: 18, survival_months: 99.70, risk: -15.4503
+		average speed: 0.35s per batch
+	batch: 299, loss: 0.1225, label: 14, survival_months: 48.49, risk: -14.3690
+		average speed: 0.86s per batch
+	batch: 349, loss: 2.4916, label: 14, survival_months: 54.96, risk: -13.3894
+		average speed: 0.79s per batch
+	batch: 399, loss: 1.0186, label: 19, survival_months: 140.18, risk: -15.4756
+		average speed: 0.94s per batch
+	batch: 449, loss: 1.8174, label: 17, survival_months: 83.25, risk: -16.4215
+		average speed: 0.55s per batch
+	batch: 499, loss: 0.5341, label: 19, survival_months: 233.44, risk: -16.5071
+		average speed: 0.61s per batch
+	batch: 549, loss: 0.0123, label: 7, survival_months: 19.19, risk: -16.6079
+		average speed: 0.71s per batch
+	batch: 599, loss: 0.0117, label: 3, survival_months: 12.48, risk: -15.7365
+		average speed: 1.02s per batch
+	batch: 649, loss: 0.0128, label: 7, survival_months: 19.19, risk: -16.5269
+		average speed: 0.80s per batch
+	batch: 699, loss: 2.1745, label: 6, survival_months: 17.21, risk: -8.6545
+		average speed: 0.59s per batch
+	batch: 749, loss: 0.0124, label: 9, survival_months: 23.78, risk: -16.9419
+		average speed: 1.25s per batch
+	batch: 799, loss: 0.0033, label: 1, survival_months: 3.88, risk: -16.7147
+		average speed: 0.84s per batch
+Epoch: 6, train_loss: 0.3724, train_c_index: 0.8203
+Epoch: 6, val_loss: 0.4901, val_c_index: 0.4578
+[23/12/2024 - 13:40:22] - Time elapsed for epoch 6: 509s
+[23/12/2024 - 13:40:22] - Epoch: 7

@@ -4,7 +4,7 @@ device: cuda
 # W&B configuration
 wandb:
   # Whether enable or not W&B
-  enabled: False
+  enabled: True
   # Project name
   project: TCGA-BRCA-COMP
 
@@ -13,9 +13,9 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA
   # CSV dataset file
-  file: F:/Bioinformatica/brca/brca.csv
+  file: /work/h2020deciderficarra_shared/mgualtieri/brca/brca.csv
   # Directory containing slides embeddings
-  patches_dir: F:/Bioinformatica/brca/slides/
+  patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
   # Signature of genes to use
   signatures: ../../data/tables/gene_expression_keys.csv
   # Whether to use only Decider data or not
@@ -47,7 +47,7 @@ model:
 # Training configuration
 training:
   # ID of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: ~
+  leave_one_out: bb1de798-0c02-437e-b539-33cb556d3993
   # At which epoch write the attention file
   output_attn_epoch: 20
   # Directory in which attention outputs will be saved
@@ -63,14 +63,14 @@ training:
   # Learning rate
   lr: 0.0001
   # Weight decay
-  weight_decay: 0.0001
+  weight_decay: 0.0005
   # Gradient acceleration step
-  grad_acc_step: 16
+  grad_acc_step: 8
   # Scheduler for learning rate [~, exp]
   scheduler: exp
   # Coefficient used in Cross Entropy Survival loss
-  alpha: 0.75
+  alpha: 0.9
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: 0.0
+  lambda: 0.001
   # Coefficient used in exponential lr scheduling
   gamma: 1.0
