@@ -4,7 +4,7 @@ device: cuda
 # W&B configuration
 wandb:
   # Whether enable or not W&B
-  enabled: False
+  enabled: True
   # Project name
   project: TCGA-BRCA-COMP
 
@@ -13,9 +13,9 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA
   # CSV dataset file
-  file: F:/Bioinformatica/brca/brca.csv
+  file: /work/h2020deciderficarra_shared/mgualtieri/brca/brca.csv
   # Directory containing slides embeddings
-  patches_dir: F:/Bioinformatica/brca/slides/
+  patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
   # Signature of genes to use
   signatures: ../../data/tables/gene_expression_keys.csv
   # Whether to use only Decider data or not
@@ -47,7 +47,7 @@ model:
 # Training configuration
 training:
   # ID of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: dbb2da92-99dd-400c-bc05-e87d7273656c
+  leave_one_out: ~
   # At which epoch write the attention file
   output_attn_epoch: 20
   # Directory in which attention outputs will be saved
