@@ -97,9 +97,9 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     if use_scheduler:
         lr = optimizer.param_groups[0]["lr"]
         scheduler.step()
-        print('Epoch: {}, lr: {:.8f}, train_loss: {:.4f}, train_c_index: {:.4f}'.format(epoch + 1, lr, train_loss, c_index))
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
     else:
-        print('Epoch: {}, train_loss: {:.4f}, train_c_index: {:.4f}'.format(epoch + 1, train_loss, c_index))
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
     if checkpoint_epoch > 0:
         if (epoch + 1) % checkpoint_epoch == 0 and epoch != 0:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M')
