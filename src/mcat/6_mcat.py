@@ -76,10 +76,11 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
         train_loss += loss_value + loss_reg
 
         if (batch_index + 1) % 50 == 0:
-            print('\tbatch: {}, loss: {:.4f}, label: {}, survival_months: {:.2f}, risk: {:.4f}'.format(
-                batch_index, loss_value + loss_reg, survival_class.item(), survival_months.item(), float(risk.item())))
+
+            print(f'--> Batch: {batch_index}, Loss: {loss_value + loss_reg:.4f}, Label: {survival_class.item()}, Survival Months: {survival_months.item():.2f}, Risk: {float(risk.item()):.4f}')
             end_batch_time = time.time()
-            print('\t\taverage speed: {:.2f}s per batch'.format((end_batch_time - start_batch_time) / 32))
+            print(f'\t--> Average Speed: {((end_batch_time - start_batch_time) / 32):.2f}s per batch')
+            print(f'\t--> Time from Last Check: {(end_batch_time - start_batch_time):.2f}s')
             start_batch_time = time.time()
         loss = loss / grad_acc_step + loss_reg
         loss.backward()

@@ -47,7 +47,7 @@ model:
 # Training configuration
 training:
   # ID of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: dbb2da92-99dd-400c-bc05-e87d7273656c
+  leave_one_out: ~
   # At which epoch write the attention file
   output_attn_epoch: 20
   # Directory in which attention outputs will be saved
@@ -61,13 +61,13 @@ training:
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adam
   # Learning rate
-  lr: 0.0002
+  lr: 0.0001
   # Weight decay
-  weight_decay: 0.00001
+  weight_decay: 0.0001
   # Gradient acceleration step
-  grad_acc_step: 32
+  grad_acc_step: 16
   # Scheduler for learning rate [~, exp]
-  scheduler: ~
+  scheduler: exp
   # Coefficient used in Cross Entropy Survival loss
   alpha: 0.75
   # Regulator coefficient. Set 0.0 if regularization is not needed
