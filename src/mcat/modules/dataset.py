@@ -10,7 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 
 ## CLASSES
 class MultimodalDataset(Dataset):
-    def __init__(self, file: str, config, use_signatures=False, remove_incomplete_samples=True):
+    def __init__(self, file: str, config, classes_number: int = 4, use_signatures: bool = False, remove_incomplete_samples: bool = True):
         # Managing CSV Dataset
         self.data = pd.read_csv(file)
         if config['dataset']['decider_only']:
@@ -62,8 +62,8 @@ class MultimodalDataset(Dataset):
             print(f'--> Remaining samples after removing incomplete: {len(self.data)}')
 
         # Managing Classes creation
-        classes_number = 4
-        survival_class, class_intervals = pd.qcut(self.data['survival_months'], q=classes_number, retbins=True, labels=False)
+        self.classes_number = classes_number
+        survival_class, class_intervals = pd.qcut(self.data['survival_months'], q=self.classes_number, retbins=True, labels=False)
         self.data['survival_class'] = survival_class
         print('--> Class intervals: [')
         for i in range(0, classes_number):
@@ -125,6 +125,7 @@ class MultimodalDataset(Dataset):
         survival_class = self.survival_class[index]
         censorship = self.censorship[index]
 
+        # Managing H5 Dataset
         if not self.use_h5_dataset:
             slide_name = self.data['slide_id'][index].replace('.svs', '.pt')
             patches_embeddings = torch.load(os.path.join(self.patches_dir, slide_name))
@@ -132,6 +133,7 @@ class MultimodalDataset(Dataset):
             slide_name = self.data['slide_id'][index].replace('.svs', '')
             patches_embeddings = torch.tensor(self.h5_file[slide_name])
 
+        # Managing Signatures
         if not self.use_signatures:
             omics_data = {
                 'rnaseq': self.rnaseq[index],
@@ -196,8 +198,7 @@ class MultimodalDataset(Dataset):
 
         # Reset indices in the DataFrame
         df = df.reset_index(drop=True)
-        # Copy attributes from the original instance
-        instance.data = df
+        instance.data = df  # Copy attributes from the original instance
         instance.patches_dir = original_instance.patches_dir
         instance.use_h5_dataset = original_instance.use_h5_dataset
         instance.use_signatures = original_instance.use_signatures
@@ -206,6 +207,7 @@ class MultimodalDataset(Dataset):
             instance.signature_sizes = original_instance.signature_sizes
         instance.h5_dataset = original_instance.h5_dataset if original_instance.use_h5_dataset else None
 
+        # H5 Dataset Case
         if original_instance.use_h5_dataset:
             instance.h5_file = h5py.File(instance.h5_dataset, 'r')
 

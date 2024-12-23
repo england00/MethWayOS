@@ -20,6 +20,8 @@ from torch.utils.data import DataLoader
 
 ## CONFIGURATION
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+CLASSES_NUMBER = 20
+BATCH_SIZE = 1
 
 
 ## FUNCTIONS
@@ -196,12 +198,11 @@ def test(config, device, epoch, val_loader, model, patient, save=False):
                 torch.save(attention_scores['coattn'], output_file)
 
 
+''' W&B CONFIGURATION '''
 def wandb_init(config):
     wandb.init(
         project=config['wandb']['project'],
-        settings=wandb.Settings(
-            init_timeout=300,
-        ),
+        settings=wandb.Settings(init_timeout=300),
         config={
             'model': config['model']['name'],
             'dataset': config['dataset']['name'],
@@ -228,14 +229,13 @@ def wandb_init(config):
     )
 
 
-''' Main definition '''
+''' MAIN DEFINITION '''
 def main(config_path: str):
     # Loading Configuration file
     with open(config_path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-    # W&B
-    print('')
+    # Starting W&B
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         print('WANDB: setting up for report')
@@ -261,7 +261,11 @@ def main(config_path: str):
     # Loading Dataset
     print('')
     file_csv = config['dataset']['file']
-    dataset = MultimodalDataset(file_csv, config, use_signatures=True)  # Dataset object
+    dataset = MultimodalDataset(file_csv,
+                                config,
+                                classes_number=CLASSES_NUMBER,
+                                use_signatures=True,
+                                remove_incomplete_samples=True)  # Dataset object
     train_size = config['training']['train_size']
     print(f'--> Using {int(train_size * 100)}% train, {100 - int(train_size * 100)}% validation')
     leave_one_out = config['training']['leave_one_out'] is not None  # Managing Leave One Out
@@ -270,22 +274,28 @@ def main(config_path: str):
     print(f'--> Training Set: [{len(train_dataset)}], Validation Set: [{len(val_dataset)}]')
     if test_dataset is not None:
         print(f'--> Leave One Out available: testing patient {test_patient}')
-    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=2, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=1, shuffle=True, num_workers=2, pin_memory=True)
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=6, pin_memory=True)
     output_attn_epoch = config['training']['output_attn_epoch']
 
     # Model
+    print('')
+    model_name = config['model']['name']
+    print(f'MODEL: {model_name}')
     model_size = config['model']['model_size']
     omics_sizes = dataset.signature_sizes
     fusion = config['model']['fusion']
-    model_name = config['model']['name']
-    model = MultimodalCoAttentionTransformer(model_size=model_size, omic_sizes=omics_sizes, fusion=fusion, device=device)
-    print(f'Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
-    checkpoint_path = config['model']['load_from_checkpoint']
+    model = MultimodalCoAttentionTransformer(model_size=model_size,
+                                             n_classes=CLASSES_NUMBER,
+                                             omic_sizes=omics_sizes,
+                                             fusion=fusion,
+                                             device=device)
+    print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
+    checkpoint_path = config['model']['load_from_checkpoint']  # Loading previous checkpoint if specified
     checkpoint = None
     if checkpoint_path is not None:
-        print(f'Loading model checkpoint from {checkpoint_path}')
+        print(f'--> Loading model checkpoint from {checkpoint_path}')
         checkpoint = torch.load(checkpoint_path)
         model.load_state_dict(checkpoint['model_state_dict'])
     if device == 'cuda' and torch.cuda.device_count() > 1:
@@ -294,37 +304,40 @@ def main(config_path: str):
     alpha = config['training']['alpha']
 
     # Loss function
+    print('')
     if config['training']['loss'] == 'ce':
-        print('Using CrossEntropyLoss during training')
+        print('LOSS FUNCTION: CrossEntropyLoss')
         loss_function = nn.CrossEntropyLoss()
     elif config['training']['loss'] == 'ces':
-        print('Using CrossEntropySurvivalLoss during training')
+        print('LOSS FUNCTION: CrossEntropySurvivalLoss')
         loss_function = CrossEntropySurvivalLoss(alpha=alpha)
     elif config['training']['loss'] == 'sct':
-        print('Using SurvivalClassificationTobitLoss during training')
+        print('LOSS FUNCTION: SurvivalClassificationTobitLoss')
         loss_function = SurvivalClassificationTobitLoss()
     else:
-        raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+        raise RuntimeError(f'LOSS FUNCTION: "{config["training"]["loss"]}" not implemented')
 
     # Optimizer
-    lr = config['training']['lr']
+    print('')
+    learning_rate = config['training']['lr']
     weight_decay = config['training']['weight_decay']
     optimizer_name = config['training']['optimizer']
     if optimizer_name == 'sgd':
         optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()),
-                                    lr=lr)
+                                    lr=learning_rate)
     elif optimizer_name == 'adadelta':
         optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, model.parameters()),
-                                         lr=lr, weight_decay=weight_decay)
+                                         lr=learning_rate, weight_decay=weight_decay)
     elif optimizer_name == 'adamax':
         optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()),
-                                       lr=lr, weight_decay=weight_decay)
+                                       lr=learning_rate, weight_decay=weight_decay)
     else:
         optimizer_name = 'adam'
         optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                                     lr=lr, weight_decay=weight_decay)
-    print(f'Using optimizer: {optimizer_name}')
+                                     lr=learning_rate, weight_decay=weight_decay)
+    print(f'OPTIMIZER: {optimizer_name}')
 
+    # Scheduler for variable learning rate
     scheduler = config['training']['scheduler']
     if scheduler == 'exp':
         gamma = config['training']['gamma']
@@ -332,18 +345,21 @@ def main(config_path: str):
     else:
         scheduler = None
 
+    # Optimizer in a given checkpoint
     starting_epoch = 0
     if checkpoint_path is not None:
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         starting_epoch = checkpoint['epoch']
 
+    # Lambda parameter
     lambda_param = config['training']['lambda']
     if lambda_param:
         reg_function = l1_reg
     else:
         reg_function = None
 
-    print('Training started...')
+    # Training
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - Training started')
     model.train()
     epochs = config['training']['epochs']
     for epoch in range(starting_epoch, epochs):
@@ -359,9 +375,12 @@ def main(config_path: str):
             test(config, device, epoch + 1, test_loader, model, test_patient, save=save)
         end_time = time.time()
         print('Time elapsed for epoch {}: {:.0f}s'.format(epoch + 1, end_time - start_time))
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M")}] - Training started')
 
+    # Validation
     validate('final validation', config, device, val_loader, model, loss_function, reg_function)
 
+    # Ending W&B
     if wandb_enabled:
         wandb.finish()
 

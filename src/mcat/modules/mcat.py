@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from src.mcat.modules.blocks import AttentionNetGated
 from src.mcat.modules.fusion import BilinearFusion, ConcatFusion, GatedConcatFusion
 
