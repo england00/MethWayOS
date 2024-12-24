@@ -29,6 +29,7 @@ def title(text):
     print('\n' + f' {text} '.center(80, '#'))
 
 
+''' TRAINING DEFINITION '''
 def train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function):
     model.train()
     grad_acc_step = config['training']['grad_acc_step']
@@ -97,7 +98,10 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if use_scheduler:
         lr = optimizer.param_groups[0]["lr"]
-        scheduler.step()
+        if scheduler == 'exp':
+            scheduler.step()
+        if scheduler == 'rop':
+            scheduler.step(train_loss)
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
     else:
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
@@ -107,7 +111,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
             filename = f'{config["model"]["name"]}_{config["dataset"]["name"]}_E{epoch + 1}_{now}.pt'
             checkpoint_dir = config['model']['checkpoint_dir']
             checkpoint_path = os.path.join(checkpoint_dir, filename)
-            print(f'Saving model into {checkpoint_path}')
+            print(f'--> Saving model into {checkpoint_path}')
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
@@ -119,6 +123,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
         wandb.log({"train_loss": train_loss, "train_c_index": c_index})
 
 
+''' VALIDATION DEFINITION '''
 def validate(epoch, config, device, val_loader, model, loss_function, reg_function):
     model.eval()
     val_loss = 0.0
@@ -144,7 +149,7 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
         elif config['training']['loss'] == 'sct':
             loss = loss_function(Y, survival_class, c=censorship)
         else:
-            raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+            raise RuntimeError(f'--> Loss "{config["training"]["loss"]}" not implemented')
         loss_value = loss.item()
 
         if reg_function is None:
@@ -163,14 +168,15 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
     val_loss /= len(val_loader)
     c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if epoch == 'final validation':
-        print(f'Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     else:
-        print(f'Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         wandb.log({"val_loss": val_loss, "val_c_index": c_index})
 
 
+''' TESTING DEFINITION '''
 def test(config, device, epoch, val_loader, model, patient, save=False):
     model.eval()
     output_dir = config['training']['test_output_dir']
@@ -201,8 +207,11 @@ def test(config, device, epoch, val_loader, model, patient, save=False):
 
 ''' W&B CONFIGURATION '''
 def wandb_init(config):
+    slurm_job_name = os.getenv('SLURM_JOB_NAME', 'default_job_name')  # Slurm Job Name
+    slurm_job_id = os.getenv('SLURM_JOB_ID', 'default_job_id')  # Slurm Job Id
     wandb.init(
         project=config['wandb']['project'],
+        name=f"{slurm_job_name}_{slurm_job_id}",
         settings=wandb.Settings(init_timeout=300),
         config={
             'model': config['model']['name'],
@@ -322,18 +331,14 @@ def main(config_path: str):
     weight_decay = config['training']['weight_decay']
     optimizer_name = config['training']['optimizer']
     if optimizer_name == 'sgd':
-        optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()),
-                                    lr=learning_rate)
+        optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate)
     elif optimizer_name == 'adadelta':
-        optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, model.parameters()),
-                                         lr=learning_rate, weight_decay=weight_decay)
+        optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate, weight_decay=weight_decay)
     elif optimizer_name == 'adamax':
-        optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()),
-                                       lr=learning_rate, weight_decay=weight_decay)
+        optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate, weight_decay=weight_decay)
     else:
         optimizer_name = 'adam'
-        optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                                     lr=learning_rate, weight_decay=weight_decay)
+        optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate, weight_decay=weight_decay)
     print(f'--> Optimizer: {optimizer_name}')
 
     # Scheduler for variable learning rate
@@ -341,6 +346,8 @@ def main(config_path: str):
     if scheduler == 'exp':
         gamma = config['training']['gamma']
         scheduler = lrs.ExponentialLR(optimizer, gamma=gamma)
+    elif scheduler == 'rop':
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=1)
     else:
         scheduler = None
 
