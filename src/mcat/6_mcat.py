@@ -5,6 +5,7 @@ import time
 import wandb
 import yaml
 import numpy as np
+import socket
 import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
@@ -245,7 +246,15 @@ def main(config_path: str):
     with open(config_path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
 
+    # Managing Runs on Local Machine
+    print(f"HOSTNAME: {socket.gethostname()}")
+    if socket.gethostname() == 'DELL-XPS-15':
+        config['wandb']['enabled'] = False
+        config['dataset']['file'] = 'D:/Data - Tirocinio/brca/brca.csv'
+        config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
+
     # Starting W&B
+    print('')
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         print('WANDB: setting up for report')
