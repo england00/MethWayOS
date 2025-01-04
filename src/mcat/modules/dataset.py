@@ -1,10 +1,9 @@
 import os
-import h5py
 import numpy as np
 import pandas as pd
 import time
 import torch
-from pandas.io.formats.printing import pprint_thing
+import yaml
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -31,31 +30,15 @@ class MultimodalDataset(Dataset):
         if self.patches_dir is None:
             self.patches_dir = ''
 
-        # Managing H5 Dataset
-        self.use_h5_dataset = False
-        try:
-            self.use_h5_dataset = config['dataset']['h5_dataset'] is not None
-        except KeyError:
-            pass
-
         # Managing incomplete examples (only sample with both Gene Expression and WSI)
         if remove_incomplete_samples:
             slide_index = 0
             complete_data_only = []
-            if not self.use_h5_dataset:
-                for slide in self.data['slide_id']:  # WSI
-                    slide_name = slide.replace('.svs', '.pt')
-                    if os.path.exists(os.path.join(self.patches_dir, slide_name)):
-                        complete_data_only.append(self.data.iloc[slide_index])
-                    slide_index += 1
-            else:
-                self.h5_dataset = config['dataset']['h5_dataset']
-                self.h5_file = h5py.File(self.h5_dataset, 'r')
-                for slide in self.data['slide_id']:  # WSI
-                    slide_name = slide.replace('.svs', '')
-                    if slide_name in self.h5_file:
-                        complete_data_only.append(self.data.iloc[slide_index])
-                    slide_index += 1
+            for slide in self.data['slide_id']:  # WSI
+                slide_name = slide.replace('.svs', '.pt')
+                if os.path.exists(os.path.join(self.patches_dir, slide_name)):
+                    complete_data_only.append(self.data.iloc[slide_index])
+                slide_index += 1
             # Saving only complete samples inside a new dataframe
             self.data = pd.DataFrame(complete_data_only)
             self.data.reset_index(drop=True, inplace=True)
@@ -78,11 +61,20 @@ class MultimodalDataset(Dataset):
         if config['dataset']['standardize']:
             print('--> Standardizing RNA-seq data')
             for col in rnaseq_columns:
-                self.data[col] = (self.data[col] - self.data[col].mean()) / self.data[col].std()
+                mean = self.data[col].mean()
+                std = self.data[col].std()
+                if std == 0:
+                    self.data[col] = 0
+                else:
+                    self.data[col] = (self.data[col] - mean) / std
         elif config['dataset']['normalize']:
             print('--> Normalizing RNA-seq data')
             for col in rnaseq_columns:
-                self.data[col] = 2 * (self.data[col] - self.data[col].min()) / (self.data[col].max() - self.data[col].min()) - 1
+                std = self.data[col].std()
+                if std == 0:
+                    self.data[col] = 0.5
+                else:
+                    self.data[col] = 2 * (self.data[col] - self.data[col].min()) / (self.data[col].max() - self.data[col].min()) - 1
 
         # RNA
         self.rnaseq = self.data.iloc[:, self.data.columns.str.endswith('_rnaseq')].astype(float)
@@ -101,52 +93,40 @@ class MultimodalDataset(Dataset):
 
         # Managing Signatures
         self.use_signatures = use_signatures
-        if self.use_signatures:
-            self.signature_sizes = []
-            self.signature_data = {}
-            signatures_file = config['dataset']['signatures']
-            signatures_df = pd.read_csv(signatures_file)
-            self.signatures = signatures_df.columns
-            for signature_name in self.signatures:
-                columns = {}
-                for gene in signatures_df[signature_name].dropna():
-                    gene += '_rnaseq'
-                    if gene in self.data.columns:
-                        columns[gene] = self.data[gene]
-                self.signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-                self.signature_sizes.append(self.signature_data[signature_name].shape[1])
-            print(f'--> Signatures size: {self.signature_sizes}')
-
-    def __len__(self):
-        return len(self.data)
+        self.signature_sizes = []
+        self.signature_data = {}
+        signatures_file = config['dataset']['signatures']
+        signatures_df = pd.read_csv(signatures_file)
+        self.signatures = signatures_df.columns
+        for signature_name in self.signatures:
+            columns = {}
+            for gene in signatures_df[signature_name].dropna():
+                gene += '_rnaseq'
+                if gene in self.data.columns:
+                    columns[gene] = self.data[gene]
+            self.signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            self.signature_sizes.append(self.signature_data[signature_name].shape[1])
+        print(f'--> Signatures size: {self.signature_sizes}')
 
     def __getitem__(self, index):
         survival_months = self.survival_months[index]
         survival_class = self.survival_class[index]
         censorship = self.censorship[index]
 
-        # Managing H5 Dataset
-        if not self.use_h5_dataset:
-            slide_name = self.data['slide_id'][index].replace('.svs', '.pt')
-            patches_embeddings = torch.load(os.path.join(self.patches_dir, slide_name))
-        else:
-            slide_name = self.data['slide_id'][index].replace('.svs', '')
-            patches_embeddings = torch.tensor(self.h5_file[slide_name])
+        # Managing Patches Embeddings
+        slide_name = self.data['slide_id'][index].replace('.svs', '.pt')
+        patches_embeddings = torch.load(os.path.join(self.patches_dir, slide_name))
 
-        # Managing Signatures
-        if not self.use_signatures:
-            omics_data = {
-                'rnaseq': self.rnaseq[index],
-                'cnv': self.cnv[index],
-                'mut': self.mut[index]
-            }
-        else:
-            omics_data = []
-            for signature in self.signatures:
-                signature_data = self.signature_data[signature][index]
-                omics_data.append(signature_data)
+        # Managing Omics Data
+        omics_data = []
+        for signature in self.signatures:
+            signature_data = self.signature_data[signature][index]
+            omics_data.append(signature_data)
 
         return survival_months, survival_class, censorship, omics_data, patches_embeddings
+
+    def __len__(self):
+        return len(self.data)
 
     def split(self, train_size, test: bool = False, patient: str = ''):
         # Ensure train_size is a valid ratio
@@ -200,16 +180,10 @@ class MultimodalDataset(Dataset):
         df = df.reset_index(drop=True)
         instance.data = df  # Copy attributes from the original instance
         instance.patches_dir = original_instance.patches_dir
-        instance.use_h5_dataset = original_instance.use_h5_dataset
         instance.use_signatures = original_instance.use_signatures
         if original_instance.use_signatures:
             instance.signatures = original_instance.signatures
             instance.signature_sizes = original_instance.signature_sizes
-        instance.h5_dataset = original_instance.h5_dataset if original_instance.use_h5_dataset else None
-
-        # H5 Dataset Case
-        if original_instance.use_h5_dataset:
-            instance.h5_file = h5py.File(instance.h5_dataset, 'r')
 
         # Copy RNA, CNV, and MUT data with the new subset of data
         instance.survival_months = df['survival_months'].values
@@ -248,58 +222,26 @@ class MultimodalDataset(Dataset):
 
         return instance
 
-    def __del__(self):
-        if self.use_h5_dataset:
-            self.h5_file.close()
 
-
-## FUNCTIONS
+## TEST FUNCTIONS
 def test_multimodal_dataset():
     print('Testing MultimodalDataset...')
 
-    config = {
-        'dataset': {
-            'file': '../input/luad/luad.csv',
-            'patches_dir': '../input/luad/patches/',
-            'signatures': '../input/signatures.csv',
-            'decider_only': False
-        }
-    }
+    # Loading Configuration file
+    with open('../../../config/files/mcat.yaml') as config_file:
+        config = yaml.load(config_file, Loader=yaml.FullLoader)
+    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
+    config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys.csv'
+    config['dataset']['decider_only'] = False
 
+    # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
     loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
-
     start_dataload_time = time.time()
     for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(loader):
-        pass
+        print(omics_data)
     end_dataload_time = time.time()
-
-    print('Average dataload time: {:.2f}'.format((end_dataload_time - start_dataload_time) / len(dataset)))
-
-    print('Test successful')
-
-
-def test_multimodal_dataset_h5():
-    print('Testing MultimodalDataset...')
-
-    config = {
-        'dataset': {
-            'file': '../input/luad/luad.csv',
-            'patches_dir': '../input/luad/patches/',
-            'h5_dataset': '../input/luad/luad.h5',
-            'signatures': '../input/signatures.csv',
-            'decider_only': False
-        }
-    }
-
-    dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
-    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
-
-    start_dataload_time = time.time()
-    for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(loader):
-        pass
-    end_dataload_time = time.time()
-
     print('Average dataload time: {:.2f}'.format((end_dataload_time - start_dataload_time) / len(dataset)))
 
     print('Test successful')
@@ -308,19 +250,18 @@ def test_multimodal_dataset_h5():
 def test_multimodal_dataset_split():
     print('Testing MultimodalDataset...')
 
-    config = {
-        'dataset': {
-            'file': '../input/ov/decider_tcga_ov.csv',
-            'patches_dir': '../input/ov/patches/',
-            'signatures': '../input/signatures.csv',
-            'decider_only': True
-        }
-    }
+    # Loading Configuration file
+    with open('../../../config/files/mcat.yaml') as config_file:
+        config = yaml.load(config_file, Loader=yaml.FullLoader)
+    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
+    config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys.csv'
+    config['dataset']['decider_only'] = True
 
+    # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
     train_split, test_split = dataset.split(0.7)
     assert len(train_split) > len(test_split)
-
     loader = DataLoader(train_split, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
     for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(loader):
         pass
@@ -331,19 +272,27 @@ def test_multimodal_dataset_split():
 def test_std():
     print('Testing MultimodalDataset Standardization...')
 
-    config = {
-        'dataset': {
-            'file': '../input/ov/decider_ov.csv',
-            'patches_dir': '../input/ov/patches/',
-            'signatures': '../input/signatures.csv',
-            'decider_only': True
-        }
-    }
+    # Loading Configuration file
+    with open('../../../config/files/mcat.yaml') as config_file:
+        config = yaml.load(config_file, Loader=yaml.FullLoader)
+    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
+    config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys.csv'
+    config['dataset']['decider_only'] = True
 
-    dataset = MultimodalDataset(config['dataset']['file'], config, standardize=True, normalize=False,
+    # Testing
+    dataset = MultimodalDataset(config['dataset']['file'],
+                                config,
+                                standardize=True,
+                                normalize=False,
                                 use_signatures=True,
                                 remove_incomplete_samples=False)
     dataset.split(0.5)
     assert dataset is not None
 
     print('Test successful')
+
+
+## MAIN
+if __name__ == '__main__':
+    test_multimodal_dataset()

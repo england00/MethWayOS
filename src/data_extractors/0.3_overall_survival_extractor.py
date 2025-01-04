@@ -7,12 +7,11 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+ALIVE_THRESHOLD = 1825  # NOTE: 1825 days with MLP, 0 with MCAT
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 
 
@@ -49,8 +48,8 @@ if __name__ == "__main__":
     # Selecting only DEAD cases
     buffer = []
     for dictionary in overall_survival_datastore:
-        if (dictionary['last_check']['vital_status'] == 'Dead'                        # DEAD
-                or int(dictionary['last_check']['days_to_last_followup']) >= 1825):   # ALIVE after 5 years (1825 days)
+        if (dictionary['last_check']['vital_status'] == 'Dead'                                      # DEAD
+                or int(dictionary['last_check']['days_to_last_followup']) >= ALIVE_THRESHOLD):      # ALIVE
             buffer.append(dictionary)
             # Adding for each dictionary 'case_id', 'file_name' and 'file_id'
             file_name = dictionary['info'].split('/')[len(dictionary['info'].split('/')) - 1]

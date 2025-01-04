@@ -250,7 +250,8 @@ def main(config_path: str):
     print(f"HOSTNAME: {socket.gethostname()}")
     if socket.gethostname() == 'DELL-XPS-15':
         config['wandb']['enabled'] = False
-        config['dataset']['file'] = 'D:/Data - Tirocinio/brca/brca.csv'
+        # config['dataset']['file'] = 'D:/Data - Tirocinio/brca/brca.csv'
+        config['dataset']['file'] = '../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
         config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
 
     # Starting W&B
@@ -296,19 +297,16 @@ def main(config_path: str):
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6, pin_memory=True)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=6, pin_memory=True)
-    output_attn_epoch = config['training']['output_attn_epoch']
+    output_attn_epoch = config['training']['output_attn_epoch']  # At which epoc writing the attention file
 
     # Model
     print('')
     model_name = config['model']['name']
     print(f'MODEL: {model_name}')
-    model_size = config['model']['model_size']
-    omics_sizes = dataset.signature_sizes
-    fusion = config['model']['fusion']
-    model = MultimodalCoAttentionTransformer(model_size=model_size,
+    model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
                                              n_classes=CLASSES_NUMBER,
-                                             omic_sizes=omics_sizes,
-                                             fusion=fusion,
+                                             omic_sizes=dataset.signature_sizes,
+                                             fusion=config['model']['fusion'],
                                              device=device)
     print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
     checkpoint_path = config['model']['load_from_checkpoint']  # Loading previous checkpoint if specified

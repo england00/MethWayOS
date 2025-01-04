@@ -7,7 +7,7 @@ from src.mcat.modules.fusion import BilinearFusion, ConcatFusion, GatedConcatFus
 
 # https://github.com/mahmoodlab/MCAT/blob/master/Model%20Computation%20%2B%20Complexity%20Overview.ipynb
 
-
+''' MultimodalCoAttentionTransformer Definition '''
 class MultimodalCoAttentionTransformer(nn.Module):
     def __init__(self, omic_sizes: [], model_size: str = 'medium', n_classes: int = 4, dropout: float = 0.25, fusion: str = 'concat', device: str = 'cpu'):
         super(MultimodalCoAttentionTransformer, self).__init__()
