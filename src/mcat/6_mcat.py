@@ -169,9 +169,9 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
     val_loss /= len(val_loader)
     c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if epoch == 'final validation':
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     else:
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         wandb.log({"val_loss": val_loss, "val_c_index": c_index})
