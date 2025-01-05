@@ -283,8 +283,6 @@ def test_std():
     # Testing
     dataset = MultimodalDataset(config['dataset']['file'],
                                 config,
-                                standardize=True,
-                                normalize=False,
                                 use_signatures=True,
                                 remove_incomplete_samples=False)
     dataset.split(0.5)

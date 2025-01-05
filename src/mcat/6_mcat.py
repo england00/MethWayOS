@@ -31,7 +31,7 @@ def title(text):
 
 
 ''' TRAINING DEFINITION '''
-def train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function):
+def train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index):
     model.train()
     grad_acc_step = config['training']['grad_acc_step']
     use_scheduler = config['training']['scheduler']
@@ -98,16 +98,16 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     risk_scores = risk_scores.detach().cpu().numpy()
     censorships = censorships.detach().cpu().numpy()
     event_times = event_times.detach().cpu().numpy()
-    c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
+    train_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if use_scheduler:
         lr = optimizer.param_groups[0]["lr"]
         if use_scheduler == 'exp':
             scheduler.step()
         elif use_scheduler == 'rop':
-            scheduler.step(train_loss)
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
+            scheduler.step(validation_loss)
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {train_loss:.4f}, train_c_index: {train_c_index:.4f}')
     else:
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, train_loss: {train_loss:.4f}, train_c_index: {train_c_index:.4f}')
     if checkpoint_epoch > 0:
         if (epoch + 1) % checkpoint_epoch == 0 and epoch != 0:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M')
@@ -124,7 +124,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
             }, checkpoint_path)
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
-        wandb.log({"train_loss": train_loss, "train_c_index": c_index})
+        wandb.log({"train_loss": train_loss, "train_c_index": train_c_index})
 
 
 ''' VALIDATION DEFINITION '''
@@ -174,14 +174,16 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
 
     # Calculating Loss and Error
     val_loss /= len(val_loader)
-    c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
+    validation_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if epoch == 'final validation':
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Validation, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Validation, val_loss: {val_loss:.4f}, val_c_index: {validation_c_index:.4f}')
     else:
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {validation_c_index:.4f}')
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
-        wandb.log({"val_loss": val_loss, "val_c_index": c_index})
+        wandb.log({"val_loss": val_loss, "val_c_index": validation_c_index})
+
+    return val_loss, validation_c_index
 
 
 ''' TESTING DEFINITION '''
@@ -360,7 +362,7 @@ def main(config_path: str):
         gamma = config['training']['gamma']
         scheduler = lrs.ExponentialLR(optimizer, gamma=gamma)
     elif config['training']['scheduler'] == 'rop':
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=1)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=1, threshold=0.01, cooldown=0, min_lr=1e-6)
     else:
         scheduler = None
 
@@ -381,11 +383,13 @@ def main(config_path: str):
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
     model.train()
     epochs = config['training']['epochs']
+    validation_loss = np.inf
+    validation_c_index = 0.0
     for epoch in range(starting_epoch, epochs):
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
         start_time = time.time()
-        train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function)
-        validate(epoch, config, device, val_loader, model, loss_function, reg_function)
+        train(epoch, config, device, train_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index)
+        validation_loss, validation_c_index = validate(epoch, config, device, val_loader, model, loss_function, reg_function)
         if leave_one_out:
             save = False
             if (epoch + 1) % output_attn_epoch == 0:
