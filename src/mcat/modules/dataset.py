@@ -128,10 +128,10 @@ class MultimodalDataset(Dataset):
     def __len__(self):
         return len(self.data)
 
-    def split(self, train_size, test: bool = False, patient: str = ''):
-        # Ensure train_size is a valid ratio
-        if not 0 < train_size < 1:
-            raise ValueError("train_size should be a float between 0 and 1.")
+    def split(self, training_size, testing: bool = False, patient: str = ''):
+        # Ensure training_size is a valid ratio
+        if not 0 < training_size < 1:
+            raise ValueError("training_size should be a float between 0 and 1.")
 
         # Get unique patients
         unique_patients = self.data['patient'].unique()
@@ -140,35 +140,35 @@ class MultimodalDataset(Dataset):
         np.random.shuffle(unique_patients)
 
         # Determine the number of patients in the train split
-        train_patient_count = int(len(unique_patients) * train_size)
+        training_patient_count = int(len(unique_patients) * training_size)
 
         # Split patients into train and test sets
-        train_patients = unique_patients[:train_patient_count]
-        val_patients = unique_patients[train_patient_count:]
+        training_patients = unique_patients[:training_patient_count]
+        validation_patients = unique_patients[training_patient_count:]
 
         # Filter the data into train and test sets
-        test_dataset = None
-        if test:
-            train_data = self.data[self.data['patient'].isin(train_patients)].copy()
-            train_data = train_data[train_data['patient'] != patient]
-            val_data = self.data[self.data['patient'].isin(val_patients)].copy()
-            val_data = val_data[val_data['patient'] != patient]
-            test_data = self.data[self.data['patient'] == patient].copy()
-            test_data.reset_index(drop=True, inplace=True)
-            test_dataset = MultimodalDataset.from_dataframe(test_data, self)
+        testing_dataset = None
+        if testing:
+            training_data = self.data[self.data['patient'].isin(training_patients)].copy()
+            training_data = training_data[training_data['patient'] != patient]
+            validation_data = self.data[self.data['patient'].isin(validation_patients)].copy()
+            validation_data = validation_data[validation_data['patient'] != patient]
+            testing_data = self.data[self.data['patient'] == patient].copy()
+            testing_data.reset_index(drop=True, inplace=True)
+            testing_dataset = MultimodalDataset.from_dataframe(testing_data, self)
         else:
-            train_data = self.data[self.data['patient'].isin(train_patients)].copy()
-            val_data = self.data[self.data['patient'].isin(val_patients)].copy()
+            training_data = self.data[self.data['patient'].isin(training_patients)].copy()
+            validation_data = self.data[self.data['patient'].isin(validation_patients)].copy()
 
         # Reset indices for train and test datasets
-        train_data.reset_index(drop=True, inplace=True)
-        val_data.reset_index(drop=True, inplace=True)
+        training_data.reset_index(drop=True, inplace=True)
+        validation_data.reset_index(drop=True, inplace=True)
 
         # Create new instances of MultimodalDataset with the train and test data
-        train_dataset = MultimodalDataset.from_dataframe(train_data, self)
-        val_dataset = MultimodalDataset.from_dataframe(val_data, self)
+        training_dataset = MultimodalDataset.from_dataframe(training_data, self)
+        validation_dataset = MultimodalDataset.from_dataframe(validation_data, self)
 
-        return train_dataset, val_dataset, test_dataset
+        return training_dataset, validation_dataset, testing_dataset
 
     @classmethod
     def from_dataframe(cls, df, original_instance):
@@ -260,9 +260,9 @@ def test_multimodal_dataset_split():
 
     # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
-    train_split, test_split = dataset.split(0.7)
-    assert len(train_split) > len(test_split)
-    loader = DataLoader(train_split, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
+    training_split, testing_split = dataset.split(0.7)
+    assert len(training_split) > len(testing_split)
+    loader = DataLoader(training_split, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
     for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(loader):
         pass
 
