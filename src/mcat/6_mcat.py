@@ -101,9 +101,9 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if use_scheduler:
         lr = optimizer.param_groups[0]["lr"]
-        if scheduler == 'exp':
+        if use_scheduler == 'exp':
             scheduler.step()
-        if scheduler == 'rop':
+        elif use_scheduler == 'rop':
             scheduler.step(train_loss)
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {train_loss:.4f}, train_c_index: {c_index:.4f}')
     else:
@@ -119,6 +119,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
                 'loss': train_loss,
             }, checkpoint_path)
     wandb_enabled = config['wandb']['enabled']
@@ -355,11 +356,10 @@ def main(config_path: str):
     print(f'--> Optimizer: {optimizer_name}')
 
     # Scheduler for variable learning rate
-    scheduler = config['training']['scheduler']
-    if scheduler == 'exp':
+    if config['training']['scheduler'] == 'exp':
         gamma = config['training']['gamma']
         scheduler = lrs.ExponentialLR(optimizer, gamma=gamma)
-    elif scheduler == 'rop':
+    elif config['training']['scheduler'] == 'rop':
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=1)
     else:
         scheduler = None
