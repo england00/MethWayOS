@@ -13,7 +13,7 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA
   # CSV dataset file
-  file: /work/h2020deciderficarra_shared/mgualtieri/brca/brca.csv
+  file: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Directory containing slides embeddings
   patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
   # Signature of genes to use
@@ -67,10 +67,10 @@ training:
   # Gradient acceleration step
   grad_acc_step: 8
   # Scheduler for learning rate [~, exp, rop]
-  scheduler: exp
+  scheduler: rop
   # Coefficient used in Cross Entropy Survival loss
   alpha: 0.85
   # Regulator coefficient. Set 0.0 if regularization is not needed
   lambda: 0.0
   # Coefficient used in exponential lr scheduling
-  gamma: 0.9
+  gamma: 1.0

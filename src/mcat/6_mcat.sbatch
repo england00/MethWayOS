@@ -7,7 +7,7 @@
 
 #SBATCH --partition=all_usr_prod
 #SBATCH --time=24:00:00
-#SBATCH --mem=24G
+#SBATCH --mem=16G
 #SBATCH --array=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
