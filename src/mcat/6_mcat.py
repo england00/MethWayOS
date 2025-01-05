@@ -44,8 +44,6 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
     start_batch_time = time.time()
     for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(
             train_loader):
-
-        # print(survival_class)
         survival_months = survival_months.to(device, non_blocking=True)
         survival_class = survival_class.to(device, non_blocking=True)
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
@@ -65,20 +63,23 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
             raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
         loss_value = loss.item()
 
+        # Regularization function
         if reg_function is None:
             loss_reg = 0
         else:
             loss_reg = reg_function(model) * lambda_reg
 
+        # Scores
         risk = -torch.sum(survs, dim=1)
         risk_scores[batch_index] = risk
         censorships[batch_index] = censorship
         event_times[batch_index] = survival_months
 
+        # Training Loss
         train_loss += loss_value + loss_reg
 
+        # Logger
         if (batch_index + 1) % 50 == 0:
-
             print(f'--> Batch: {batch_index}, Loss: {loss_value + loss_reg:.4f}, Label: {survival_class.item()}, Survival Months: {survival_months.item():.2f}, Risk: {float(risk.item()):.4f}')
             end_batch_time = time.time()
             print(f'\t--> Average Speed: {((end_batch_time - start_batch_time) / 32):.2f}s per batch')
@@ -87,6 +88,7 @@ def train(epoch, config, device, train_loader, model, loss_function, optimizer, 
         loss = loss / grad_acc_step + loss_reg
         loss.backward()
 
+        # Scheduler
         if (batch_index + 1) % grad_acc_step == 0:
             optimizer.step()
             optimizer.zero_grad()
@@ -143,6 +145,7 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
         with torch.no_grad():
             hazards, survs, Y, attention_scores = model(wsi=patches_embeddings, omics=omics_data)
 
+        # Choosing Loss Function
         if config['training']['loss'] == 'ce':
             loss = loss_function(Y, survival_class.long())
         elif config['training']['loss'] == 'ces':
@@ -153,23 +156,26 @@ def validate(epoch, config, device, val_loader, model, loss_function, reg_functi
             raise RuntimeError(f'--> Loss "{config["training"]["loss"]}" not implemented')
         loss_value = loss.item()
 
+        # Regularization function
         if reg_function is None:
             loss_reg = 0
         else:
             loss_reg = reg_function(model) * lambda_reg
 
+        # Scores
         risk = -torch.sum(survs, dim=1).cpu().numpy()
         risk_scores[batch_index] = risk.item()
         censorships[batch_index] = censorship.item()
         event_times[batch_index] = survival_months.item()
 
+        # Validation Loss
         val_loss += loss_value + loss_reg
 
     # Calculating Loss and Error
     val_loss /= len(val_loader)
     c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if epoch == 'final validation':
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Validation, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     else:
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, val_loss: {val_loss:.4f}, val_c_index: {c_index:.4f}')
     wandb_enabled = config['wandb']['enabled']
@@ -388,10 +394,15 @@ def main(config_path: str):
             test(config, device, epoch + 1, test_loader, model, test_patient, save=save)
         end_time = time.time()
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Validation
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation started')
+    start_time = time.time()
     validate('final validation', config, device, val_loader, model, loss_function, reg_function)
+    end_time = time.time()
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Validation: {end_time - start_time:.0f}s')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation completed')
 
     # Ending W&B
     if wandb_enabled:
