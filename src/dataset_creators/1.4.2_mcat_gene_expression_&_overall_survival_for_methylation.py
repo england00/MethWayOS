@@ -12,23 +12,20 @@ from logs.methods.log_storer import *
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 GENE_EXPRESSION_MCAT = 'gene_expression_MCAT'
-GENE_EXPRESSION_KEYS = 'gene_expression_keys'
+GENE_EXPRESSION_MCAT_methylation = 'gene_expression_MCAT_methylation'
+GENE_EXPRESSION_KEYS_methylation = 'gene_expression_keys_methylation'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 OVERALL_SURVIVAL = 'overall_survival'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
-WHOLE_SLIDE_IMAGE = 'whole_slide_image'
 
 
 ## FUNCTIONS
-def process_patient(ge_patient, os_datastore, wsi_datastore, ge_keys):
+def process_patient(ge_patient, os_datastore, ge_keys):
     for patient in os_datastore:
-        if (ge_patient['info']['case_id'] in wsi_datastore and
-                ge_patient['info']['case_id'] == patient['info']['case_id']):
-            # Case ID & Slide ID & Patient ID
-            buffer = [ge_patient['info']['case_id'],
-                      wsi_datastore[patient['info']['case_id']]['slide_id'],
-                      wsi_datastore[patient['info']['case_id']]['patient']]
+        if ge_patient['info']['case_id'] == patient['info']['case_id']:
+            # Case ID
+            buffer = [ge_patient['info']['case_id']]
             # Survival Months
             if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
                 buffer.append(round(float(patient['last_check']['days_to_death']) / 12, 2))  # Adding 'survival_months'
@@ -59,7 +56,6 @@ if __name__ == "__main__":
     # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION_MCAT])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
-    whole_slide_image_datastore = json_loader(datastore_paths[WHOLE_SLIDE_IMAGE])
 
     # Changing 'gene_id' with 'gene_name' as key in each dictionary
     for gene_expression_patient in gene_expression_datastore:
@@ -84,7 +80,6 @@ if __name__ == "__main__":
                 futures.append(executor.submit(process_patient,
                                                gene_expression_patient,
                                                overall_survival_datastore,
-                                               whole_slide_image_datastore,
                                                gene_expression_keys))
 
             # Process each future as it completes
@@ -96,12 +91,12 @@ if __name__ == "__main__":
     print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
-    csv_storer(table_paths[GENE_EXPRESSION_KEYS], gene_expression_keys, ["gene"], keys_mode=True)
-    gene_expression_keys = (['case_id', 'slide_id', 'patient', 'survival_months', 'censorship'] +
+    csv_storer(table_paths[GENE_EXPRESSION_KEYS_methylation], gene_expression_keys, ["gene"], keys_mode=True)
+    gene_expression_keys = (['case_id', 'survival_months', 'censorship'] +
                             [key + '_rnaseq' for key in gene_expression_keys])
     dataframe = pd.DataFrame(dataset, columns=gene_expression_keys)
-    dataframe.to_csv(dataset_paths[GENE_EXPRESSION_MCAT], index=True)
-    print(f"Data has been correctly saved inside {dataset_paths[GENE_EXPRESSION_MCAT]} file")
+    dataframe.to_csv(dataset_paths[GENE_EXPRESSION_MCAT_methylation], index=True)
+    print(f"Data has been correctly saved inside {dataset_paths[GENE_EXPRESSION_MCAT_methylation]} file")
 
     # Close LOG file
     sys.stdout = sys.__stdout__

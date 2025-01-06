@@ -10,7 +10,7 @@ from logs.methods.log_storer import *
 ## CONFIGURATION
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
-GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
+GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_binary_classification'
 GENE_EXPRESSION = 'gene_expression'
 GENE_EXPRESSION_AND_METHYLATION_27_STATISTICS = 'gene_expression_and_methylation27_statistics'
 GENE_EXPRESSION_AND_METHYLATION_450_STATISTICS = 'gene_expression_and_methylation450_statistics'
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     # Storing data from JSON datastores
     gene_expression_datastore = json_loader(datastore_paths[GENE_EXPRESSION])
-    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_STATISTICS])
+    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Changing 'gene_id' with 'gene_name' as key in each dictionary
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     gene_expression_and_methylation_keys = gene_expression_keys + methylation_keys
-    csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION_27_STATISTICS], dataset, gene_expression_and_methylation_keys)
+    csv_storer(dataset_paths[GENE_EXPRESSION_AND_METHYLATION_450_STATISTICS], dataset, gene_expression_and_methylation_keys)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

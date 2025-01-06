@@ -9,7 +9,9 @@ from logs.methods.log_storer import *
 ## CONFIGURATION
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
-GENE_ASSOCIATED_METHYLATION = 'gene_associated_methylation'
+GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_data_binary_classification'
+GENE_ASSOCIATED_METHYLATION_27 = 'gene_associated_methylation_27'
+GENE_ASSOCIATED_METHYLATION_450 = 'gene_associated_methylation_450'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 METHYLATION = 'methylation'
@@ -99,7 +101,7 @@ if __name__ == "__main__":
     methylation_datastore = common_keys_filter(methylation_datastore)
 
     # Storing the datastore inside a JSON file
-    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION], methylation_datastore)
+    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION], methylation_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
