@@ -11,19 +11,19 @@ import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
 from logs.methods.log_storer import DualOutput
-from src.mcat.functions.training import training
-from src.mcat.functions.validation import validation
-from src.mcat.functions.testing import test
+from src.mcat.functions.training_methylation import training
+from src.mcat.functions.validation_methylation import validation
+from src.mcat.functions.testing_methylation import test
 from src.mcat.modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.mcat.modules.utils import l1_reg
-from src.mcat.modules.mcat import MultimodalCoAttentionTransformer
-from src.mcat.modules.dataset import MultimodalDataset
+from src.mcat.modules.mcat_methylation import MultimodalCoAttentionTransformer
+from src.mcat.modules.dataset_methylation import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_YAML = '../../config/files/mcat.yaml'
+MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
 
 
 ## FUNCTIONS
@@ -42,11 +42,12 @@ def wandb_init(config):
         config={
             'model': config['model']['name'],
             'dataset': config['dataset']['name'],
+            'gene_expression': config['dataset']['gene_expression'],
+            'gene_expression_signatures': config['dataset']['gene_expression_signatures'],
+            'methylation': config['dataset']['methylation'],
+            'methylation_signatures': config['dataset']['methylation_signatures'],
             'normalization': config['dataset']['normalize'],
             'standardization': config['dataset']['standardize'],
-            'decider_only': config['dataset']['decider_only'],
-            'tcga_only': config['dataset']['tcga_only'],
-            'diagnostic_only': config['dataset']['diagnostic_only'],
             'optimizer': config['training']['optimizer'],
             'learning_rate': config['training']['lr'],
             'weight_decay': config['training']['weight_decay'],
@@ -77,7 +78,6 @@ def main(config_path: str):
     print(f"HOSTNAME: {socket.gethostname()}")
     if socket.gethostname() == 'DELL-XPS-15':
         config['wandb']['enabled'] = False
-        config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
 
     # Starting W&B
     print('')
@@ -103,8 +103,7 @@ def main(config_path: str):
 
     # Loading Dataset
     print('')
-    dataset = MultimodalDataset(config['dataset']['file'],
-                                config,
+    dataset = MultimodalDataset(config,
                                 classes_number=config['training']['classes_number'],
                                 use_signatures=True,
                                 remove_incomplete_samples=True)  # Dataset object
@@ -129,7 +128,8 @@ def main(config_path: str):
     print(f'MODEL: {model_name}')
     model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
                                              n_classes=config['training']['classes_number'],
-                                             omic_sizes=dataset.signature_sizes,
+                                             rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                             meth_sizes=dataset.methylation_signature_sizes,
                                              fusion=config['model']['fusion'],
                                              device=config['device'])
     print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
     # Execution
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
-    main(MCAT_YAML)
+    main(MCAT_METHYLATION_YAML)
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT terminated')
 
     # Close LOG file

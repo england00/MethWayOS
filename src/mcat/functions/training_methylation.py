@@ -17,14 +17,14 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
 
     # Starting
     start_batch_time = time.time()
-    for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(training_loader):
+    for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(training_loader):
         survival_months = survival_months.to(config['device'], non_blocking=True)
         survival_class = survival_class.to(config['device'], non_blocking=True)
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
         censorship = censorship.type(torch.FloatTensor).to(config['device'], non_blocking=True)
-        patches_embeddings = patches_embeddings.to(config['device'])
-        omics_data = [omic_data.to(config['device']) for omic_data in omics_data]
-        hazards, surveys, Y, attention_scores = model(wsi=patches_embeddings, omics=omics_data)
+        gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
+        methylation_data = [island.to(config['device']) for island in methylation_data]
+        hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
 
         # Choosing Loss Function
         if config['training']['loss'] == 'ce':

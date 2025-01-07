@@ -10,18 +10,18 @@ def test(epoch, config, testing_loader, model, patient, save=False):
     now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
     # Starting
-    for batch_index, (survival_months, survival_class, censorship, omics_data, patches_embeddings) in enumerate(testing_loader):
+    for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(testing_loader):
         survival_months = survival_months.to(config['device'])
         survival_class = survival_class.to(config['device'])
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
         censorship = censorship.type(torch.FloatTensor).to(config['device'])
-        patches_embeddings = patches_embeddings.to(config['device'])
-        omics_data = [omic_data.to(config['device']) for omic_data in omics_data]
+        gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
+        methylation_data = [island.to(config['device']) for island in methylation_data]
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing Batch Index: {batch_index}, Survival months: {survival_months.item()}, Survival class: {survival_class.item()}, Censorship: {censorship.item()}')
 
         # Testing
         with torch.no_grad():
-            hazards, surveys, Y, attention_scores = model(wsi=patches_embeddings, omics=omics_data, inference=True)
+            hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data, inference=True)
             risk = -torch.sum(surveys, dim=1).cpu().numpy()
             print(f'--> Hazards: {hazards}')
             print(f'--> Surveys: {surveys}')
