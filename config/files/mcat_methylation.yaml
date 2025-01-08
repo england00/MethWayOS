@@ -17,9 +17,9 @@ dataset:
   # Gene Expression signatures
   gene_expression_signatures: ../../data/tables/gene_expression_keys_methylation.csv
   # CSV Methylation secondary dataset
-  methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
+  methylation: ../../data/datasets/MCAT_methylation27_and_overall_survival_dataset.csv
   # Methylation signatures
-  methylation_signatures: ../../data/tables/methylation450_keys.csv
+  methylation_signatures: ../../data/tables/methylation27_keys.csv
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -43,7 +43,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: 0.85
+  alpha: 0.8
   # Batch size
   batch_size: 1
   # Classes Number
@@ -51,7 +51,7 @@ training:
   # How many epochs of training
   epochs: 20
   # Coefficient used in exponential lr scheduling
-  gamma: 0.85
+  gamma: 0.99
   # Gradient acceleration step
   grad_acc_step: 8
   # Regulator coefficient. Set 0.0 if regularization is not needed
@@ -73,4 +73,4 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: 0.0001
+  weight_decay: 0.00002

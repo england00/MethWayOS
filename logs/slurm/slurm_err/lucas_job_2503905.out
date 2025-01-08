@@ -1,0 +1,22 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: - Waiting for wandb.init()...wandb: \ Waiting for wandb.init()...wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /work/tesi_linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250107_022120-z2vr3b9a
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2503905
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-COMP
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-COMP/runs/z2vr3b9a
+Traceback (most recent call last):
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation.py", line 237, in <module>
+    main(MCAT_METHYLATION_YAML)
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation.py", line 203, in main
+    training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index)
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/functions/training_methylation.py", line 27, in training
+    hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/modules/mcat_methylation.py", line 115, in forward
+    h_path = torch.mm(F.softmax(A_path, dim=1), h_path)
+RuntimeError: self must be a matrix
