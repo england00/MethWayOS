@@ -60,7 +60,7 @@ def wandb_init(config):
             'lambda': config['training']['lambda'],
             'gamma': config['training']['gamma'],
             'model_size': config['model']['model_size'],
-            'leave_one_out': config['training']['leave_one_out'],
+            'early_stopping_patience': config['training']['early_stopping_patience'],
             'batch_size': config['training']['batch_size'],
             'classes_number': config['training']['classes_number'],
         }
