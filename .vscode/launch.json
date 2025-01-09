@@ -2,8 +2,9 @@
 
     "configurations": [
       {
-        "name": "0 - DEBUG Data Extractors",
-        "type": "debugpy",        "request": "launch",
+        "name": "0 - Current File DEBUG",
+        "type": "debugpy",        
+        "request": "launch",
         "program": "${file}",
         "console": "integratedTerminal",
         "justMyCode": false,
@@ -12,219 +13,27 @@
       },
 
       {
-        "name": "0.0 - Case ID Extractor",
+        "name": "6 - MCAT - Gene Expression & WSI",
         "type": "debugpy",
         "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.0_case_id_extractor.py",
+        "program": "${workspaceRoot}/src/mcat/6_mcat.py",
         "console": "integratedTerminal",
         "justMyCode": false,
         "args": [], // TODO: relative path
         "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
+        "cwd":"${workspaceFolder}/src/mcat"
       },
 
       {
-        "name": "0.1 - Gene Expression Extractor",
+        "name": "7 - MCAT - Gene Expression & Methylation",
         "type": "debugpy",
         "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.1_gene_expression_extractor.py",
+        "program": "${workspaceRoot}/src/mcat/7_mcat_methylation.py",
         "console": "integratedTerminal",
         "justMyCode": false,
         "args": [], // TODO: relative path
         "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "0.2.1 - Methylation Extractor",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.2.1_methylation_extractor.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "0.2.2 - CPG950 Methylation Islands Counter per Gene",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.2.2_cgp950_methylation_islands_counter_per_gene.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "0.2.3 - Methylation Vectors for each Gene",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.2.3_methylation_vectors_for_each_gene.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "0.2.4 - Gene Associated Methylation Extractor",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.2.4_gene_associated_methylation_extractor.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "0.3 - Overall Survival Extractor",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/0.3_overall_survival_extractor.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "1.1 - Gene Expression & Overall Survival",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/1.1_gene_expression_&_overall_survival.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "1.2 - Methylation & Overall Survival",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/1.2_methylation_&_overall_survival.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "1.3 - Gene Expression & Methylation & Overall Survival",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/1.3_gene_expression_&_methylation_&_overall_survival.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "2.1 - Gene Expression & Overall Survival - SKLearn",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/2.1_ge_&_os_sklearn.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "2.2 - Methylation & Overall Survival - SKLearn",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/2.2_methylation_&_os_sklearn.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "3.1 - Gene Expression & Overall Survival - GPU",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/3.1_ge_&_os_gpu.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "3.2 - Methylation & Overall Survival - GPU",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/3.2_methylation_&_os_gpu.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "3.3 - Gene Expression & Methylation & Overall Survival - GPU",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/3.3_ge_&_methylation_&_os_gpu.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "4.1 - Gene Expression & Overall Survival - GPU - V1",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/4.1_ge_&_os_gpu_v1.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "4.2 - Methylation & Overall Survival - GPU - V1",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/4.2_methylation_&_os_gpu_v1.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
-      },
-
-      {
-        "name": "4.3 - Gene Expression & Methylation & Overall Survival - GPU - V1",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/data_extractors/4.3_ge_&_methylation_&_os_gpu_v1.py",
-        "console": "integratedTerminal",
-        "justMyCode": false,
-        "args": [], // TODO: relative path
-        "env": {"PYTHONPATH":"${workspaceRoot}"},
-        "cwd":"${workspaceFolder}/src/data_extractors"
+        "cwd":"${workspaceFolder}/src/mcat"
       },
     ]
   }

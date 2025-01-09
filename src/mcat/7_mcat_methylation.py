@@ -1,6 +1,8 @@
+import sys
+sys.path.append('/work/tesi_linghilterra/AIforBioinformatics')
+
 import datetime
 import os
-import sys
 import time
 import wandb
 import yaml
