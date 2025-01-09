@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from src.mcat.modules.utils import init_max_weights
+from src.mcat.original_modules.utils import init_max_weights
 
 
 class ConcatFusion(nn.Module):

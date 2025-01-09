@@ -77,9 +77,9 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             scheduler.step()
         elif config['training']['scheduler'] == 'rop':
             scheduler.step(validation_loss)
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, train_loss: {training_loss:.4f}, train_c_index: {training_c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
     else:
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, train_loss: {training_loss:.4f}, train_c_index: {training_c_index:.4f}')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
     if config['model']['checkpoint_epoch'] > 0:
         if (epoch + 1) % config['model']['checkpoint_epoch'] == 0 and epoch != 0:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M')

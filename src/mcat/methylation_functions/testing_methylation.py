@@ -2,6 +2,14 @@ import datetime
 import os
 import torch.cuda
 
+'''
+ if leave_one_out:
+     save = False
+     if (epoch + 1) % config['training']['output_attn_epoch'] == 0:
+         save = True
+     testing_patient = config['training']['leave_one_out']
+     test(epoch + 1, config, testing_loader, model, testing_patient, save=save)
+ '''
 
 ''' TESTING DEFINITION '''
 def test(epoch, config, testing_loader, model, patient, save=False):

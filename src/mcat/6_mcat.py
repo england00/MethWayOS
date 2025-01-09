@@ -11,13 +11,13 @@ import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
 from logs.methods.log_storer import DualOutput
-from src.mcat.functions.training import training
-from src.mcat.functions.validation import validation
-from src.mcat.functions.testing import test
-from src.mcat.modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.modules.utils import l1_reg
-from src.mcat.modules.mcat import MultimodalCoAttentionTransformer
-from src.mcat.modules.dataset import MultimodalDataset
+from src.mcat.original_functions.training import training
+from src.mcat.original_functions.validation import validation
+from src.mcat.original_functions.testing import test
+from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
+from src.mcat.original_modules.utils import l1_reg
+from src.mcat.original_modules.mcat import MultimodalCoAttentionTransformer
+from src.mcat.original_modules.dataset import MultimodalDataset
 from torch.utils.data import DataLoader
 
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Managing CUDA modules
+# Managing CUDA original_modules
 module unload cuda/12.1
 module load cuda/11.8
 

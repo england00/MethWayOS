@@ -11,13 +11,12 @@ import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
 from logs.methods.log_storer import DualOutput
-from src.mcat.functions.training_methylation import training
-from src.mcat.functions.validation_methylation import validation
-from src.mcat.functions.testing_methylation import test
-from src.mcat.modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.modules.utils import l1_reg
-from src.mcat.modules.mcat_methylation import MultimodalCoAttentionTransformer
-from src.mcat.modules.dataset_methylation import MultimodalDataset
+from src.mcat.methylation_functions.training_methylation import training
+from src.mcat.methylation_functions.validation_methylation import validation
+from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
+from src.mcat.original_modules.utils import l1_reg
+from src.mcat.methylation_modules.mcat_methylation import MultimodalCoAttentionTransformer
+from src.mcat.methylation_modules.dataset_methylation import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
@@ -109,18 +108,11 @@ def main(config_path: str):
                                 remove_incomplete_samples=True)  # Dataset object
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
 
-    # Managing Leave One Out
-    leave_one_out = config['training']['leave_one_out'] is not None
-    testing_patient = config['training']['leave_one_out']
-
     # Splitting Dataset
-    training_dataset, validation_dataset, testing_dataset = dataset.split(config['training']['train_size'], testing=leave_one_out, patient=testing_patient)
-    print(f'--> Training Set: [{len(training_dataset)}], Validation Set: [{len(validation_dataset)}]')
-    if testing_dataset is not None:
-        print(f'--> Leave One Out available: testing patient {testing_patient}')
+    training_dataset, validation_dataset, testing_dataset = dataset.split(config['training']['train_size'])
+    print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(validation_dataset)}]')
     training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
     validation_loader = DataLoader(validation_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
-    testing_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=False, num_workers=6, pin_memory=True)
 
     # Model
     print('')
@@ -193,8 +185,13 @@ def main(config_path: str):
     # Training
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
     model.train()
-    validation_loss = np.inf
     validation_c_index = 0.0
+    validation_loss = np.inf
+    best_c_index = 0.0
+    best_loss = np.inf
+    best_model_state = None
+    epochs_without_improvement = 0
+    patience = config['training']['early_stopping_patience']
     for epoch in range(starting_epoch, config['training']['epochs']):
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
         start_time = time.time()
@@ -203,14 +200,42 @@ def main(config_path: str):
         training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index)
         validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
-        if leave_one_out:
-            save = False
-            if (epoch + 1) % config['training']['output_attn_epoch'] == 0:
-                save = True
-            testing_patient = config['training']['leave_one_out']
-            test(epoch + 1, config, testing_loader, model, testing_patient, save=save)
+        # Saving best model dependently on Validation Loss or Validation C-Index
+        if validation_loss < best_loss or validation_c_index > best_c_index:
+            if validation_loss < best_loss:
+                best_loss = validation_loss
+            if validation_c_index > best_c_index:
+                best_c_index = validation_c_index
+            epochs_without_improvement = 0
+            best_model_state = {
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'validation_loss': validation_loss,
+                'validation_c_index': validation_c_index,
+            }
+            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - New best Validation Score - Epoch: {epoch + 1}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+        else:
+            epochs_without_improvement += 1
+            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+
+        # Early stopping
+        if epochs_without_improvement >= patience:
+            print(
+                f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Early stopping triggered after {patience} epochs without improvement')
+            break
+
         end_time = time.time()
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
+
+    # Restoring Best Model
+    if best_model_state:
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
+        model.load_state_dict(best_model_state['model_state_dict'])
+        optimizer.load_state_dict(best_model_state['optimizer_state_dict'])
+        if scheduler:
+            scheduler.load_state_dict(best_model_state['scheduler_state_dict'])
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Final Validation

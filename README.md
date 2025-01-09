@@ -131,7 +131,7 @@
             - [5 - GENE EXPRESSION & METHYLATION STATISTICS & OS - (GPU) - SBATCH](./src/binary_classification/5_ge_&_methylation_statistics_&_os_gpu.sbatch)
           - [MCAT](./src/mcat) 
             - [Checkpoints](./src/mcat/checkpoints)
-            - [Modules](./src/mcat/modules)
+            - [Modules](./src/mcat/original_modules)
             - [Outputs](./src/mcat/outputs)
             - [Wandb](./src/mcat/wandb)
             - [6 - MCAT](./src/mcat/6_mcat.py)

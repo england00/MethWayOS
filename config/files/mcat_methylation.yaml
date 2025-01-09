@@ -49,15 +49,15 @@ training:
   # Classes Number
   classes_number: 20
   # How many epochs of training
-  epochs: 20
+  epochs: 50
+  # Patience during training
+  early_stopping_patience: 5
   # Coefficient used in exponential lr scheduling
   gamma: 0.99
   # Gradient acceleration step
   grad_acc_step: 8
   # Regulator coefficient. Set 0.0 if regularization is not needed
   lambda: 0.00001
-  # 'Case ID' of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: ~
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
