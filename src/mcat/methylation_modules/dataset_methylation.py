@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import torch
 import yaml
+from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -141,7 +142,7 @@ class MultimodalDataset(Dataset):
     def __len__(self):
         return len(self.gene_expression)
 
-    def split(self, training_size, testing: bool = False, patient: str = ''):
+    def split(self, training_size):
         # GENERAL: Ensure training_size is a valid ratio
         if not 0 < training_size < 1:
             raise ValueError("training_size should be a float between 0 and 1.")
@@ -153,56 +154,73 @@ class MultimodalDataset(Dataset):
 
         # GENERAL: Split patients into train and validation sets
         training_patients = unique_patients[:training_patient_count]
-        validation_patients = unique_patients[training_patient_count:]
+        testing_patients = unique_patients[training_patient_count:]
 
-        # GENERAL: Filter the data into train, validation, and optionally test sets for both datasets
-        testing_dataset = None
-        if testing:
-            # GENE EXPRESSION: Filtering
-            training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].copy()
-            training_data_ge = training_data_ge[training_data_ge['case_id'] != patient]
-            validation_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(validation_patients)].copy()
-            validation_data_ge = validation_data_ge[validation_data_ge['case_id'] != patient]
-            testing_data_ge = self.gene_expression[self.gene_expression['case_id'] == patient].copy()
-            testing_data_ge.reset_index(drop=True, inplace=True)
-
-            # METHYLATION: Filtering
-            training_data_me = self.methylation[self.methylation['case_id'].isin(training_patients)].copy()
-            training_data_me = training_data_me[training_data_me['case_id'] != patient]
-            validation_data_me = self.methylation[self.methylation['case_id'].isin(validation_patients)].copy()
-            validation_data_me = validation_data_me[validation_data_me['case_id'] != patient]
-            testing_data_me = self.methylation[self.methylation['case_id'] == patient].copy()
-            testing_data_me.reset_index(drop=True, inplace=True)
-
-            # GENERAL: Create testing dataset
-            testing_dataset = MultimodalDataset.from_dataframes(testing_data_ge, testing_data_me, self)
-        else:
-            # GENE EXPRESSION: Filtering
-            training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].copy()
-            validation_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(validation_patients)].copy()
-
-            # METHYLATION: Filtering
-            training_data_me = self.methylation[self.methylation['case_id'].isin(training_patients)].copy()
-            validation_data_me = self.methylation[self.methylation['case_id'].isin(validation_patients)].copy()
-
-        # GENE EXPRESSION: Reset indices for training datasets
+        # GENE EXPRESSION: Filter and Reset indices for training datasets
+        training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].copy()
         training_data_ge.reset_index(drop=True, inplace=True)
-        training_data_me.reset_index(drop=True, inplace=True)
-        training_data_me = training_data_me.set_index('case_id').reindex(training_data_ge['case_id']).reset_index()
+        training_data_meth = self.methylation[self.methylation['case_id'].isin(training_patients)].copy()
+        training_data_meth.reset_index(drop=True, inplace=True)
+        training_data_meth = training_data_meth.set_index('case_id').reindex(training_data_ge['case_id']).reset_index()
 
-        # METHYLATION: Reset indices for validation datasets
-        validation_data_ge.reset_index(drop=True, inplace=True)
-        validation_data_me.reset_index(drop=True, inplace=True)
-        validation_data_me = validation_data_me.set_index('case_id').reindex(validation_data_ge['case_id']).reset_index()
+        # METHYLATION: Filter and Reset indices for validation datasets
+        testing_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(testing_patients)].copy()
+        testing_data_ge.reset_index(drop=True, inplace=True)
+        testing_data_meth = self.methylation[self.methylation['case_id'].isin(testing_patients)].copy()
+        testing_data_meth.reset_index(drop=True, inplace=True)
+        testing_data_meth = testing_data_meth.set_index('case_id').reindex(testing_data_ge['case_id']).reset_index()
 
         # GENERAL: Create new instances of MultimodalDataset with the train and validation data
-        training_dataset = MultimodalDataset.from_dataframes(training_data_ge, training_data_me, self)
-        validation_dataset = MultimodalDataset.from_dataframes(validation_data_ge, validation_data_me, self)
+        training_dataset = MultimodalDataset.from_dataframes(training_data_ge, training_data_meth, self)
+        testing_dataset = MultimodalDataset.from_dataframes(testing_data_ge, testing_data_meth, self)
 
-        return training_dataset, validation_dataset, testing_dataset
+        return training_dataset, testing_dataset
+
+    def k_fold_split(self, training_dataset, k):
+        # GENERAL: Ensure k is a valid ratio
+        if k < 2:
+            raise ValueError("Number of folds k must be at least 2")
+
+        # GENERAL: Extract dataframes from training dataset
+        ge_dataframe = training_dataset.gene_expression
+        meth_dataframe = training_dataset.methylation
+
+        # GENERAL: Extract unique patient IDs
+        unique_patients = ge_dataframe['case_id'].unique()
+        k_fold = KFold(n_splits=k, shuffle=True, random_state=42)
+
+        # GENERAL: Extract folds
+        folds = []
+        for training_indices, validation_indices in k_fold.split(unique_patients):
+            # GENERAL: Splitting patients into train and validation sets
+            training_patients = unique_patients[training_indices]
+            validation_patients = unique_patients[validation_indices]
+
+            # GENE EXPRESSION: Filter and Reset indices for validation datasets
+            training_ge = ge_dataframe[ge_dataframe['case_id'].isin(training_patients)].copy()
+            training_ge.reset_index(drop=True, inplace=True)
+            training_meth = meth_dataframe[meth_dataframe['case_id'].isin(training_patients)].copy()
+            training_meth.reset_index(drop=True, inplace=True)
+            training_meth = training_meth.set_index('case_id').reindex(training_ge['case_id']).reset_index()
+
+            # METHYLATION: Filter and Reset indices for validation datasets
+            validation_ge = ge_dataframe[ge_dataframe['case_id'].isin(validation_patients)].copy()
+            validation_ge.reset_index(drop=True, inplace=True)
+            validation_meth = meth_dataframe[meth_dataframe['case_id'].isin(validation_patients)].copy()
+            validation_meth.reset_index(drop=True, inplace=True)
+            validation_meth = validation_meth.set_index('case_id').reindex(validation_ge['case_id']).reset_index()
+
+            # GENERAL: Create MultimodalDataset instances
+            training_fold = MultimodalDataset.from_dataframes(training_ge, training_meth, self)
+            validation_fold = MultimodalDataset.from_dataframes(validation_ge, validation_meth, self)
+
+            # GENERAL: Storing current fold
+            folds.append((training_fold, validation_fold))
+
+        return folds
 
     @classmethod
-    def from_dataframes(cls, ge_dataframe, me_dataframe, original_instance):
+    def from_dataframes(cls, ge_dataframe, meth_dataframe, original_instance):
         # Create a new MultimodalDataset instance from an existing DataFrame
         # while preserving the original configuration and parameters (without calling __init__)
         instance = cls.__new__(cls)
@@ -216,8 +234,8 @@ class MultimodalDataset(Dataset):
             instance.gene_expression_signature_sizes = original_instance.gene_expression_signature_sizes
 
         # METHYLATION: Reset indices in the DataFrame
-        me_dataframe = me_dataframe.reset_index(drop=True)
-        instance.methylation = me_dataframe
+        meth_dataframe = meth_dataframe.reset_index(drop=True)
+        instance.methylation = meth_dataframe
         if original_instance.use_signatures:
             instance.methylation_signatures = original_instance.methylation_signatures
             instance.methylation_signature_sizes = original_instance.methylation_signature_sizes
@@ -235,11 +253,11 @@ class MultimodalDataset(Dataset):
             instance.rnaseq = torch.tensor(np.zeros((len(ge_dataframe), original_instance.rnaseq_size)), dtype=torch.float32)
 
         # METHYLATION: Meth-Islands
-        meth = me_dataframe.iloc[:, me_dataframe.columns.str.endswith('_meth')].astype(float)
+        meth = meth_dataframe.iloc[:, meth_dataframe.columns.str.endswith('_meth')].astype(float)
         if original_instance.meth_size == len(meth.columns):
             instance.meth = torch.tensor(meth.values, dtype=torch.float32)
         else:
-            instance.meth = torch.tensor(np.zeros((len(me_dataframe), original_instance.meth_size)), dtype=torch.float32)
+            instance.meth = torch.tensor(np.zeros((len(meth_dataframe), original_instance.meth_size)), dtype=torch.float32)
 
         # GENE EXPRESSION: Copy signature data if use_signatures is True
         if original_instance.use_signatures:
@@ -256,7 +274,7 @@ class MultimodalDataset(Dataset):
             instance.methylation_signature_data = {}
             for signature_name in original_instance.methylation_signatures:
                 signature_data = original_instance.methylation_signature_data[signature_name]
-                indices = me_dataframe.index
+                indices = meth_dataframe.index
                 instance.methylation_signature_data[signature_name] = signature_data[indices]
 
         return instance
@@ -300,8 +318,8 @@ def test_multimodal_dataset_split():
 
     # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
-    training_dataset, validation_dataset, testing_dataset = dataset.split(config['training']['train_size'])
-    assert len(training_dataset) > len(validation_dataset)
+    training_dataset, testing_dataset = dataset.split(config['training']['train_size'])
+    assert len(training_dataset) > len(testing_dataset)
 
     # Training set
     print("\nTRAINING SET:")
@@ -315,7 +333,7 @@ def test_multimodal_dataset_split():
 
     # Validation set
     print("\nVALIDATION SET:")
-    validation_loader = DataLoader(validation_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    validation_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
     start_dataload_time = time.time()
     for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(validation_loader):
         print('GE: ', gene_expression_data, ', lenght: ', gene_expression_data[0].numel(), ', index: ', batch_index)

@@ -23,13 +23,13 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
         methylation_data = [island.to(config['device']) for island in methylation_data]
         with torch.no_grad():
-            hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
+            hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
 
         # Choosing Loss Function
         if config['training']['loss'] == 'ce':
             loss = loss_function(Y, survival_class.long())
         elif config['training']['loss'] == 'ces':
-            loss = loss_function(hazards, surveys, survival_class, c=censorship)
+            loss = loss_function(hazards, surv, survival_class, c=censorship)
         elif config['training']['loss'] == 'sct':
             loss = loss_function(Y, survival_class, c=censorship)
         else:
@@ -43,7 +43,7 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
             loss_reg = reg_function(model) * config['training']['lambda']
 
         # Scores
-        risk = -torch.sum(surveys, dim=1).cpu().numpy()
+        risk = -torch.sum(surv, dim=1).cpu().numpy()
         risk_scores[batch_index] = risk.item()
         censorships[batch_index] = censorship.item()
         event_times[batch_index] = survival_months.item()
@@ -56,6 +56,8 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Validation, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
     else:
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+
+    # W&B
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         wandb.log({"validation_loss": validation_loss, "validation_c_index": validation_c_index})

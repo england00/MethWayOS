@@ -58,11 +58,11 @@ class MultimodalCoAttentionTransformer(nn.Module):
 
         # Path Transformer (T_H)
         path_encoder_layer = nn.TransformerEncoderLayer(d_model=self.model_sizes[1], nhead=8, dim_feedforward=512, dropout=dropout, activation='relu')
-        self.path_transformer = nn.TransformerEncoder(path_encoder_layer, num_layers=2)
+        self.meth_transformer = nn.TransformerEncoder(path_encoder_layer, num_layers=2)
 
         # Methylation Global Attention Pooling (rho_H)
-        self.path_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1])
-        self.path_rho = nn.Sequential(*[nn.Linear(self.model_sizes[1], self.model_sizes[1]), nn.ReLU(), nn.Dropout(dropout)])
+        self.meth_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1])
+        self.meth_rho = nn.Sequential(*[nn.Linear(self.model_sizes[1], self.model_sizes[1]), nn.ReLU(), nn.Dropout(dropout)])
 
         # Gene Expression Transformer (T_G)
         rnaseq_encoder_layer = nn.TransformerEncoderLayer(d_model=self.model_sizes[1], nhead=8, dim_feedforward=512, dropout=dropout, activation='relu')
@@ -106,28 +106,27 @@ class MultimodalCoAttentionTransformer(nn.Module):
 
         # Set-Based MIL Transformers
         # Attention is permutation-equivariant, so dimensions are the same (Nxd_k)
-        path_trans = self.path_transformer(H_coattn)
-        omic_trans = self.rnaseq_transformer(G_bag)
+        meth_trans = self.meth_transformer(H_coattn)
+        rnaseq_trans = self.rnaseq_transformer(G_bag)
 
         # Global Attention Pooling
-        A_path, h_path = self.path_attention_head(path_trans.squeeze(1))
-        A_path = torch.transpose(A_path, 1, 0)
-        h_path = torch.mm(F.softmax(A_path, dim=1), h_path)
-        # h_path: final Methylation embeddings (dk)
-        h_path = self.path_rho(h_path).squeeze()
+        A_meth, h_meth = self.meth_attention_head(meth_trans.squeeze(1))
+        A_meth = torch.transpose(A_meth, 1, 0)
+        h_meth = torch.mm(F.softmax(A_meth, dim=1), h_meth)
+        # h_meth: final Methylation embeddings (dk)
+        h_meth = self.meth_rho(h_meth).squeeze()
 
-        A_omic, h_omic = self.rnaseq_attention_head(omic_trans.squeeze(1))
-        A_omic = torch.transpose(A_omic, 1, 0)
-        h_omic = torch.mm(F.softmax(A_omic, dim=1), h_omic)
+        A_rnaseq, h_rnaseq = self.rnaseq_attention_head(rnaseq_trans.squeeze(1))
+        A_rnaseq = torch.transpose(A_rnaseq, 1, 0)
+        h_rnaseq = torch.mm(F.softmax(A_rnaseq, dim=1), h_rnaseq)
         # h_omic: final omics embeddings (dk)
-        h_omic = self.rnaseq_rho(h_omic).squeeze()
+        h_rnaseq = self.rnaseq_rho(h_rnaseq).squeeze()
 
         # Fusion Layer
         # h: final representation (dk)
-        h = self.fusion_layer(h_path, h_omic)
+        h = self.fusion_layer(h_meth, h_rnaseq)
 
         # Survival Layer
-
         # logits: classifier output
         # size   --> (1, 4)
         # domain --> R
@@ -139,15 +138,15 @@ class MultimodalCoAttentionTransformer(nn.Module):
         # survs: probability of patient survival after time t
         # size   --> (1, 4)
         # domain --> [0, 1]
-        survs = torch.cumprod(1 - hazards, dim=1)
+        surv = torch.cumprod(1 - hazards, dim=1)
         # Y: predicted probability distribution
         # size   --> (1, 4)
         # domain --> [0, 1] (probability distribution)
         Y = F.softmax(logits, dim=1)
 
-        attention_scores = {'coattn': A_coattn, 'path': A_path, 'omic': A_omic}
+        attention_scores = {'coattn': A_coattn, 'path': A_meth, 'omic': A_rnaseq}
 
-        return hazards, survs, Y, attention_scores
+        return hazards, surv, Y, attention_scores
 
     def get_trainable_parameters(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)

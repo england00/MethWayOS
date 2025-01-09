@@ -140,6 +140,8 @@ def main(config_path: str):
         print(f'--> Loading model checkpoint from {config["model"]["load_from_checkpoint"]}')
         checkpoint = torch.load(config['model']['load_from_checkpoint'])
         model.load_state_dict(checkpoint['model_state_dict'])
+
+    # Moving Model on GPU
     if config['device'] == 'cuda' and torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
     model.to(device=config['device'])

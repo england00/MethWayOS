@@ -24,13 +24,13 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
         censorship = censorship.type(torch.FloatTensor).to(config['device'], non_blocking=True)
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
         methylation_data = [island.to(config['device']) for island in methylation_data]
-        hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
+        hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
 
         # Choosing Loss Function
         if config['training']['loss'] == 'ce':
             loss = loss_function(Y, survival_class.long())
         elif config['training']['loss'] == 'ces':
-            loss = loss_function(hazards, surveys, survival_class, c=censorship)
+            loss = loss_function(hazards, surv, survival_class, c=censorship)
         elif config['training']['loss'] == 'sct':
             loss = loss_function(Y, survival_class, c=censorship)
         else:
@@ -44,7 +44,7 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             loss_reg = reg_function(model) * config['training']['lambda']
 
         # Scores
-        risk = -torch.sum(surveys, dim=1)
+        risk = -torch.sum(surv, dim=1)
         risk_scores[batch_index] = risk
         censorships[batch_index] = censorship
         event_times[batch_index] = survival_months
@@ -80,6 +80,8 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
     else:
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
+
+    # Checkpoint
     if config['model']['checkpoint_epoch'] > 0:
         if (epoch + 1) % config['model']['checkpoint_epoch'] == 0 and epoch != 0:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M')
@@ -94,6 +96,8 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
                 'scheduler_state_dict': scheduler.state_dict(),
                 'loss': training_loss,
             }, checkpoint_path)
+
+    # W&B
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         wandb.log({"training_loss": training_loss, "training_c_index": training_c_index})

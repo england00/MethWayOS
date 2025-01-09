@@ -109,10 +109,12 @@ def main(config_path: str):
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
 
     # Splitting Dataset
-    training_dataset, validation_dataset, testing_dataset = dataset.split(config['training']['train_size'])
-    print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(validation_dataset)}]')
+    training_dataset, testing_dataset = dataset.split(config['training']['train_size'])
+    print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(testing_dataset)}]')
+    # Esegui K-Fold Cross Validation
+    folds = dataset.k_fold_split(training_dataset, k=5)
     training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
-    validation_loader = DataLoader(validation_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    validation_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
 
     # Model
     print('')
@@ -132,6 +134,8 @@ def main(config_path: str):
         print(f'--> Loading model checkpoint from {config["model"]["load_from_checkpoint"]}')
         checkpoint = torch.load(config['model']['load_from_checkpoint'])
         model.load_state_dict(checkpoint['model_state_dict'])
+
+    # Moving Model on GPU
     if config['device'] == 'cuda' and torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
     model.to(device=config['device'])
@@ -189,7 +193,7 @@ def main(config_path: str):
     validation_loss = np.inf
     best_c_index = 0.0
     best_loss = np.inf
-    best_model_state = None
+    best_score = -np.inf
     epochs_without_improvement = 0
     patience = config['training']['early_stopping_patience']
     for epoch in range(starting_epoch, config['training']['epochs']):
@@ -201,41 +205,38 @@ def main(config_path: str):
         validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
         # Saving best model dependently on Validation Loss or Validation C-Index
-        if validation_loss < best_loss or validation_c_index > best_c_index:
-            if validation_loss < best_loss:
-                best_loss = validation_loss
-            if validation_c_index > best_c_index:
-                best_c_index = validation_c_index
+        validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
+        if validation_score > best_score:
+            best_score = validation_score
+            best_loss = validation_loss
+            best_c_index = validation_c_index
             epochs_without_improvement = 0
-            best_model_state = {
+            torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'scheduler_state_dict': scheduler.state_dict(),
                 'validation_loss': validation_loss,
                 'validation_c_index': validation_c_index,
-            }
-            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - New best Validation Score - Epoch: {epoch + 1}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+            }, config['model']['checkpoint_best_model'])
+            print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
         else:
             epochs_without_improvement += 1
-            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+            print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+        print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_loss:.4f}\n\t--> best validation_c_index: {best_c_index:.4f}')
 
         # Early stopping
         if epochs_without_improvement >= patience:
-            print(
-                f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Early stopping triggered after {patience} epochs without improvement')
+            print(f'--> Early stopping triggered after {patience} epochs without improvement')
             break
 
         end_time = time.time()
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
 
     # Restoring Best Model
-    if best_model_state:
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
-        model.load_state_dict(best_model_state['model_state_dict'])
-        optimizer.load_state_dict(best_model_state['optimizer_state_dict'])
-        if scheduler:
-            scheduler.load_state_dict(best_model_state['scheduler_state_dict'])
+    best_model_state = torch.load(config['model']['checkpoint_best_model'])
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
+    model.load_state_dict(best_model_state['model_state_dict'])
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Final Validation

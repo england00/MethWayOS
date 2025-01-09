@@ -35,6 +35,8 @@ model:
   checkpoint_epoch: 20
   # Directory in which model checkpoint will be saved
   checkpoint_dir: checkpoints/
+  # Best model file during training (for Early Stopping)
+  checkpoint_best_model: ../../src/mcat/checkpoints/best_current_model.pt
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [small, medium, big]
@@ -51,7 +53,7 @@ training:
   # How many epochs of training
   epochs: 50
   # Patience during training
-  early_stopping_patience: 5
+  early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling
   gamma: 0.99
   # Gradient acceleration step
@@ -74,3 +76,7 @@ training:
   train_size: 0.8
   # Weight decay
   weight_decay: 0.00002
+  # C-Index weight
+  weight_c_index: 1.0
+  # Loss weight
+  weight_loss: 0.1
