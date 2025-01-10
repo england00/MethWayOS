@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
+N_FOLDS = 5
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
 PID = None
@@ -71,19 +72,19 @@ def wandb_init(config):
 
 ''' MAIN DEFINITION '''
 def main(config_path: str):
-    # Loading Configuration file
+    ## Configuration
     with open(config_path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-    # Managing Runs on Local Machine
+    ## Local Machine Runs
     print(f"HOSTNAME: {socket.gethostname()}")
     if socket.gethostname() == 'DELL-XPS-15':
         config['wandb']['enabled'] = False
-        PID = f'{socket.gethostname()}_{os.getpid()}'
+        process_id = f'{socket.gethostname()}_{os.getpid()}'
     else:
-        PID = f'{os.getenv("SLURM_JOB_NAME", "default_job_name")}_{os.getenv("SLURM_JOB_ID", "default_job_id")}'
+        process_id = f'{os.getenv("SLURM_JOB_NAME", "default_job_name")}_{os.getenv("SLURM_JOB_ID", "default_job_id")}'
 
-    # Starting W&B
+    ## Starting W&B
     print('')
     if config['wandb']['enabled']:
         print('WANDB: setting up for report')
@@ -92,7 +93,7 @@ def main(config_path: str):
     else:
         print('WANDB: disabled')
 
-    # CUDA
+    ## CUDA
     print('')
     warnings.filterwarnings("ignore", category=UserWarning, module="torch")
     if config['device'] == 'cuda' and not torch.cuda.is_available():
@@ -105,153 +106,219 @@ def main(config_path: str):
             print(f'--> Using device: {torch.cuda.get_device_name(device_index)}')
     print(f'--> Running on {config["device"].upper()}')
 
-    # Loading Dataset
+    ## DATASET
     print('')
     dataset = MultimodalDataset(config,
                                 classes_number=config['training']['classes_number'],
                                 use_signatures=True,
                                 remove_incomplete_samples=True)  # Dataset object
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
-
-    # Splitting Dataset
     training_dataset, testing_dataset = dataset.split(config['training']['train_size'])
     print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(testing_dataset)}]')
-    # Esegui K-Fold Cross Validation
-    folds = dataset.k_fold_split(training_dataset, k=5)
-    training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
-    validation_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
 
-    # Model
-    print('')
-    model_name = config['model']['name']
-    print(f'MODEL: {model_name}')
-    model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
+    ## CROSS VALIDATION
+    folds = dataset.k_fold_split(training_dataset, k=N_FOLDS)
+    for fold_index, (training_fold, validation_fold) in enumerate(folds):
+        title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Fold n°{fold_index + 1}')
+
+        ## MODEL
+        print('')
+        model_name = config['model']['name']
+        print(f'MODEL: {model_name}')
+        model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
+                                                 n_classes=config['training']['classes_number'],
+                                                 rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                                 meth_sizes=dataset.methylation_signature_sizes,
+                                                 fusion=config['model']['fusion'],
+                                                 device=config['device'])
+        print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
+        checkpoint = None
+        if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
+            print(f'--> Loading model checkpoint from {config["model"]["load_from_checkpoint"]}')
+            checkpoint = torch.load(config['model']['load_from_checkpoint'])
+            model.load_state_dict(checkpoint['model_state_dict'])
+        if config['device'] == 'cuda' and torch.cuda.device_count() > 1:  # Moving Model on GPU
+            model = nn.DataParallel(model)
+        model.to(device=config['device'])
+
+        ## Loss Function
+        if config['training']['loss'] == 'ce':
+            print('--> Loss function: CrossEntropyLoss')
+            loss_function = nn.CrossEntropyLoss()
+        elif config['training']['loss'] == 'ces':
+            print('--> Loss function: CrossEntropySurvivalLoss')
+            loss_function = CrossEntropySurvivalLoss(alpha=config['training']['alpha'])
+        elif config['training']['loss'] == 'sct':
+            print('--> Loss function: SurvivalClassificationTobitLoss')
+            loss_function = SurvivalClassificationTobitLoss()
+        else:
+            raise RuntimeError(f'--> Loss function: "{config["training"]["loss"]}" not implemented')
+
+        ## Optimizer
+        if config['training']['optimizer'] == 'sgd':
+            optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'])
+        elif config['training']['optimizer'] == 'adadelta':
+            optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        elif config['training']['optimizer'] == 'adamax':
+            optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        else:
+            config['training']['optimizer'] = 'adam'
+            optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        print(f'--> Optimizer: {config["training"]["optimizer"]}')
+        starting_epoch = 0
+        if config['model']['load_from_checkpoint'] is not None:  # Starting Optimizer from Checkpoint
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            starting_epoch = checkpoint['epoch']
+
+        ## Scheduler
+        if config['training']['scheduler'] == 'exp':
+            gamma = config['training']['gamma']
+            scheduler = lrs.ExponentialLR(optimizer, gamma=gamma)
+        else:
+            scheduler = None
+
+        ## Regularization
+        if config['training']['lambda']:
+            reg_function = l1_reg
+        else:
+            reg_function = None
+
+        ## Fold's TRAINING
+        title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started (Fold n°{fold_index + 1})')
+        training_loader = DataLoader(training_fold, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+        validation_loader = DataLoader(validation_fold, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+        model.train()
+        best_c_index = 0.0
+        best_loss = np.inf
+        best_score = -np.inf
+        epochs_without_improvement = 0
+        patience = config['training']['early_stopping_patience']
+        for epoch in range(starting_epoch, config['training']['epochs']):
+            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
+            start_time = time.time()
+
+            # TRAINING & VALIDATION in this epoch
+            training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
+            testing_loss, testing_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
+
+            # BEST MODEL chosen on VALIDATION Loss or C-Index
+            validation_score = config['training']['weight_c_index'] * testing_c_index - config['training']['weight_loss'] * testing_loss
+            if validation_score > best_score:
+                best_score = validation_score
+                best_loss = testing_loss
+                best_c_index = testing_c_index
+                epochs_without_improvement = 0
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'scheduler_state_dict': scheduler.state_dict(),
+                    'validation_loss': testing_loss,
+                    'validation_c_index': testing_c_index,
+                }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
+                print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {testing_loss:.4f}, validation_c_index: {testing_c_index:.4f}')
+            else:
+                epochs_without_improvement += 1
+                print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+            print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_loss:.4f}\n\t--> best validation_c_index: {best_c_index:.4f}')
+
+            # Early stopping
+            if epochs_without_improvement >= patience:
+                print(f'--> Early stopping triggered after {patience} epochs without improvement')
+                break
+
+            end_time = time.time()
+            print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
+
+        ## Fold's BEST MODEL
+        best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Best model in epoch {best_model_state["epoch"] + 1}')
+        title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed (Fold n°{fold_index + 1})')
+
+    ## Final TRAINING
+    final_model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
                                              n_classes=config['training']['classes_number'],
                                              rnaseq_sizes=dataset.gene_expression_signature_sizes,
                                              meth_sizes=dataset.methylation_signature_sizes,
                                              fusion=config['model']['fusion'],
                                              device=config['device'])
-    print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
+    model_state_dicts = [torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{i}.pt')['model_state_dict'] for i in range(len(folds))]
+    averaged_model_state_dicts = {}
+    for key in model_state_dicts[0].keys():
+        averaged_model_state_dicts[key] = sum(state_dict[key] for state_dict in model_state_dicts) / len(folds)
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring Averaged Model from the Bests')
+    final_model.load_state_dict(averaged_model_state_dicts)
+    if config['device'] == 'cuda' and torch.cuda.device_count() > 1:  # Moving Model on GPU
+        final_model = nn.DataParallel(final_model)
+    final_model.to(device=config['device'])
 
-    # Starting from Checkpoint
-    checkpoint = None
-    if config['model']['load_from_checkpoint'] is not None:
-        print(f'--> Loading model checkpoint from {config["model"]["load_from_checkpoint"]}')
-        checkpoint = torch.load(config['model']['load_from_checkpoint'])
-        model.load_state_dict(checkpoint['model_state_dict'])
-
-    # Moving Model on GPU
-    if config['device'] == 'cuda' and torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
-    model.to(device=config['device'])
-
-    # Loss function
+    ## Loss Function
     if config['training']['loss'] == 'ce':
         print('--> Loss function: CrossEntropyLoss')
-        loss_function = nn.CrossEntropyLoss()
+        final_loss_function = nn.CrossEntropyLoss()
     elif config['training']['loss'] == 'ces':
         print('--> Loss function: CrossEntropySurvivalLoss')
-        loss_function = CrossEntropySurvivalLoss(alpha=config['training']['alpha'])
+        final_loss_function = CrossEntropySurvivalLoss(alpha=config['training']['alpha'])
     elif config['training']['loss'] == 'sct':
         print('--> Loss function: SurvivalClassificationTobitLoss')
-        loss_function = SurvivalClassificationTobitLoss()
+        final_loss_function = SurvivalClassificationTobitLoss()
     else:
         raise RuntimeError(f'--> Loss function: "{config["training"]["loss"]}" not implemented')
 
-    # Optimizer
+    ## Optimizer
     if config['training']['optimizer'] == 'sgd':
-        optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'])
+        final_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'])
     elif config['training']['optimizer'] == 'adadelta':
-        optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        final_optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
     elif config['training']['optimizer'] == 'adamax':
-        optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        final_optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
     else:
         config['training']['optimizer'] = 'adam'
-        optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+        final_optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
     print(f'--> Optimizer: {config["training"]["optimizer"]}')
 
-    # Scheduler for variable learning rate
+    ## Scheduler
     if config['training']['scheduler'] == 'exp':
         gamma = config['training']['gamma']
-        scheduler = lrs.ExponentialLR(optimizer, gamma=gamma)
-    elif config['training']['scheduler'] == 'rop':
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=1, threshold=0.01, cooldown=0, min_lr=1e-6)
+        final_scheduler = lrs.ExponentialLR(final_optimizer, gamma=gamma)
     else:
-        scheduler = None
+        final_scheduler = None
 
-    # Optimizer in a given checkpoint
-    starting_epoch = 0
-    if config['model']['load_from_checkpoint'] is not None:
-        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        starting_epoch = checkpoint['epoch']
-
-    # Lambda parameter
+    ## Regularization
     if config['training']['lambda']:
-        reg_function = l1_reg
+        final_reg_function = l1_reg
     else:
-        reg_function = None
+        final_reg_function = None
 
-    # Training
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
-    model.train()
-    validation_c_index = 0.0
-    validation_loss = np.inf
-    best_c_index = 0.0
-    best_loss = np.inf
-    best_score = -np.inf
-    epochs_without_improvement = 0
-    patience = config['training']['early_stopping_patience']
-    for epoch in range(starting_epoch, config['training']['epochs']):
+    ## TRAINING
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Training started')
+    training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    final_model.train()
+    starting_epoch = 0
+    for epoch in range(starting_epoch, 20):
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
         start_time = time.time()
-
-        # Training and validation in this epoch
-        training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index)
-        validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
-
-        # Saving best model dependently on Validation Loss or Validation C-Index
-        validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
-        if validation_score > best_score:
-            best_score = validation_score
-            best_loss = validation_loss
-            best_c_index = validation_c_index
-            epochs_without_improvement = 0
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'scheduler_state_dict': scheduler.state_dict(),
-                'validation_loss': validation_loss,
-                'validation_c_index': validation_c_index,
-            }, f'{config["model"]["checkpoint_best_model"]}_{PID}.pt')
-            print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
-        else:
-            epochs_without_improvement += 1
-            print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
-        print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_loss:.4f}\n\t--> best validation_c_index: {best_c_index:.4f}')
-
-        # Early stopping
-        if epochs_without_improvement >= patience:
-            print(f'--> Early stopping triggered after {patience} epochs without improvement')
-            break
-
+        training(epoch, config, training_loader, final_model, final_loss_function, final_optimizer, final_scheduler, final_reg_function)
         end_time = time.time()
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Training completed')
 
-    # Restoring Best Model
-    best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt')
-    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
-    model.load_state_dict(best_model_state['model_state_dict'])
-    os.rename(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt', f'{config["model"]["checkpoint_best_model"]}_{PID}_{best_model_state["validation_c_index"]:4f}.pt')
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
-
-    # Final Validation
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation started')
+    ## TESTING
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing started')
+    testing_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
     start_time = time.time()
-    validation('final validation', config, validation_loader, model, loss_function, reg_function)
+    testing_loss, testing_c_index = validation('testing', config, testing_loader, final_model, final_loss_function, final_optimizer)
     end_time = time.time()
-    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Validation: {end_time - start_time:.0f}s')
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation completed')
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Testing: {end_time - start_time:.0f}s')
+    torch.save({
+        'epoch': 'testing',
+        'model_state_dict': final_model.state_dict(),
+        'optimizer_state_dict': final_optimizer.state_dict(),
+        'scheduler_state_dict': final_scheduler.state_dict(),
+        'testing_loss': testing_loss,
+        'testing_c_index': testing_c_index,
+    }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_testing_{testing_c_index:4f}.pt')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing completed')
 
     # Ending W&B
     if config['wandb']['enabled']:

@@ -1,5 +1,4 @@
 import datetime
-import os
 import time
 import wandb
 import torch.cuda
@@ -7,7 +6,7 @@ from sksurv.metrics import concordance_index_censored
 
 
 ''' TRAINING DEFINITION '''
-def training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, validation_loss, validation_c_index):
+def training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function):
     # Initialization
     model.train()
     training_loss = 0.0
@@ -75,27 +74,9 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
         lr = optimizer.param_groups[0]["lr"]
         if config['training']['scheduler'] == 'exp':
             scheduler.step()
-        elif config['training']['scheduler'] == 'rop':
-            scheduler.step(validation_loss)
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
     else:
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
-
-    # Checkpoint
-    if config['model']['checkpoint_epoch'] > 0:
-        if (epoch + 1) % config['model']['checkpoint_epoch'] == 0 and epoch != 0:
-            now = datetime.datetime.now().strftime('%Y%m%d%H%M')
-            filename = f'{config["model"]["name"]}_{config["dataset"]["name"]}_E{epoch + 1}_{now}.pt'
-            checkpoint_dir = config['model']['checkpoint_dir']
-            checkpoint_path = os.path.join(checkpoint_dir, filename)
-            print(f'--> Saving model into {checkpoint_path}')
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'scheduler_state_dict': scheduler.state_dict(),
-                'loss': training_loss,
-            }, checkpoint_path)
 
     # W&B
     wandb_enabled = config['wandb']['enabled']
