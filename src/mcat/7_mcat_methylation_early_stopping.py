@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
+C_INDEX_THRESHOLD = 0.65
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
 PID = None
@@ -236,7 +237,13 @@ def main(config_path: str):
     best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt')
     print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
     model.load_state_dict(best_model_state['model_state_dict'])
-    os.rename(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt', f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt')
+    if best_model_state["validation_c_index"] >= C_INDEX_THRESHOLD:
+        new_filename = f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt'
+        os.rename(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt', f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt')
+        print(f'--> Model saved as {new_filename}')
+    else:
+        os.remove(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt')
+        print('--> Model discarded due to low validation C-Index.')        
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Final Validation
