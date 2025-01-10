@@ -249,7 +249,7 @@ def main(config_path: str):
     # Final Validation
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation started')
     start_time = time.time()
-    validation('final validation', config, validation_loader, model, loss_function, reg_function)
+    validation('testing', config, validation_loader, model, loss_function, reg_function)
     end_time = time.time()
     print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Validation: {end_time - start_time:.0f}s')
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation completed')
