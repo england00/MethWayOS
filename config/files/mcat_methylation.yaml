@@ -36,7 +36,7 @@ model:
   # Directory in which model checkpoint will be saved
   checkpoint_dir: checkpoints/
   # Best model file during training (for Early Stopping)
-  checkpoint_best_model: ../../src/mcat/checkpoints/best_current_model.pt
+  checkpoint_best_model: ../../src/mcat/checkpoints/model
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [small, medium, big]
@@ -51,7 +51,7 @@ training:
   # Classes Number
   classes_number: 20
   # How many epochs of training
-  epochs: 50
+  epochs: 100
   # Patience during training
   early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling

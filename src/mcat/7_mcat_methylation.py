@@ -1,6 +1,4 @@
 import sys
-sys.path.append('/work/tesi_linghilterra/AIforBioinformatics')
-
 import datetime
 import os
 import time
@@ -12,6 +10,7 @@ import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
+sys.path.append('/work/tesi_linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
 from src.mcat.methylation_functions.training_methylation import training
 from src.mcat.methylation_functions.validation_methylation import validation
@@ -25,6 +24,7 @@ from torch.utils.data import DataLoader
 ## CONFIGURATION
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
+PID = None
 
 
 ## FUNCTIONS
@@ -79,6 +79,9 @@ def main(config_path: str):
     print(f"HOSTNAME: {socket.gethostname()}")
     if socket.gethostname() == 'DELL-XPS-15':
         config['wandb']['enabled'] = False
+        PID = f'{socket.gethostname()}_{os.getpid()}'
+    else:
+        PID = f'{os.getenv("SLURM_JOB_NAME", "default_job_name")}_{os.getenv("SLURM_JOB_ID", "default_job_id")}'
 
     # Starting W&B
     print('')
@@ -220,7 +223,7 @@ def main(config_path: str):
                 'scheduler_state_dict': scheduler.state_dict(),
                 'validation_loss': validation_loss,
                 'validation_c_index': validation_c_index,
-            }, config['model']['checkpoint_best_model'])
+            }, f'{config["model"]["checkpoint_best_model"]}_{PID}.pt')
             print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
         else:
             epochs_without_improvement += 1
@@ -236,9 +239,10 @@ def main(config_path: str):
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
 
     # Restoring Best Model
-    best_model_state = torch.load(config['model']['checkpoint_best_model'])
+    best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt')
     print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
     model.load_state_dict(best_model_state['model_state_dict'])
+    os.rename(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt', f'{config["model"]["checkpoint_best_model"]}_{PID}_{best_model_state["validation_c_index"]}.pt')
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Final Validation
