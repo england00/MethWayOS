@@ -237,6 +237,10 @@ def main(config_path: str):
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed (Fold n°{fold_index + 1})')
 
     ## Final TRAINING
+    ## MODEL
+    print('')
+    model_name = config['model']['name']
+    print(f'MODEL: {model_name}')
     final_model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
                                              n_classes=config['training']['classes_number'],
                                              rnaseq_sizes=dataset.gene_expression_signature_sizes,
@@ -277,7 +281,25 @@ def main(config_path: str):
         config['training']['optimizer'] = 'adam'
         final_optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
     print(f'--> Optimizer: {config["training"]["optimizer"]}')
+    optimizer_state_dicts = [torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{i}.pt')['optimizer_state_dict'] for i in range(len(folds))]
+    averaged_optimizer_state_dicts = {}
+    for key in optimizer_state_dicts[0].keys():
+        if isinstance(optimizer_state_dicts[0][key], list):
+            averaged_optimizer_state_dicts[key] = optimizer_state_dicts[0][key]  # Copia il primo gruppo di parametri
+            for group_idx in range(len(optimizer_state_dicts[0][key])):
+                for subkey in optimizer_state_dicts[0][key][group_idx].keys():
+                    if isinstance(optimizer_state_dicts[0][key][group_idx][subkey], (int, float)):
+                        averaged_optimizer_state_dicts[key][group_idx][subkey] = sum(state_dict[key][group_idx][subkey] for state_dict in optimizer_state_dicts) / len(folds)
+        elif isinstance(optimizer_state_dicts[0][key], dict):
+            averaged_optimizer_state_dicts[key] = {}
+            for subkey in optimizer_state_dicts[0][key].keys():
+                averaged_optimizer_state_dicts[key][subkey] = sum(state_dict[key][subkey] for state_dict in optimizer_state_dicts) / len(folds)
+        else:
+            averaged_optimizer_state_dicts[key] = sum(state_dict[key] for state_dict in optimizer_state_dicts) / len(folds)
+    final_optimizer.load_state_dict(averaged_optimizer_state_dicts)
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring Averaged Optimizer from the Bests')
 
+    '''
     ## Scheduler
     if config['training']['scheduler'] == 'exp':
         gamma = config['training']['gamma']
@@ -303,6 +325,7 @@ def main(config_path: str):
         end_time = time.time()
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Training completed')
+    '''
 
     ## TESTING
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing started')
@@ -315,7 +338,6 @@ def main(config_path: str):
         'epoch': 'testing',
         'model_state_dict': final_model.state_dict(),
         'optimizer_state_dict': final_optimizer.state_dict(),
-        'scheduler_state_dict': final_scheduler.state_dict(),
         'testing_loss': testing_loss,
         'testing_c_index': testing_c_index,
     }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_testing_{testing_c_index:4f}.pt')
