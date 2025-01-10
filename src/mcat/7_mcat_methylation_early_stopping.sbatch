@@ -30,4 +30,4 @@ echo "Job "$SLURM_JOB_ID" started"
 export PYTHONPATH=/work/tesi_linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /work/tesi_linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation.py
+python /work/tesi_linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation_early_stopping.py

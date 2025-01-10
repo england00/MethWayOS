@@ -6,7 +6,7 @@ wandb:
   # Whether enable or not W&B
   enabled: True
   # Project name
-  project: TCGA-BRCA-GE-ME-COMP
+  project: TCGA-BRCA-GE-ME-Early-Stopping
 
 # Dataset configuration
 dataset:
@@ -30,7 +30,7 @@ model:
   # Model name
   name: MCAT
   # Path of model checkpoint to load. Set ~ if loading is not necessary
-  load_from_checkpoint: ../../src/mcat/checkpoints/model_lucas_job_2505427_0.749543.pt
+  load_from_checkpoint: ~
   # Epoch of checkpointing. Set 0 if saving the model is not necessary
   checkpoint_epoch: 20
   # Directory in which model checkpoint will be saved
@@ -53,7 +53,7 @@ training:
   # How many epochs of training
   epochs: 100
   # Patience during training
-  early_stopping_patience: 20
+  early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling
   gamma: 1.0
   # Gradient acceleration step
