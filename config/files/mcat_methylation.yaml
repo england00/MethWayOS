@@ -30,7 +30,7 @@ model:
   # Model name
   name: MCAT
   # Path of model checkpoint to load. Set ~ if loading is not necessary
-  load_from_checkpoint: ~
+  load_from_checkpoint: ../../src/mcat/checkpoints/model_lucas_job_2505427_0.749543.pt
   # Epoch of checkpointing. Set 0 if saving the model is not necessary
   checkpoint_epoch: 20
   # Directory in which model checkpoint will be saved
@@ -45,7 +45,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: 0.8
+  alpha: 1.0
   # Batch size
   batch_size: 1
   # Classes Number
@@ -53,13 +53,13 @@ training:
   # How many epochs of training
   epochs: 100
   # Patience during training
-  early_stopping_patience: 7
+  early_stopping_patience: 20
   # Coefficient used in exponential lr scheduling
-  gamma: 0.99
+  gamma: 1.0
   # Gradient acceleration step
-  grad_acc_step: 8
+  grad_acc_step: 16
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: 0.0000125
+  lambda: 0.0
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
