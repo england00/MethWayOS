@@ -242,7 +242,7 @@ def main(config_path: str):
     best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt')
     print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
     model.load_state_dict(best_model_state['model_state_dict'])
-    os.rename(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt', f'{config["model"]["checkpoint_best_model"]}_{PID}_{best_model_state["validation_c_index"]}.pt')
+    os.rename(f'{config["model"]["checkpoint_best_model"]}_{PID}.pt', f'{config["model"]["checkpoint_best_model"]}_{PID}_{best_model_state["validation_c_index"]:4f}.pt')
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed')
 
     # Final Validation
