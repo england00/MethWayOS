@@ -6,7 +6,7 @@ wandb:
   # Whether enable or not W&B
   enabled: True
   # Project name
-  project: TCGA-BRCA-GE-ME-27-Early-Stopping
+  project: TCGA-BRCA-GE-ME-27-Cross-Validation
 
 # Dataset configuration
 dataset:
@@ -45,7 +45,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: 1.0
+  alpha: 0.9
   # Batch size
   batch_size: 1
   # Classes Number
@@ -55,11 +55,11 @@ training:
   # Patience during training
   early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling
-  gamma: 1.0
+  gamma: 0.9
   # Gradient acceleration step
-  grad_acc_step: 16
+  grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: 0.0
+  lambda: 0.00002
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
