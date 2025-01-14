@@ -9,13 +9,24 @@ from torch.utils.data import Dataset, DataLoader
 
 ## CLASSES
 class MultimodalDataset(Dataset):
-    def __init__(self, config, classes_number: int = 4, use_signatures: bool = False, remove_incomplete_samples: bool = True):
-        # GENERAL: Managing CSV Dataset
-        self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
-        self.methylation = pd.read_csv(config['dataset']['methylation'])
+    def __init__(self, config, classes_number: int = 4, use_signatures: bool = False, random_seed: int = None, remove_incomplete_samples: bool = True):
+        # GENERAL
+        self.random_seed = random_seed
+
+        # GENE EXPRESSION: Loading CSV Dataset
         print('DATASET: Loading data')
+        self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
         self.gene_expression.reset_index(drop=True, inplace=True)
+        if 'Unnamed: 0' in self.gene_expression.columns:
+            self.gene_expression = self.gene_expression.drop(columns=['Unnamed: 0'])
+        print('--> Gene Expression loaded')
+
+        # METHYLATION: Loading CSV Dataset
+        self.methylation = pd.read_csv(config['dataset']['methylation'])
         self.methylation.reset_index(drop=True, inplace=True)
+        if 'Unnamed: 0' in self.methylation.columns:
+            self.methylation = self.methylation.drop(columns=['Unnamed: 0'])
+        print('--> Methylation loaded')
 
         # GENERAL: Managing incomplete examples (only 'case_id' within Gene Expression and Methylation datasets)
         if remove_incomplete_samples:
@@ -149,6 +160,7 @@ class MultimodalDataset(Dataset):
 
         # GENERAL: Get unique patients and Shuffle randomly
         unique_patients = self.gene_expression['case_id'].unique()
+        np.random.seed(self.random_seed)
         np.random.shuffle(unique_patients)
         training_patient_count = int(len(unique_patients) * training_size)
 
@@ -156,18 +168,14 @@ class MultimodalDataset(Dataset):
         training_patients = unique_patients[:training_patient_count]
         testing_patients = unique_patients[training_patient_count:]
 
-        # GENE EXPRESSION: Filter and Reset indices for training datasets
-        training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].copy()
-        training_data_ge.reset_index(drop=True, inplace=True)
-        training_data_meth = self.methylation[self.methylation['case_id'].isin(training_patients)].copy()
-        training_data_meth.reset_index(drop=True, inplace=True)
+        # GENERAL: Filter and Reset indices for training datasets
+        training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].reset_index(drop=True)
+        training_data_meth = self.methylation[self.methylation['case_id'].isin(training_patients)].reset_index(drop=True)
         training_data_meth = training_data_meth.set_index('case_id').reindex(training_data_ge['case_id']).reset_index()
 
-        # METHYLATION: Filter and Reset indices for validation datasets
-        testing_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(testing_patients)].copy()
-        testing_data_ge.reset_index(drop=True, inplace=True)
-        testing_data_meth = self.methylation[self.methylation['case_id'].isin(testing_patients)].copy()
-        testing_data_meth.reset_index(drop=True, inplace=True)
+        # GENERAL: Filter and Reset indices for testing datasets
+        testing_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(testing_patients)].reset_index(drop=True)
+        testing_data_meth = self.methylation[self.methylation['case_id'].isin(testing_patients)].reset_index(drop=True)
         testing_data_meth = testing_data_meth.set_index('case_id').reindex(testing_data_ge['case_id']).reset_index()
 
         # GENERAL: Create new instances of MultimodalDataset with the train and validation data
@@ -187,7 +195,7 @@ class MultimodalDataset(Dataset):
 
         # GENERAL: Extract unique patient IDs
         unique_patients = ge_dataframe['case_id'].unique()
-        k_fold = KFold(n_splits=k, shuffle=True, random_state=42)
+        k_fold = KFold(n_splits=k, shuffle=True, random_state=self.random_seed)
 
         # GENERAL: Extract folds
         folds = []
@@ -196,18 +204,14 @@ class MultimodalDataset(Dataset):
             training_patients = unique_patients[training_indices]
             validation_patients = unique_patients[validation_indices]
 
-            # GENE EXPRESSION: Filter and Reset indices for validation datasets
-            training_ge = ge_dataframe[ge_dataframe['case_id'].isin(training_patients)].copy()
-            training_ge.reset_index(drop=True, inplace=True)
-            training_meth = meth_dataframe[meth_dataframe['case_id'].isin(training_patients)].copy()
-            training_meth.reset_index(drop=True, inplace=True)
+            # GENERAL: Filter and Reset indices for training datasets
+            training_ge = ge_dataframe[ge_dataframe['case_id'].isin(training_patients)].reset_index(drop=True)
+            training_meth = meth_dataframe[meth_dataframe['case_id'].isin(training_patients)].reset_index(drop=True)
             training_meth = training_meth.set_index('case_id').reindex(training_ge['case_id']).reset_index()
 
-            # METHYLATION: Filter and Reset indices for validation datasets
-            validation_ge = ge_dataframe[ge_dataframe['case_id'].isin(validation_patients)].copy()
-            validation_ge.reset_index(drop=True, inplace=True)
-            validation_meth = meth_dataframe[meth_dataframe['case_id'].isin(validation_patients)].copy()
-            validation_meth.reset_index(drop=True, inplace=True)
+            # GENERAL: Filter and Reset indices for validation datasets
+            validation_ge = ge_dataframe[ge_dataframe['case_id'].isin(validation_patients)].reset_index(drop=True)
+            validation_meth = meth_dataframe[meth_dataframe['case_id'].isin(validation_patients)].reset_index(drop=True)
             validation_meth = validation_meth.set_index('case_id').reindex(validation_ge['case_id']).reset_index()
 
             # GENERAL: Create MultimodalDataset instances

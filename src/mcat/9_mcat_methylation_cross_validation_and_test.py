@@ -4,8 +4,6 @@ import time
 import wandb
 import yaml
 import numpy as np
-import random
-import scipy.stats as stats
 import socket
 import sys
 import torch.cuda
@@ -24,7 +22,6 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
-C_INDEX_THRESHOLD = 0.65
 N_FOLDS = 5
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
@@ -34,26 +31,6 @@ PID = None
 ## FUNCTIONS
 def title(text):
     print('\n' + f' {text} '.center(80, '#'))
-
-
-''' RANDOM CONFIGURATION '''
-def set_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-
-
-''' STATISTICS '''
-def calculate_statistics(data):
-    mean = np.mean(data)
-    variance = np.var(data, ddof=1)
-    cardinality = len(data)
-    std_error = np.std(data, ddof=1) / np.sqrt(cardinality)
-    ci_lower, ci_upper = stats.norm.interval(0.95, loc=mean, scale=std_error)
-    return mean, variance, ci_lower, ci_upper
 
 
 ''' W&B CONFIGURATION '''
@@ -98,7 +75,6 @@ def main(config_path: str):
     ## Configuration
     with open(config_path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
-        set_seed(config['dataset']['random_seed'])
 
     ## Local Machine Runs
     print(f"HOSTNAME: {socket.gethostname()}")
@@ -136,14 +112,13 @@ def main(config_path: str):
     dataset = MultimodalDataset(config,
                                 classes_number=config['training']['classes_number'],
                                 use_signatures=True,
-                                random_seed=config['dataset']['random_seed'],
                                 remove_incomplete_samples=True)  # Dataset object
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
+    training_dataset, testing_dataset = dataset.split(config['training']['train_size'])
+    print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(testing_dataset)}]')
 
     ## CROSS VALIDATION
-    validation_c_index_list = []
-    validation_loss_list = []
-    folds = dataset.k_fold_split(dataset, k=N_FOLDS)
+    folds = dataset.k_fold_split(training_dataset, k=N_FOLDS)
     for fold_index, (training_fold, validation_fold) in enumerate(folds):
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Fold n°{fold_index + 1}')
 
@@ -212,7 +187,7 @@ def main(config_path: str):
         ## Fold's TRAINING
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started (Fold n°{fold_index + 1})')
         training_loader = DataLoader(training_fold, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
-        validation_loader = DataLoader(validation_fold, batch_size=config['training']['batch_size'], shuffle=False, num_workers=6, pin_memory=True)
+        validation_loader = DataLoader(validation_fold, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
         model.train()
         best_c_index = 0.0
         best_loss = np.inf
@@ -225,25 +200,24 @@ def main(config_path: str):
 
             # TRAINING & VALIDATION in this epoch
             training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
-            validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
+            testing_loss, testing_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
             # BEST MODEL chosen on VALIDATION Loss or C-Index
-            validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
+            validation_score = config['training']['weight_c_index'] * testing_c_index - config['training']['weight_loss'] * testing_loss
             if validation_score > best_score:
                 best_score = validation_score
-                best_loss = validation_loss
-                best_c_index = validation_c_index
+                best_loss = testing_loss
+                best_c_index = testing_c_index
                 epochs_without_improvement = 0
                 torch.save({
                     'epoch': epoch,
-                    'fold_number': fold_index + 1,
                     'model_state_dict': model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'scheduler_state_dict': scheduler.state_dict(),
-                    'validation_loss': validation_loss,
-                    'validation_c_index': validation_c_index,
+                    'validation_loss': testing_loss,
+                    'validation_c_index': testing_c_index,
                 }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
-                print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+                print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {testing_loss:.4f}, validation_c_index: {testing_c_index:.4f}')
             else:
                 epochs_without_improvement += 1
                 print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
@@ -259,36 +233,91 @@ def main(config_path: str):
 
         ## Fold's BEST MODEL
         best_model_state = torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring best model from epoch {best_model_state["epoch"] + 1}')
-        model.load_state_dict(best_model_state['model_state_dict'])
-        if best_model_state["validation_c_index"] >= C_INDEX_THRESHOLD:
-            new_filename = f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt'
-            os.rename(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt',
-                      f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt')
-            print(f'--> Model saved as {new_filename}')
-        else:
-            os.remove(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt')
-            print('--> Model discarded due to low validation C-Index.')
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Best model in epoch {best_model_state["epoch"] + 1}')
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed (Fold n°{fold_index + 1})')
 
-        # Final Validation
-        title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation started (Fold n°{fold_index + 1})')
-        start_time = time.time()
-        validation_loss, validation_c_index = validation('testing', config, validation_loader, model, loss_function, reg_function)
-        validation_c_index_list.append(validation_c_index)
-        validation_loss_list.append(validation_loss)
-        end_time = time.time()
-        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Validation: {end_time - start_time:.0f}s')
-        title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation completed (Fold n°{fold_index + 1})')
+    ## Final TRAINING
+    ## MODEL
+    final_model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
+                                             n_classes=config['training']['classes_number'],
+                                             rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                             meth_sizes=dataset.methylation_signature_sizes,
+                                             fusion=config['model']['fusion'],
+                                             device=config['device'])
+    model_state_dicts = [torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{i}.pt')['model_state_dict'] for i in range(len(folds))]
+    averaged_model_state_dicts = {}
+    for key in model_state_dicts[0].keys():
+        averaged_model_state_dicts[key] = sum(state_dict[key] for state_dict in model_state_dicts) / len(folds)
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Restoring Averaged Model from the Bests')
+    final_model.load_state_dict(averaged_model_state_dicts)
+    if config['device'] == 'cuda' and torch.cuda.device_count() > 1:  # Moving Model on GPU
+        final_model = nn.DataParallel(final_model)
+    final_model.to(device=config['device'])
 
-    ## Final Metrics
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Metrics')
-    c_index_mean, c_index_variance, c_index_ci_lower, c_index_ci_upper = calculate_statistics(validation_c_index_list)
-    loss_mean, loss_variance, loss_ci_lower, loss_ci_upper = calculate_statistics(validation_loss_list)
-    print("--> Validation C-Index:")
-    print(f"Mean: {c_index_mean:.4f}, Variance: {c_index_variance:.4f}, 95% Confidence Interval: [{c_index_ci_lower:.4f}, {c_index_ci_upper:.4f}]")
-    print("\n--> Validation Loss:")
-    print(f"Mean: {loss_mean:.4f}, Variance: {loss_variance:.4f}, 95% Confidence Interval: [{loss_ci_lower:.4f}, {loss_ci_upper:.4f}]")
+    ## Loss Function
+    if config['training']['loss'] == 'ce':
+        final_loss_function = nn.CrossEntropyLoss()
+    elif config['training']['loss'] == 'ces':
+        final_loss_function = CrossEntropySurvivalLoss(alpha=config['training']['alpha'])
+    elif config['training']['loss'] == 'sct':
+        final_loss_function = SurvivalClassificationTobitLoss()
+    else:
+        raise RuntimeError(f'--> Loss function: "{config["training"]["loss"]}" not implemented')
+
+    ## Regularization
+    if config['training']['lambda']:
+        final_reg_function = l1_reg
+    else:
+        final_reg_function = None
+
+    '''
+    ## Optimizer
+    if config['training']['optimizer'] == 'sgd':
+        final_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'])
+    elif config['training']['optimizer'] == 'adadelta':
+        final_optimizer = torch.optim.Adadelta(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+    elif config['training']['optimizer'] == 'adamax':
+        final_optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+    else:
+        config['training']['optimizer'] = 'adam'
+        final_optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, final_model.parameters()), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
+    print(f'--> Optimizer: {config["training"]["optimizer"]}')
+
+    ## Scheduler
+    if config['training']['scheduler'] == 'exp':
+        gamma = config['training']['gamma']
+        final_scheduler = lrs.ExponentialLR(final_optimizer, gamma=gamma)
+    else:
+        final_scheduler = None
+
+    ## TRAINING
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Training started')
+    training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    final_model.train()
+    starting_epoch = 0
+    for epoch in range(starting_epoch, 20):
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}')
+        start_time = time.time()
+        training(epoch, config, training_loader, final_model, final_loss_function, final_optimizer, final_scheduler, final_reg_function)
+        end_time = time.time()
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for epoch {epoch + 1}: {end_time - start_time:.0f}s')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Training completed')
+    '''
+
+    ## TESTING
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing started')
+    testing_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    start_time = time.time()
+    testing_loss, testing_c_index = validation('testing', config, testing_loader, final_model, final_loss_function, final_reg_function)
+    end_time = time.time()
+    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Testing: {end_time - start_time:.0f}s')
+    torch.save({
+        'epoch': 'testing',
+        'model_state_dict': final_model.state_dict(),
+        'testing_loss': testing_loss,
+        'testing_c_index': testing_c_index,
+    }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_testing_{testing_c_index:4f}.pt')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing completed')
 
     # Ending W&B
     if config['wandb']['enabled']:

@@ -1,4 +1,3 @@
-import sys
 import datetime
 import os
 import time
@@ -6,6 +5,7 @@ import wandb
 import yaml
 import numpy as np
 import socket
+import sys
 import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
@@ -119,7 +119,7 @@ def main(config_path: str):
     training_dataset, testing_dataset = dataset.split(config['training']['train_size'])
     print(f'--> Training Set: [{len(training_dataset)}], Testing Set: [{len(testing_dataset)}]')
     training_loader = DataLoader(training_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
-    validation_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
+    validation_loader = DataLoader(testing_dataset, batch_size=config['training']['batch_size'], shuffle=False, num_workers=6, pin_memory=True)
 
     # Model
     print('')
