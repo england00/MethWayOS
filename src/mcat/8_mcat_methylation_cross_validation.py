@@ -36,7 +36,7 @@ def title(text):
     print('\n' + f' {text} '.center(80, '#'))
 
 
-''' RANDOM CONFIGURATION '''
+''' RANDOM CONFIGURATION for deterministic results '''
 def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
