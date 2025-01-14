@@ -1,0 +1,23 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /work/tesi_linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250114_181604-6cbhzev1
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2506889
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/6cbhzev1
+Traceback (most recent call last):
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 306, in <module>
+    # Execution
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 287, in main
+    validation_loss_list = [t.cpu().numpy() for t in validation_loss_list if isinstance(t, torch.Tensor)]
+  File "/work/tesi_linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 51, in calculate_statistics
+    mean = np.mean(data)
+  File "<__array_function__ internals>", line 200, in mean
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/numpy/core/fromnumeric.py", line 3464, in mean
+    return _methods._mean(a, axis=axis, dtype=dtype,
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/numpy/core/_methods.py", line 165, in _mean
+    arr = asanyarray(a)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/_tensor.py", line 1062, in __array__
+    return self.numpy()
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
