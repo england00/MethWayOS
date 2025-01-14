@@ -263,11 +263,11 @@ def main(config_path: str):
         model.load_state_dict(best_model_state['model_state_dict'])
         if best_model_state["validation_c_index"] >= C_INDEX_THRESHOLD:
             new_filename = f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt'
-            os.rename(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt',
-                      f'{config["model"]["checkpoint_best_model"]}_{process_id}_{best_model_state["validation_c_index"]:4f}.pt')
+            os.rename(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt',
+                      f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}_{best_model_state["validation_c_index"]:4f}.pt')
             print(f'--> Model saved as {new_filename}')
         else:
-            os.remove(f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt')
+            os.remove(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
             print('--> Model discarded due to low validation C-Index.')
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training completed (Fold n°{fold_index + 1})')
 
