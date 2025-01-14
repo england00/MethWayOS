@@ -283,7 +283,6 @@ def main(config_path: str):
 
     ## Final Metrics
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Metrics')
-    validation_c_index_list = [tensor.detach().cpu().numpy() for tensor in validation_c_index_list if isinstance(tensor, torch.Tensor)]
     validation_loss_list = [tensor.detach().cpu().numpy() for tensor in validation_loss_list if isinstance(tensor, torch.Tensor)]
     c_index_mean, c_index_variance, c_index_ci_lower, c_index_ci_upper = calculate_statistics(validation_c_index_list)
     loss_mean, loss_variance, loss_ci_lower, loss_ci_upper = calculate_statistics(validation_loss_list)
