@@ -286,9 +286,9 @@ def main(config_path: str):
     validation_loss_list = [tensor.detach().cpu().numpy() for tensor in validation_loss_list if isinstance(tensor, torch.Tensor)]
     c_index_mean, c_index_variance, c_index_ci_lower, c_index_ci_upper = calculate_statistics(validation_c_index_list)
     loss_mean, loss_variance, loss_ci_lower, loss_ci_upper = calculate_statistics(validation_loss_list)
-    print("--> Validation C-Index:")
+    print(f"--> Validation C-Index: {validation_c_index_list}")
     print(f"Mean: {c_index_mean:.4f}, Variance: {c_index_variance:.4f}, 95% Confidence Interval: [{c_index_ci_lower:.4f}, {c_index_ci_upper:.4f}]")
-    print("\n--> Validation Loss:")
+    print(f"\n--> Validation Loss: {validation_loss_list}")
     print(f"Mean: {loss_mean:.4f}, Variance: {loss_variance:.4f}, 95% Confidence Interval: [{loss_ci_lower:.4f}, {loss_ci_upper:.4f}]")
 
     # Ending W&B
