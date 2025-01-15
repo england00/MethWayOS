@@ -57,11 +57,11 @@ training:
   # Patience during training
   early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling
-  gamma: 0.875
+  gamma: 0.99
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: 0.00002
+  lambda: 0.000001
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
@@ -77,7 +77,7 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: 0.0
+  weight_decay: 0.00005
   # C-Index weight
   weight_c_index: 1.0
   # Loss weight
