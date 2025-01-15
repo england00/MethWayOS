@@ -6,8 +6,8 @@
 #SBATCH --account=tesi_linghilterra
 
 #SBATCH --partition=all_usr_prod
-#SBATCH --time=2:00:00
-#SBATCH --mem=8G
+#SBATCH --time=24:00:00
+#SBATCH --mem=16G
 #SBATCH --array=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
@@ -27,7 +27,7 @@ echo "Environment conda activated"
 
 # Setting PYTHONPATH to include Root Directory of the project
 echo "Job "$SLURM_JOB_ID" started"
-export PYTHONPATH=/work/tesi_linghilterra/AIforBioinformatics:$PYTHONPATH
+export PYTHONPATH=/homes/linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /work/tesi_linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation_early_stopping.py
+python /homes/linghilterra/AIforBioinformatics/src/mcat/7_mcat_methylation_early_stopping.py

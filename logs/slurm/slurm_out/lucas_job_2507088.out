@@ -1,0 +1,103 @@
+Environment conda activated
+Job 2507088 started
+
+#################### [15/01/2025 - 13:40:35] - MCAT started ####################
+HOSTNAME: carabbaggio
+
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: NVIDIA GeForce GTX 1080 Ti
+--> Running on CUDA
+
+DATASET: Loading data
+--> Gene Expression loaded
+--> Methylation loaded
+--> Remaining samples after removing incomplete: 1039
+--> Class intervals: [
+	0: [0.00 - 2.57]
+	1: [2.57 - 17.70]
+	2: [17.70 - 26.37]
+	3: [26.37 - 31.25]
+	4: [31.25 - 34.71]
+	5: [34.71 - 38.03]
+	6: [38.03 - 42.94]
+	7: [42.94 - 47.45]
+	8: [47.45 - 51.69]
+	9: [51.69 - 58.17]
+	10: [58.17 - 67.10]
+	11: [67.10 - 79.80]
+	12: [79.80 - 88.56]
+	13: [88.56 - 102.25]
+	14: [102.25 - 120.62]
+	15: [120.62 - 141.88]
+	16: [141.88 - 174.40]
+	17: [174.40 - 205.88]
+	18: [205.88 - 263.29]
+	19: [263.29 - 593.83]
+    ]
+--> Standardizing RNA-seq data
+--> Standardizing Methylation Islands beta values
+--> Gene Expression Signatures size: [19938]
+--> Methylation Signatures size: [4522]
+--> Using 80% training, 20% validation
+
+###################### [15/01/2025 - 13:41:23] - Fold n°1 ######################
+
+MODEL: MCAT
+--> Trainable parameters of MCAT: 9362966
+--> Loss function: CrossEntropySurvivalLoss
+--> Optimizer: adam
+
+############ [15/01/2025 - 13:41:25] - Training started (Fold n°1) #############
+[15/01/2025 - 13:41:25] - Epoch: 1
+--> Batch: 49, Loss: 3.3118, Label: 13, Survival Months: 89.33, Risk: -1.1113
+	--> Average Speed: 0.07s per batch
+	--> Time from Last Check: 2.35s
+--> Batch: 99, Loss: 2.3412, Label: 0, Survival Months: 2.50, Risk: -1.2202
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.72s
+--> Batch: 149, Loss: 2.2336, Label: 0, Survival Months: 0.00, Risk: -1.4331
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.74s
+--> Batch: 199, Loss: 2.4169, Label: 6, Survival Months: 41.58, Risk: -1.7961
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.66s
+--> Batch: 249, Loss: 2.6114, Label: 15, Survival Months: 132.25, Risk: -2.9204
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.75s
+--> Batch: 299, Loss: 2.0799, Label: 9, Survival Months: 52.92, Risk: -8.0526
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.73s
+--> Batch: 349, Loss: 1.9485, Label: 2, Survival Months: 21.50, Risk: -11.3465
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.71s
+--> Batch: 399, Loss: 1.8908, Label: 1, Survival Months: 14.00, Risk: -14.7247
+	--> Average Speed: 0.06s per batch
+	--> Time from Last Check: 1.76s
+--> Batch: 449, Loss: 1.8553, Label: 3, Survival Months: 28.58, Risk: -12.3608
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.68s
+--> Batch: 499, Loss: 4.3370, Label: 14, Survival Months: 110.33, Risk: -12.7512
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.67s
+--> Batch: 549, Loss: 1.9435, Label: 18, Survival Months: 207.42, Risk: -13.6165
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.66s
+--> Batch: 599, Loss: 1.7634, Label: 8, Survival Months: 50.92, Risk: -11.2362
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.68s
+--> Batch: 649, Loss: 1.8906, Label: 18, Survival Months: 220.42, Risk: -12.9630
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.72s
+--> Batch: 699, Loss: 1.8992, Label: 19, Survival Months: 346.58, Risk: -13.6009
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.69s
+--> Batch: 749, Loss: 1.7489, Label: 15, Survival Months: 126.83, Risk: -11.4709
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.67s
+--> Batch: 799, Loss: 1.8129, Label: 18, Survival Months: 215.83, Risk: -11.7785
+	--> Average Speed: 0.05s per batch
+	--> Time from Last Check: 1.69s
+[15/01/2025 - 13:41:54] - Epoch: 1, lr: 0.00010000, training_loss: 2.6142, training_c_index: 0.4528
