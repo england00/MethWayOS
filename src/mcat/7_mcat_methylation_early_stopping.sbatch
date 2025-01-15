@@ -13,8 +13,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --constraint="gpu_1080_8G|gpu_2080Ti_11G|gpu_A40_48G|gpu_RTX5000_16G|gpu_RTX6000_24G|gpu_RTXA5000_24G"
 
-#SBATCH --output=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
-#SBATCH --error=/work/tesi_linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
+#SBATCH --output=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
+#SBATCH --error=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
 
 # Choosing CUDA Module
 module unload cuda/12.1

@@ -288,7 +288,7 @@ def main(config_path: str):
     loss_mean, loss_variance, loss_ci_lower, loss_ci_upper = calculate_statistics(validation_loss_list)
     print(f"--> Validation C-Index: [", ", ".join(f"{value:.4f}" for value in validation_c_index_list), "]")
     print(f"Mean: {c_index_mean:.4f}, Variance: {c_index_variance:.4f}, 95% Confidence Interval: [{c_index_ci_lower:.4f}, {c_index_ci_upper:.4f}]")
-    print(f"\n--> Validation Loss: [", ", ".join(f"{value:.4f}" for value in validation_c_index_list), "]")
+    print(f"\n--> Validation Loss: [", ", ".join(f"{value:.4f}" for value in validation_loss_list), "]")
     print(f"Mean: {loss_mean:.4f}, Variance: {loss_variance:.4f}, 95% Confidence Interval: [{loss_ci_lower:.4f}, {loss_ci_upper:.4f}]")
 
     # Ending W&B
