@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 import time
 import wandb
 import torch.cuda
@@ -26,14 +27,18 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
         hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
 
         # Choosing Loss Function
-        if config['training']['loss'] == 'ce':
-            loss = loss_function(Y, survival_class.long())
-        elif config['training']['loss'] == 'ces':
-            loss = loss_function(hazards, surv, survival_class, c=censorship)
-        elif config['training']['loss'] == 'sct':
-            loss = loss_function(Y, survival_class, c=censorship)
-        else:
-            raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+        try:
+            if config['training']['loss'] == 'ce':
+                loss = loss_function(Y, survival_class.long())
+            elif config['training']['loss'] == 'ces':
+                loss = loss_function(hazards, surv, survival_class, c=censorship)
+            elif config['training']['loss'] == 'sct':
+                loss = loss_function(Y, survival_class, c=censorship)
+            else:
+                raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+        except RuntimeError as e:
+            print(f"Error computing loss, skipping: {e}")
+            continue
         loss_value = loss.item()
 
         # Regularization function
@@ -44,6 +49,12 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
 
         # Scores
         risk = -torch.sum(surv, dim=1)
+        if torch.isnan(risk).any():
+            print(f"NaN detected in risk at batch {batch_index}, skipping")
+            continue
+        if torch.isnan(censorship).any() or torch.isnan(survival_months).any():
+            print(f"NaN detected in censorship or survival_months at batch {batch_index}, skipping")
+            continue
         risk_scores[batch_index] = risk
         censorships[batch_index] = censorship
         event_times[batch_index] = survival_months
@@ -65,10 +76,16 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             optimizer.zero_grad()
 
     # Calculate loss and error for epoch
+    if torch.isnan(training_loss):
+        print("NaN detected in training_loss, skipping")
+        training_loss = 0.0
     training_loss /= len(training_loader)
     risk_scores = risk_scores.detach().cpu().numpy()
     censorships = censorships.detach().cpu().numpy()
     event_times = event_times.detach().cpu().numpy()
+    if np.isnan(risk_scores).any() or np.isnan(censorships).any() or np.isnan(event_times).any():
+        print("NaN detected in final metrics, skipping")
+        return
     training_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
     if config['training']['scheduler']:
         lr = optimizer.param_groups[0]["lr"]
