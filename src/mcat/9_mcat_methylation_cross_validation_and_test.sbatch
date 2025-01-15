@@ -15,6 +15,7 @@
 
 #SBATCH --output=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
 #SBATCH --error=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
+#SBATCH --chdir=/homes/linghilterra/AIforBioinformatics/src/mcat
 
 # Choosing CUDA Module
 module unload cuda/12.1

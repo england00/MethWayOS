@@ -15,6 +15,7 @@
 
 #SBATCH --output=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_out/%x_%j.out
 #SBATCH --error=/homes/linghilterra/AIforBioinformatics/logs/slurm/slurm_err/%x_%j.out
+#SBATCH --chdir=/homes/linghilterra/AIforBioinformatics/src/binary_classification
 
 # Choosing CUDA Module
 module unload cuda/12.1
@@ -30,4 +31,4 @@ echo "Job "$SLURM_JOB_ID" started"
 export PYTHONPATH=/homes/linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /homes/linghilterra/AIforBioinformatics/src/mcat/3.2_methylation_\&_os_gpu.py
+python /homes/linghilterra/AIforBioinformatics/src/binary_classification/3.2_methylation_\&_os_gpu.py
