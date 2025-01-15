@@ -1,18 +1,18 @@
 wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
 wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
-wandb: Tracking run with wandb version 0.19.1
-wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250115_155535-vqnym343
+wandb: - Waiting for wandb.init()...wandb: \ Waiting for wandb.init()...wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250115_164306-lyn3lst0
 wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run lucas_job_2507176
+wandb: Syncing run lucas_job_2507593
 wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation
-wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/vqnym343
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/lyn3lst0
 Traceback (most recent call last):
   File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 307, in <module>
     main(MCAT_METHYLATION_YAML)
-  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 227, in main
-    training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
-  File "/homes/linghilterra/AIforBioinformatics/src/mcat/methylation_functions/training_methylation.py", line 72, in training
-    training_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 228, in main
+    validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/methylation_functions/validation_methylation.py", line 54, in validation
+    validation_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
   File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/sksurv/metrics.py", line 216, in concordance_index_censored
     event_indicator, event_time, estimate = _check_inputs(event_indicator, event_time, estimate)
   File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/sksurv/metrics.py", line 47, in _check_inputs
