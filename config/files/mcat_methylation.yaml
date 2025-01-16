@@ -15,7 +15,7 @@ dataset:
   # CSV Gene Expression main dataset
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_methylation_and_overall_survival_dataset.csv
   # Gene Expression signatures
-  gene_expression_signatures: ../../data/tables/gene_expression_keys_methylation.csv
+  gene_expression_signatures: ../../data/tables/mcat_signatures.csv
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation27_and_overall_survival_dataset.csv
   # Methylation signatures
@@ -57,17 +57,17 @@ training:
   # Patience during training
   early_stopping_patience: 7
   # Coefficient used in exponential lr scheduling
-  gamma: 0.99
+  gamma: 0.91
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: 0.000001
+  lambda: 0.00003
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
   lr: 0.0001
   # Which optimizer to use [sgd, adam, rms, adamax]
-  optimizer: adam
+  optimizer: sgd
   # At which epoch write the attention file
   output_attn_epoch: 20
   # Scheduler for learning rate [~, exp]
@@ -77,7 +77,7 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: 0.0001
+  weight_decay: 0.00001
   # C-Index weight
   weight_c_index: 1.0
   # Loss weight

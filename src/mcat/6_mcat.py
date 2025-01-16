@@ -6,10 +6,12 @@ import wandb
 import yaml
 import numpy as np
 import socket
+import sys
 import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
+sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
 from src.mcat.original_functions.training import training
 from src.mcat.original_functions.validation import validation

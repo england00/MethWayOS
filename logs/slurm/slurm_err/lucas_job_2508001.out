@@ -1,16 +1,16 @@
 wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
 wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
 wandb: Tracking run with wandb version 0.19.1
-wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250115_173134-y32hpwnl
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250116_001809-6u40fhy0
 wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run lucas_job_2507647
+wandb: Syncing run lucas_job_2508001
 wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation
-wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/y32hpwnl
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/6u40fhy0
 Traceback (most recent call last):
   File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 307, in <module>
     main(MCAT_METHYLATION_YAML)
   File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 227, in main
     training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
   File "/homes/linghilterra/AIforBioinformatics/src/mcat/methylation_functions/training_methylation.py", line 79, in training
-    if torch.isnan(training_loss):
+    if torch.isnan(torch.tensor(training_loss)):
 TypeError: isnan(): argument 'input' (position 1) must be Tensor, not float

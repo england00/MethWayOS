@@ -12,7 +12,7 @@ import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
-sys.path.append('/work/tesi_linghilterra/AIforBioinformatics')
+sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
 from src.mcat.methylation_functions.training_methylation import training
 from src.mcat.methylation_functions.validation_methylation import validation
