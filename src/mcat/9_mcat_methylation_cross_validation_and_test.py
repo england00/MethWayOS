@@ -130,6 +130,7 @@ def main(config_path: str):
                                                  n_classes=config['training']['classes_number'],
                                                  rnaseq_sizes=dataset.gene_expression_signature_sizes,
                                                  meth_sizes=dataset.methylation_signature_sizes,
+                                                 dropout=config['training']['dropout'],
                                                  fusion=config['model']['fusion'],
                                                  device=config['device'])
         print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
@@ -239,11 +240,12 @@ def main(config_path: str):
     ## Final TRAINING
     ## MODEL
     final_model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
-                                             n_classes=config['training']['classes_number'],
-                                             rnaseq_sizes=dataset.gene_expression_signature_sizes,
-                                             meth_sizes=dataset.methylation_signature_sizes,
-                                             fusion=config['model']['fusion'],
-                                             device=config['device'])
+                                                   n_classes=config['training']['classes_number'],
+                                                   rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                                   meth_sizes=dataset.methylation_signature_sizes,
+                                                   dropout=config['training']['dropout'],
+                                                   fusion=config['model']['fusion'],
+                                                   device=config['device'])
     model_state_dicts = [torch.load(f'{config["model"]["checkpoint_best_model"]}_{process_id}_{i}.pt')['model_state_dict'] for i in range(len(folds))]
     averaged_model_state_dicts = {}
     for key in model_state_dicts[0].keys():
