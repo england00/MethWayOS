@@ -88,6 +88,7 @@ def wandb_init(config):
             'model_size': config['model']['model_size'],
             'early_stopping_patience': config['training']['early_stopping_patience'],
             'batch_size': config['training']['batch_size'],
+            'dropout': config['training']['dropout'],
             'classes_number': config['training']['classes_number'],
         }
     )
