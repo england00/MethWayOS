@@ -11,24 +11,33 @@ DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-METHYLATION = 'methylation'
-METHYLATION_NAMES = 'methylation_names'
+METHYLATION = 'methylation'  # case_ids with 27k islands
+FILTER_METHYLATION_LIST_27 = 'filter_methylation_list_27'
+METHYLATION_FULL_27 = 'methylation_full_27_MCAT'
+METHYLATION_ORIGINAL = 'methylation_original'  # Original case_ids with 450k islands
+METHYLATION_FULL_450 = 'methylation_full_450_MCAT'
 OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS
-def dictionary_format(file_path, data_dictionary):
+def dictionary_format(file_path, patient_dictionary, selected_islands_dictionary=None):
     # Loading TSV file
     data = tsv_loader(file_path)
 
     # Formatting data inside a dictionary
-    dict_buffer = {'info': data_dictionary}
+    dict_buffer = {'info': patient_dictionary}
     for element in data:
-        if str(element[0]).startswith("cg"):
-            if element[1] != 'NA':
-                dict_buffer[str(element[0])] = element[1]
-            else:
-                dict_buffer[str(element[0])] = 0.0
+        if selected_islands_dictionary is not None:
+            if str(element[0]) in selected_islands_dictionary:
+                if element[1] != 'NA':
+                    dict_buffer[str(element[0])] = element[1]
+                else:
+                    dict_buffer[str(element[0])] = 0.0
+            elif str(element[0]).startswith("cg"):
+                if element[1] != 'NA':
+                    dict_buffer[str(element[0])] = element[1]
+                else:
+                    dict_buffer[str(element[0])] = 0.0
 
     return dict_buffer
 
@@ -73,20 +82,21 @@ if __name__ == "__main__":
     methylation_list = buffer
 
     # Searching only TXT paths with the right 'case_id'
+    dictionary_selected_methylation_islands = json_loader(datastore_paths[FILTER_METHYLATION_LIST_27])
     i = 0
     methylation_datastore = []
     for path in directory_loader(directories_paths[METHYLATION]):
         name = path.split('/')[len(path.split('/')) - 1]
         if name in file_names:
-            for dictionary in methylation_list:
-                if name == dictionary['file_name']:
+            for patient in methylation_list:
+                if name == patient['file_name']:
                     i += 1
-                    methylation_datastore.append(dictionary_format(path, dictionary))
+                    methylation_datastore.append(dictionary_format(path, patient, dictionary_selected_methylation_islands))  # None if using METHYLATION_FULL_450
                     break
     print(f"Loaded {i} paths")
 
     # Storing the datastore inside a JSON file
-    json_storer(datastore_paths[METHYLATION], methylation_datastore)
+    json_storer(datastore_paths[METHYLATION_FULL_27], methylation_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
