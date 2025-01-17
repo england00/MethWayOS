@@ -1,0 +1,28 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: - Waiting for wandb.init()...wandb: \ Waiting for wandb.init()...wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250116_231359-xznm2zbb
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2510333
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-27-Cross-Validation/runs/xznm2zbb
+Traceback (most recent call last):
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 309, in <module>
+    main(MCAT_METHYLATION_YAML)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_methylation_cross_validation.py", line 137, in main
+    dataset = MultimodalDataset(config,
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/methylation_modules/dataset_methylation.py", line 18, in __init__
+    self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 626, in _read
+    return parser.read(nrows)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1923, in read
+    ) = self._engine.read(  # type: ignore[attr-defined]
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 236, in read
+    data = _concatenate_chunks(chunks)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 367, in _concatenate_chunks
+    arrs = [chunk.pop(name) for chunk in chunks]
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 367, in <listcomp>
+    arrs = [chunk.pop(name) for chunk in chunks]
+KeyError: 15832
