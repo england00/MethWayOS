@@ -75,18 +75,17 @@ class MultimodalDataset(Dataset):
         # METHYLATION: Managing columns (Standardization or Normalization)
         meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
         methylation_gpu = cp.array(self.methylation[meth_columns].values)
-        # Blocks configuration
-        block_size = 1000
+        block_size = 10000
         num_columns = methylation_gpu.shape[1]
         for start_col in range(0, num_columns, block_size):
             end_col = min(start_col + block_size, num_columns)
-            block = methylation_gpu[:, start_col:end_col]  # Seleziona un blocco di colonne
+            block = methylation_gpu[:, start_col:end_col]
             if config['dataset']['standardize']:
                 print(f'--> Standardizing Methylation Islands columns from {start_col} to {end_col}')
                 means = cp.mean(block, axis=0)
                 stds = cp.std(block, axis=0)
                 standardized = (block - means) / cp.where(stds == 0, cp.nan, stds)
-                standardized = cp.nan_to_num(standardized)  # Sostituisci NaN con 0
+                standardized = cp.nan_to_num(standardized)  # Change NaN with 0
                 methylation_gpu[:, start_col:end_col] = standardized
             elif config['dataset']['normalize']:
                 print(f'--> Normalizing Methylation Islands columns from {start_col} to {end_col}')
@@ -94,31 +93,9 @@ class MultimodalDataset(Dataset):
                 maximus = cp.max(block, axis=0)
                 ranges = cp.where(maximus - minimum == 0, cp.nan, maximus - minimum)
                 normalized = 2 * (block - minimum) / ranges - 1
-                normalized = cp.nan_to_num(normalized, nan=0.5)  # Sostituisci NaN con 0.5
+                normalized = cp.nan_to_num(normalized, nan=0.5)  # Change NaN with 0.5
                 methylation_gpu[:, start_col:end_col] = normalized
         self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
-
-        '''
-        # METHYLATION: Managing columns (Standardization or Normalization)
-        meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
-        if config['dataset']['standardize']:
-            print('--> Standardizing Methylation Islands beta values')
-            for col in meth_columns:
-                mean = self.methylation[col].mean()
-                std = self.methylation[col].std()
-                if std == 0:
-                    self.methylation[col] = 0
-                else:
-                    self.methylation[col] = (self.methylation[col] - mean) / std
-        elif config['dataset']['normalize']:
-            print('--> Normalizing Methylation Islands beta values')
-            for col in meth_columns:
-                std = self.methylation[col].std()
-                if std == 0:
-                    self.methylation[col] = 0.5
-                else:
-                    self.methylation[col] = 2 * (self.methylation[col] - self.methylation[col].min()) / (self.methylation[col].max() - self.methylation[col].min()) - 1
-        '''
 
         # GENE EXPRESSION: RNA-Seq
         self.rnaseq = self.gene_expression.iloc[:, self.gene_expression.columns.str.endswith('_rnaseq')].astype(float)
@@ -126,9 +103,10 @@ class MultimodalDataset(Dataset):
         self.rnaseq = torch.tensor(self.rnaseq.values, dtype=torch.float32)
 
         # METHYLATION: Meth-Islands
-        self.meth = self.methylation.iloc[:, self.methylation.columns.str.endswith('_meth')].astype(float)
-        self.meth_size = len(self.meth.columns)
-        self.meth = torch.tensor(self.meth.values, dtype=torch.float32)
+        meth_columns_mask = self.methylation.columns.str.endswith('_meth')  # Boolean mask
+        meth_data = self.methylation.loc[:, meth_columns_mask].to_numpy(dtype='float32')
+        self.meth = torch.from_numpy(meth_data)
+        self.meth_size = self.meth.shape[1]
 
         # GENE EXPRESSION: Managing Signatures
         self.use_signatures = use_signatures
