@@ -17,16 +17,14 @@ class MultimodalDataset(Dataset):
 
         # GENE EXPRESSION: Loading CSV Dataset
         print('DATASET: Loading data')
-        self.gene_expression, _ = csv_loader(config['dataset']['gene_expression'])
-        # self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
+        self.gene_expression, _ = csv_loader(config['dataset']['gene_expression'], verbose=False)
         self.gene_expression.reset_index(drop=True, inplace=True)
         if 'Unnamed: 0' in self.gene_expression.columns:
             self.gene_expression = self.gene_expression.drop(columns=['Unnamed: 0'])
         print('--> Gene Expression loaded')
 
         # METHYLATION: Loading CSV Dataset
-        self.methylation, _ = csv_loader(config['dataset']['methylation'])
-        #self.methylation = pd.read_csv(config['dataset']['methylation'])
+        self.methylation, _ = csv_loader(config['dataset']['methylation'], verbose=False)
         self.methylation.reset_index(drop=True, inplace=True)
         if 'Unnamed: 0' in self.methylation.columns:
             self.methylation = self.methylation.drop(columns=['Unnamed: 0'])
@@ -77,21 +75,27 @@ class MultimodalDataset(Dataset):
         # METHYLATION: Managing columns (Standardization or Normalization)
         meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
         methylation_gpu = cp.array(self.methylation[meth_columns].values)
-        if config['dataset']['standardize']:
-            print('--> Standardizing Methylation Islands beta values')
-            means = cp.mean(methylation_gpu, axis=0)
-            stds = cp.std(methylation_gpu, axis=0)
-            standardized = (methylation_gpu - means) / cp.where(stds == 0, cp.nan, stds)
-            standardized = cp.nan_to_num(standardized)  # Changing NaN with 0
-            methylation_gpu = standardized
-        elif config['dataset']['normalize']:
-            print('--> Normalizing Methylation Islands beta values')
-            mins = cp.min(methylation_gpu, axis=0)
-            maxs = cp.max(methylation_gpu, axis=0)
-            ranges = cp.where(maxs - mins == 0, cp.nan, maxs - mins)
-            normalized = 2 * (methylation_gpu - mins) / ranges - 1
-            normalized = cp.nan_to_num(normalized, nan=0.5) # Changing NaN with 0.5
-            methylation_gpu = normalized
+        # Blocks configuration
+        block_size = 1000
+        num_columns = methylation_gpu.shape[1]
+        for start_col in range(0, num_columns, block_size):
+            end_col = min(start_col + block_size, num_columns)
+            block = methylation_gpu[:, start_col:end_col]  # Seleziona un blocco di colonne
+            if config['dataset']['standardize']:
+                print(f'--> Standardizing Methylation Islands columns from {start_col} to {end_col}')
+                means = cp.mean(block, axis=0)
+                stds = cp.std(block, axis=0)
+                standardized = (block - means) / cp.where(stds == 0, cp.nan, stds)
+                standardized = cp.nan_to_num(standardized)  # Sostituisci NaN con 0
+                methylation_gpu[:, start_col:end_col] = standardized
+            elif config['dataset']['normalize']:
+                print(f'--> Normalizing Methylation Islands columns from {start_col} to {end_col}')
+                minimum = cp.min(block, axis=0)
+                maximus = cp.max(block, axis=0)
+                ranges = cp.where(maximus - minimum == 0, cp.nan, maximus - minimum)
+                normalized = 2 * (block - minimum) / ranges - 1
+                normalized = cp.nan_to_num(normalized, nan=0.5)  # Sostituisci NaN con 0.5
+                methylation_gpu[:, start_col:end_col] = normalized
         self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
 
         '''

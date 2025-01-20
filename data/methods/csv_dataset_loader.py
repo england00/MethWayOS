@@ -3,9 +3,10 @@ import logging
 from error.general_error import GeneralError
 
 
-def csv_loader(path):
+def csv_loader(path, verbose=True):
     """
         :param path: CSV file to load
+        :param verbose: manage verbosity
         :return dataframe: information loaded from the CSV file
         :return dataframe_columns: column names of data loaded from the CSV file
     """
@@ -25,7 +26,8 @@ def csv_loader(path):
         dataframe = table.to_pandas()
         del table  # releasing memory
         # dataframe = pd.read_csv(path, delimiter=';', header=None, names=names)
-        print(f"Data has been correctly loaded from {path} file")
+        if verbose:
+            print(f"Data has been correctly loaded from {path} file")
         return dataframe, names
     except FileNotFoundError as e:
         logging.error(str(e))
