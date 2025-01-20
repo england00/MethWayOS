@@ -111,6 +111,7 @@ class MultimodalDataset(Dataset):
             self.meth = torch.empty((num_rows, self.meth_size), dtype=torch.float32, device=config['device'])
             for start_col in range(0, self.meth_size, block_size):
                 end_col = min(start_col + block_size, self.meth_size)
+                print(f'--> columns from {start_col} to {end_col}')
                 block_data = torch.tensor(meth_data[:, start_col:end_col], dtype=torch.float32, device=config['device'])
                 self.meth[:, start_col:end_col] = block_data
 
