@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import torch
 import yaml
+from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
 
@@ -15,14 +16,16 @@ class MultimodalDataset(Dataset):
 
         # GENE EXPRESSION: Loading CSV Dataset
         print('DATASET: Loading data')
-        self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
+        self.gene_expression, _ = csv_loader(config['dataset']['gene_expression'])
+        # self.gene_expression = pd.read_csv(config['dataset']['gene_expression'])
         self.gene_expression.reset_index(drop=True, inplace=True)
         if 'Unnamed: 0' in self.gene_expression.columns:
             self.gene_expression = self.gene_expression.drop(columns=['Unnamed: 0'])
         print('--> Gene Expression loaded')
 
         # METHYLATION: Loading CSV Dataset
-        self.methylation = pd.read_csv(config['dataset']['methylation'])
+        self.methylation, _ = csv_loader(config['dataset']['methylation'])
+        #self.methylation = pd.read_csv(config['dataset']['methylation'])
         self.methylation.reset_index(drop=True, inplace=True)
         if 'Unnamed: 0' in self.methylation.columns:
             self.methylation = self.methylation.drop(columns=['Unnamed: 0'])

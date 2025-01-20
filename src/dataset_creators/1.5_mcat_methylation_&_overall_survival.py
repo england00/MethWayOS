@@ -99,9 +99,9 @@ if __name__ == "__main__":
 
     # Storing dataset inside a CSV file
     csv_storer(table_paths[METHYLATION_450_FULL_KEYS], methylation_keys, ["methylation_island"], keys_mode=True)
-    gene_expression_keys = (['case_id', 'survival_months', 'censorship'] +
-                            [key + '_meth' for key in methylation_keys])
-    dataframe = pd.DataFrame(dataset, columns=gene_expression_keys)
+    # csv_storer(dataset_paths[METHYLATION_450_FULL_MCAT], dataset)
+    methylation_keys = (['case_id', 'survival_months', 'censorship'] + [key + '_meth' for key in methylation_keys])
+    dataframe = pd.DataFrame(dataset, columns=methylation_keys)
     dataframe.to_csv(dataset_paths[METHYLATION_450_FULL_MCAT], index=True)
     print(f"Data has been correctly saved inside {dataset_paths[METHYLATION_450_FULL_MCAT]} file")
 
