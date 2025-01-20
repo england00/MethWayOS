@@ -14,8 +14,8 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 SHUFFLE = False
@@ -25,6 +25,9 @@ FEATURES_NUMBER = 35
 PCA_DIMENSION = 90
 PLOT = False
 VERBOSE = False
+
+''' Input Dataset '''
+GENE_EXPRESSION = 'gene_expression'
 
 
 ## FUNCTIONS

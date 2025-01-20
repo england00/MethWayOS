@@ -8,15 +8,18 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
-GENE_EXPRESSION = 'gene_expression'
-GENE_EXPRESSION_TSS = 'gene_expression_tss'
-GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-OVERALL_SURVIVAL = 'overall_survival'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+
+''' Input Data'''
+GENE_EXPRESSION = 'gene_expression'  # Also Output
+GENE_EXPRESSION_TSS = 'gene_expression_tss'
+GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
+OVERALL_SURVIVAL = 'overall_survival'
 
 
 ## FUNCTIONS

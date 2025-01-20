@@ -24,6 +24,7 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
+''' General '''
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_YAML = '../../config/files/mcat.yaml'
 

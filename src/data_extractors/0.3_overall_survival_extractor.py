@@ -7,11 +7,14 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 ALIVE_THRESHOLD = 1825  # NOTE: 1825 days with MLP, 0 with MCAT
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+''' Input Data & Output Datastore '''
 OVERALL_SURVIVAL = 'overall_survival'
 
 

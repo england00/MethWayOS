@@ -8,15 +8,20 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
-GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_binary_classification'
-GENE_EXPRESSION = 'gene_expression'
-GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
-GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+''' Input Datastore '''
+GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_binary_classification'
+GENE_EXPRESSION = 'gene_expression'
 OVERALL_SURVIVAL = 'overall_survival'
+
+''' Output Dataset '''
+GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
+GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
 
 
 ## FUNCTIONS

@@ -14,9 +14,8 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
-GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
-GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 RANDOM_STATE = 42  # if 'None' changes the seed to split training set and test set every time
 SHUFFLE = True
@@ -27,6 +26,10 @@ INTERMEDIATE_CORRELATION_THRESHOLD = 0.45
 SECOND_FEATURES_SELECTION = 200
 PLOT = False
 VERBOSE = False
+
+''' Input Dataset '''
+GENE_EXPRESSION_AND_METHYLATION_27 = 'gene_expression_and_methylation27'
+GENE_EXPRESSION_AND_METHYLATION_450 = 'gene_expression_and_methylation450'  # only with 450 methylation island
 
 
 ## FUNCTIONS

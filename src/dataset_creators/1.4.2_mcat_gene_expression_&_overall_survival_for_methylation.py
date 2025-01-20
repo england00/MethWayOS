@@ -9,15 +9,20 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
-GENE_EXPRESSION_MCAT = 'gene_expression_MCAT'
-GENE_EXPRESSION_MCAT_methylation = 'gene_expression_MCAT_methylation'
-GENE_EXPRESSION_KEYS_methylation = 'gene_expression_keys_methylation'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-OVERALL_SURVIVAL = 'overall_survival'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+
+''' Input Datastore '''
+GENE_EXPRESSION_MCAT = 'gene_expression_MCAT'
+OVERALL_SURVIVAL = 'overall_survival'
+
+''' Output Dataset '''
+GENE_EXPRESSION_MCAT_methylation = 'gene_expression_MCAT_methylation'
+GENE_EXPRESSION_KEYS_methylation = 'gene_expression_keys_methylation'
 
 
 ## FUNCTIONS

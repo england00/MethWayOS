@@ -7,17 +7,22 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
-GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_data_binary_classification'
-GENE_ASSOCIATED_METHYLATION_27 = 'gene_associated_methylation_27'
-GENE_ASSOCIATED_METHYLATION_450 = 'gene_associated_methylation_450'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+''' Input Data '''
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 OVERALL_SURVIVAL = 'overall_survival'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
+
+''' Output Dataframe '''
+GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION = 'gene_associated_methylation_data_binary_classification'
+GENE_ASSOCIATED_METHYLATION_27 = 'gene_associated_methylation_27'
+GENE_ASSOCIATED_METHYLATION_450 = 'gene_associated_methylation_450'
 
 
 ## FUNCTIONS

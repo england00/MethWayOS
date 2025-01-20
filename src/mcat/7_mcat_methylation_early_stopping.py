@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
+''' General '''
 C_INDEX_THRESHOLD = 0.65
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'

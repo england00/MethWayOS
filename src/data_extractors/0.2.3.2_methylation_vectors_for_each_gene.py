@@ -9,7 +9,6 @@ from json_dir.methods.json_storer import json_storer
 from logs.methods.log_storer import DualOutput
 
 
-## CONFIGURATION
 ''' 
 NOTA: qui viene utilizzato lo  script di Alessandro Monteleone  adattato per restiutire un file  avente per ogni riga un 
       gene ed in  colonna, tra  i vari dati, anche  la lista delle isole  di metilazione presenti  all'interno della suo 
@@ -17,17 +16,27 @@ NOTA: qui viene utilizzato lo  script di Alessandro Monteleone  adattato per res
       particolare, la variabile "EXTRACTED_SEQUENCE_DIMENSION" mostra la dimensione della sequenza di ogni gene estratta 
       a tale scopo, incentrata sul TSS indicato tra i dati nel datastore "gene_expression_data.json"
 '''
-CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
+
+
+## CONFIGURATION
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 EXTRACTED_SEQUENCE_DIMENSION = 131328
-GENE_EXPRESSION_ALE = 'gene_expression_lungs'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
-SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 
+''' Input Data '''
+CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
+GENE_EXPRESSION_ALE = 'gene_expression_lungs'
+METHYLATION_ALE = 'methylation_lungs'
 
+''' Output Data '''
+METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
+SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
+
+
+## FUNCTIONS
 def extract_methylation_vectors(df_gene_expression,
                                 dict_cpg, vector_size):
     tss_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)

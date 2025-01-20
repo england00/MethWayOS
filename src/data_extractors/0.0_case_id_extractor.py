@@ -6,9 +6,12 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
-GENE_EXPRESSION = 'gene_expression'
-LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+''' General '''
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
+LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+''' Input JSON file'''
+GENE_EXPRESSION = 'gene_expression'
 METHYLATION = 'methylation'
 OVERALL_SURVIVAL = 'overall_survival'
 

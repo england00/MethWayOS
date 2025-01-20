@@ -8,10 +8,13 @@ from logs.methods.log_storer import DualOutput
 
 
 ## CONFIGURATION
-CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+
+''' Output Data '''
+CPG950_CODING_GENES_ORIGINAL = 'cpg950_coding_genes_original'
 
 
 ## FUNCTIONS

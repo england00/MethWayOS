@@ -14,10 +14,9 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-METHYLATION_27 = 'methylation27'
-METHYLATION_450 = 'methylation450'  # only with 450 methylation island
 RANDOM_STATE = None  # if 'None' changes the seed to split training set and test set every time
 SHUFFLE = False
 LOWER_THRESHOLD = 1500  # 730 (2 years)
@@ -26,6 +25,10 @@ FEATURES_NUMBER = 20
 PCA_DIMENSION = 80
 PLOT = False
 VERBOSE = False
+
+''' Input Dataset '''
+METHYLATION_27 = 'methylation27'
+METHYLATION_450 = 'methylation450'  # only with 450 methylation island
 
 
 ## FUNCTIONS

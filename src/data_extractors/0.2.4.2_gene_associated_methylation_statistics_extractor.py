@@ -11,17 +11,22 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
-GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+
+''' Input Data '''
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
 OVERALL_SURVIVAL = 'overall_survival'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
-TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+
+''' Output Dataframe '''
+GENE_ASSOCIATED_METHYLATION_STATISTICS = 'gene_associated_methylation_statistics'
 
 
 ## FUNCTIONS

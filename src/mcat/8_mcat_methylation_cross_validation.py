@@ -24,6 +24,7 @@ from torch.utils.data import DataLoader
 
 
 ## CONFIGURATION
+''' General '''
 C_INDEX_THRESHOLD = 0.65
 N_FOLDS = 5
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'

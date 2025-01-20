@@ -9,18 +9,31 @@ from logs.methods.log_storer import *
 
 
 ## CONFIGURATION
+''' General '''
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DATASET_PATH_YAML = '../../config/paths/dataset_paths.yaml'
-GENE_ASSOCIATED_METHYLATION_27 = 'gene_associated_methylation_27'
-GENE_ASSOCIATED_METHYLATION_450 = 'gene_associated_methylation_450'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-METHYLATION_27_MCAT = 'methylation27_MCAT'
-METHYLATION_27_KEYS = 'methylation27_keys'
-METHYLATION_450_MCAT = 'methylation450_MCAT'  # only with 450k methylation island
-METHYLATION_450_KEYS = 'methylation450_keys'
-OVERALL_SURVIVAL = 'overall_survival'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+
+''' Input Datastore '''
+GENE_ASSOCIATED_METHYLATION_27 = 'gene_associated_methylation_27'
+GENE_ASSOCIATED_METHYLATION_450 = 'gene_associated_methylation_450'
+METHYLATION_FULL_27 = 'methylation_full_27_MCAT'
+METHYLATION_FULL_450 = 'methylation_full_450_MCAT'
+OVERALL_SURVIVAL = 'overall_survival'
+
+''' Output Keys '''
+METHYLATION_27_KEYS = 'methylation27_keys'
+METHYLATION_27_FULL_KEYS = 'methylation27_full_keys'
+METHYLATION_450_KEYS = 'methylation450_keys'
+METHYLATION_450_FULL_KEYS = 'methylation450_full_keys'
+
+''' Output Dataset '''
+METHYLATION_27_MCAT = 'methylation27_MCAT'
+METHYLATION_27_FULL_MCAT = 'methylation27_full_MCAT'
+METHYLATION_450_MCAT = 'methylation450_MCAT'  # only with 450k methylation island
+METHYLATION_450_FULL_MCAT = 'methylation450_full_MCAT'
 
 
 ## FUNCTIONS
@@ -58,7 +71,7 @@ if __name__ == "__main__":
     table_paths = yaml_loader(TABLE_PATHS_YAML)
 
     # Storing data from JSON datastores
-    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_450])
+    methylation_datastore = json_loader(datastore_paths[METHYLATION_FULL_450])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with METHYLATION as feature vector and OVERALL SURVIVAL as label
@@ -85,12 +98,12 @@ if __name__ == "__main__":
     print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
-    csv_storer(table_paths[METHYLATION_450_KEYS], methylation_keys, ["methylation_island"], keys_mode=True)
+    csv_storer(table_paths[METHYLATION_450_FULL_KEYS], methylation_keys, ["methylation_island"], keys_mode=True)
     gene_expression_keys = (['case_id', 'survival_months', 'censorship'] +
                             [key + '_meth' for key in methylation_keys])
     dataframe = pd.DataFrame(dataset, columns=gene_expression_keys)
-    dataframe.to_csv(dataset_paths[METHYLATION_450_MCAT], index=True)
-    print(f"Data has been correctly saved inside {dataset_paths[METHYLATION_450_MCAT]} file")
+    dataframe.to_csv(dataset_paths[METHYLATION_450_FULL_MCAT], index=True)
+    print(f"Data has been correctly saved inside {dataset_paths[METHYLATION_450_FULL_MCAT]} file")
 
     # Close LOG file
     sys.stdout = sys.__stdout__
