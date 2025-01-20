@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 
 ## CLASSES
 class MultimodalDataset(Dataset):
-    def __init__(self, config, classes_number: int = 4, use_signatures: bool = False, random_seed: int = None, remove_incomplete_samples: bool = True):
+    def __init__(self, config, classes_number: int = 4, use_signatures: bool = False, random_seed: int = None, remove_incomplete_samples: bool = True, block_size: int = 10000):
         # GENERAL
         self.random_seed = random_seed
 
@@ -75,10 +75,9 @@ class MultimodalDataset(Dataset):
         # METHYLATION: Managing columns (Standardization or Normalization)
         meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
         methylation_gpu = cp.array(self.methylation[meth_columns].values)
-        block_size = 10000
-        num_columns = methylation_gpu.shape[1]
-        for start_col in range(0, num_columns, block_size):
-            end_col = min(start_col + block_size, num_columns)
+        self.meth_size = methylation_gpu.shape[1]
+        for start_col in range(0, self.meth_size, block_size):
+            end_col = min(start_col + block_size, self.meth_size)
             block = methylation_gpu[:, start_col:end_col]
             if config['dataset']['standardize']:
                 print(f'--> Standardizing Methylation Islands columns from {start_col} to {end_col}')
@@ -104,9 +103,16 @@ class MultimodalDataset(Dataset):
 
         # METHYLATION: Meth-Islands
         meth_columns_mask = self.methylation.columns.str.endswith('_meth')  # Boolean mask
+        num_rows, self.meth_size = self.methylation.shape[0], meth_columns_mask.sum()
         meth_data = self.methylation.loc[:, meth_columns_mask].to_numpy(dtype='float32')
-        self.meth = torch.from_numpy(meth_data)
-        self.meth_size = self.meth.shape[1]
+        if self.meth_size <= block_size:
+            self.meth = torch.tensor(meth_data, dtype=torch.float32, device=config['device'])
+        else:
+            self.meth = torch.empty((num_rows, self.meth_size), dtype=torch.float32, device=config['device'])
+            for start_col in range(0, self.meth_size, block_size):
+                end_col = min(start_col + block_size, self.meth_size)
+                block_data = torch.tensor(meth_data[:, start_col:end_col], dtype=torch.float32, device=config['device'])
+                self.meth[:, start_col:end_col] = block_data
 
         # GENE EXPRESSION: Managing Signatures
         self.use_signatures = use_signatures
