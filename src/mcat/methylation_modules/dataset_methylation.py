@@ -1,4 +1,5 @@
 import numpy as np
+import cupy as cp
 import pandas as pd
 import time
 import torch
@@ -75,6 +76,27 @@ class MultimodalDataset(Dataset):
 
         # METHYLATION: Managing columns (Standardization or Normalization)
         meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
+        methylation_gpu = cp.array(self.methylation[meth_columns].values)
+        if config['dataset']['standardize']:
+            print('--> Standardizing Methylation Islands beta values')
+            means = cp.mean(methylation_gpu, axis=0)
+            stds = cp.std(methylation_gpu, axis=0)
+            standardized = (methylation_gpu - means) / cp.where(stds == 0, cp.nan, stds)
+            standardized = cp.nan_to_num(standardized)  # Changing NaN with 0
+            methylation_gpu = standardized
+        elif config['dataset']['normalize']:
+            print('--> Normalizing Methylation Islands beta values')
+            mins = cp.min(methylation_gpu, axis=0)
+            maxs = cp.max(methylation_gpu, axis=0)
+            ranges = cp.where(maxs - mins == 0, cp.nan, maxs - mins)
+            normalized = 2 * (methylation_gpu - mins) / ranges - 1
+            normalized = cp.nan_to_num(normalized, nan=0.5) # Changing NaN with 0.5
+            methylation_gpu = normalized
+        self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
+
+        '''
+        # METHYLATION: Managing columns (Standardization or Normalization)
+        meth_columns = [col for col in self.methylation.columns if col.endswith('_meth')]
         if config['dataset']['standardize']:
             print('--> Standardizing Methylation Islands beta values')
             for col in meth_columns:
@@ -92,6 +114,7 @@ class MultimodalDataset(Dataset):
                     self.methylation[col] = 0.5
                 else:
                     self.methylation[col] = 2 * (self.methylation[col] - self.methylation[col].min()) / (self.methylation[col].max() - self.methylation[col].min()) - 1
+        '''
 
         # GENE EXPRESSION: RNA-Seq
         self.rnaseq = self.gene_expression.iloc[:, self.gene_expression.columns.str.endswith('_rnaseq')].astype(float)
