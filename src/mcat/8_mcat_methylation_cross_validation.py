@@ -26,7 +26,6 @@ from torch.utils.data import DataLoader
 ## CONFIGURATION
 ''' General '''
 C_INDEX_THRESHOLD = 0.65
-N_FOLDS = 5
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
 PID = None
@@ -145,7 +144,7 @@ def main(config_path: str):
     ## CROSS VALIDATION
     validation_c_index_list = []
     validation_loss_list = []
-    folds = dataset.k_fold_split(dataset, k=N_FOLDS)
+    folds = dataset.k_fold_split(dataset, k=config['training']['folds'])
     for fold_index, (training_fold, validation_fold) in enumerate(folds):
         title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Fold n°{fold_index + 1}')
 
