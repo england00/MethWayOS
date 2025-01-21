@@ -16,13 +16,13 @@ def process_block(methylation_gpu, meth_columns, start, end):
     block_cpu = cp.asnumpy(block_gpu)  # Trasferimento
     return pd.DataFrame(block_cpu, columns=meth_columns[start:end])
 
-def gpu_to_dataframe_parallel(methylation_gpu, meth_columns, block_size):
+def gpu_to_dataframe_parallel(methylation_gpu, meth_columns, b_size=1000):
     num_rows, num_columns = methylation_gpu.shape
     futures = []
 
     with ThreadPoolExecutor() as executor:
-        for start in range(0, num_columns, block_size):
-            end = min(start + block_size, num_columns)
+        for start in range(0, num_columns, b_size):
+            end = min(start + b_size, num_columns)
             futures.append(executor.submit(process_block, methylation_gpu, meth_columns, start, end))
 
     blocks = [future.result() for future in futures]
@@ -115,7 +115,7 @@ class MultimodalDataset(Dataset):
                 normalized = cp.nan_to_num(normalized, nan=0.5)  # Change NaN with 0.5
                 methylation_gpu[:, start_col:end_col] = normalized
         print('--> Done')
-        self.methylation[meth_columns] = gpu_to_dataframe_parallel(methylation_gpu, meth_columns, block_size)
+        self.methylation[meth_columns] = gpu_to_dataframe_parallel(methylation_gpu, meth_columns)
         # self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
         print('--> Done1')
 
