@@ -4,9 +4,29 @@ import pandas as pd
 import time
 import torch
 import yaml
+from concurrent.futures import ThreadPoolExecutor
 from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
+
+
+## FUNCTIONS
+def process_block(methylation_gpu, meth_columns, start, end):
+    block_gpu = methylation_gpu[:, start:end]
+    block_cpu = cp.asnumpy(block_gpu)  # Trasferimento
+    return pd.DataFrame(block_cpu, columns=meth_columns[start:end])
+
+def gpu_to_dataframe_parallel(methylation_gpu, meth_columns, block_size):
+    num_rows, num_columns = methylation_gpu.shape
+    futures = []
+
+    with ThreadPoolExecutor() as executor:
+        for start in range(0, num_columns, block_size):
+            end = min(start + block_size, num_columns)
+            futures.append(executor.submit(process_block, methylation_gpu, meth_columns, start, end))
+
+    blocks = [future.result() for future in futures]
+    return pd.concat(blocks, axis=1)
 
 
 ## CLASSES
@@ -94,26 +114,23 @@ class MultimodalDataset(Dataset):
                 normalized = 2 * (block - minimum) / ranges - 1
                 normalized = cp.nan_to_num(normalized, nan=0.5)  # Change NaN with 0.5
                 methylation_gpu[:, start_col:end_col] = normalized
-        self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
+        print('--> Done')
+        self.methylation[meth_columns] = gpu_to_dataframe_parallel(methylation_gpu, meth_columns, block_size)
+        # self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
+        print('--> Done1')
 
         # GENE EXPRESSION: RNA-Seq
         self.rnaseq = self.gene_expression.iloc[:, self.gene_expression.columns.str.endswith('_rnaseq')].astype(float)
         self.rnaseq_size = len(self.rnaseq.columns)
         self.rnaseq = torch.tensor(self.rnaseq.values, dtype=torch.float32)
+        print('--> RNA-seq loaded')
 
         # METHYLATION: Meth-Islands
         meth_columns_mask = self.methylation.columns.str.endswith('_meth')  # Boolean mask
-        num_rows, self.meth_size = self.methylation.shape[0], meth_columns_mask.sum()
         meth_data = self.methylation.loc[:, meth_columns_mask].to_numpy(dtype='float32')
-        if self.meth_size <= block_size:
-            self.meth = torch.tensor(meth_data, dtype=torch.float32, device=config['device'])
-        else:
-            self.meth = torch.empty((num_rows, self.meth_size), dtype=torch.float32, device=config['device'])
-            for start_col in range(0, self.meth_size, block_size):
-                end_col = min(start_col + block_size, self.meth_size)
-                print(f'--> columns from {start_col} to {end_col}')
-                block_data = torch.tensor(meth_data[:, start_col:end_col], dtype=torch.float32, device=config['device'])
-                self.meth[:, start_col:end_col] = block_data
+        self.meth = torch.from_numpy(meth_data)
+        self.meth_size = self.meth.shape[1]
+        print('--> Methylation loaded')
 
         # GENE EXPRESSION: Managing Signatures
         self.use_signatures = use_signatures
