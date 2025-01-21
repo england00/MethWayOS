@@ -1,32 +1,13 @@
 import numpy as np
 import cupy as cp
+import dask.dataframe as dd
 import pandas as pd
 import time
 import torch
 import yaml
-from concurrent.futures import ThreadPoolExecutor
 from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
-
-
-## FUNCTIONS
-def process_block(methylation_gpu, meth_columns, start, end):
-    block_gpu = methylation_gpu[:, start:end]
-    block_cpu = cp.asnumpy(block_gpu)  # Trasferimento
-    return pd.DataFrame(block_cpu, columns=meth_columns[start:end])
-
-def gpu_to_dataframe_parallel(methylation_gpu, meth_columns, b_size=1000):
-    num_rows, num_columns = methylation_gpu.shape
-    futures = []
-
-    with ThreadPoolExecutor() as executor:
-        for start in range(0, num_columns, b_size):
-            end = min(start + b_size, num_columns)
-            futures.append(executor.submit(process_block, methylation_gpu, meth_columns, start, end))
-
-    blocks = [future.result() for future in futures]
-    return pd.concat(blocks, axis=1)
 
 
 ## CLASSES
@@ -114,10 +95,17 @@ class MultimodalDataset(Dataset):
                 normalized = 2 * (block - minimum) / ranges - 1
                 normalized = cp.nan_to_num(normalized, nan=0.5)  # Change NaN with 0.5
                 methylation_gpu[:, start_col:end_col] = normalized
-        print('--> Done')
-        self.methylation[meth_columns] = gpu_to_dataframe_parallel(methylation_gpu, meth_columns)
-        # self.methylation[meth_columns] = pd.DataFrame(cp.asnumpy(methylation_gpu), columns=meth_columns)
-        print('--> Done1')
+        methylation_gpu = methylation_gpu.astype(cp.float32)
+        chunk_size = 500
+        chunks = []
+        for start in range(0, methylation_gpu.shape[1], chunk_size):
+            end = min(start + chunk_size, methylation_gpu.shape[1])
+            print(f"--> Processing columns {start} to {end}")
+            chunk = methylation_gpu[:, start:end]
+            dask_chunk = dd.from_pandas(pd.DataFrame(cp.asnumpy(chunk), columns=meth_columns[start:end]), npartitions=8)
+            chunks.append(dask_chunk)
+        dask_df = dd.concat(chunks, axis=1)
+        self.methylation[meth_columns] = dask_df.compute()
 
         # GENE EXPRESSION: RNA-Seq
         self.rnaseq = self.gene_expression.iloc[:, self.gene_expression.columns.str.endswith('_rnaseq')].astype(float)
