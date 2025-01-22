@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.methylation_functions.training_methylation import training
-from src.mcat.methylation_functions.validation_methylation import validation
+from src.mcat.gene_expression_and_methylation_functions.training_gene_expression_and_methylation import training
+from src.mcat.gene_expression_and_methylation_functions.validation_gene_expression_and_methylation import validation
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.mcat.original_modules.utils import l1_reg
-from src.mcat.methylation_modules.mcat_methylation import MultimodalCoAttentionTransformer
-from src.mcat.methylation_modules.dataset_methylation import MultimodalDataset
+from src.mcat.gene_expression_and_methylation_modules.mcat_gene_expression_and_methylation import MultimodalCoAttentionTransformer
+from src.mcat.gene_expression_and_methylation_modules.dataset_gene_expression_and_methylation import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 ''' General '''
 C_INDEX_THRESHOLD = 0.65
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
+MCAT_MULTIMODAL_YAML = '../../config/files/mcat_gene_expression_and_methylation.yaml'
 PID = None
 
 
@@ -306,7 +306,7 @@ if __name__ == '__main__':
 
     # Execution
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
-    main(MCAT_METHYLATION_YAML)
+    main(MCAT_MULTIMODAL_YAML)
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT terminated')
 
     # Close LOG file
