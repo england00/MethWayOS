@@ -69,8 +69,6 @@ def wandb_init(config):
             'dataset': config['dataset']['name'],
             'gene_expression': config['dataset']['gene_expression'],
             'gene_expression_signatures': config['dataset']['gene_expression_signatures'],
-            'methylation': config['dataset']['methylation'],
-            'methylation_signatures': config['dataset']['methylation_signatures'],
             'normalization': config['dataset']['normalize'],
             'standardization': config['dataset']['standardize'],
             'optimizer': config['training']['optimizer'],

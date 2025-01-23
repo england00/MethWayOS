@@ -76,7 +76,7 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             optimizer.zero_grad()
 
     # Calculate loss and error for epoch
-    if torch.isnan(torch.tensor(training_loss)):
+    if torch.isnan(training_loss.clone().detach()):
         print("NaN detected in training_loss, skipping")
         training_loss = 0.0
     training_loss /= len(training_loader)
