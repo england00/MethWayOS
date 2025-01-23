@@ -1,0 +1,84 @@
+# Device used to run experiments [cpu, cuda]
+device: cuda
+
+# W&B configuration
+wandb:
+  # Whether enable or not W&B
+  enabled: True
+  # Project name
+  project: TCGA-BRCA-ME-Cross-Validation
+
+# Dataset configuration
+dataset:
+  # Name of the dataset (logged on W&B)
+  name: TCGA-BRCA-ME
+  # CSV Methylation secondary dataset
+  methylation: ../../data/datasets/MCAT_methylation27_full_and_overall_survival_dataset.csv
+  # Methylation signatures
+  methylation_signatures: ../../data/tables/methylation27_full_keys.csv
+  # Whether to normalize genomic data or not. Default is False
+  normalize: False
+  # Whether to standardize genomic data or not. Default is True
+  standardize: True
+  # Random Seed
+  random_seed: 42
+
+# Model configuration
+model:
+  # Model name
+  name: MCAT
+  # Path of model checkpoint to load. Set ~ if loading is not necessary
+  load_from_checkpoint: ~
+  # Epoch of checkpointing. Set 0 if saving the model is not necessary
+  checkpoint_epoch: 20
+  # Directory in which model checkpoint will be saved
+  checkpoint_dir: checkpoints/
+  # Best model file during training (for Early Stopping)
+  checkpoint_best_model: ../../src/mcat/checkpoints/model
+  # Fusion mechanism [concat, gated_concat, bilinear]
+  fusion: concat
+  # Model size [small, medium, big]
+  model_size: medium
+
+# Training configuration
+training:
+  # Coefficient used in Cross Entropy Survival loss
+  alpha: 0.9
+  # Batch size
+  batch_size: 1
+  # Classes Number
+  classes_number: 20
+  # Dropout
+  dropout: 0.25
+  # How many epochs of training
+  epochs: 100
+  # Patience during training
+  early_stopping_patience: 7
+  # Folds Number
+  folds: 5
+  # Coefficient used in exponential lr scheduling
+  gamma: 0.91
+  # Gradient acceleration step
+  grad_acc_step: 4
+  # Regulator coefficient. Set 0.0 if regularization is not needed
+  lambda: 0.00001
+  # Loss to use during training [ce, ces, sct]
+  loss: ces
+  # Learning rate
+  lr: 0.0001
+  # Which optimizer to use [sgd, adam, rms, adamax]
+  optimizer: adam
+  # At which epoch write the attention file
+  output_attn_epoch: 20
+  # Scheduler for learning rate [~, exp]
+  scheduler: exp
+  # Directory in which attention outputs will be saved
+  test_output_dir: outputs/
+  # Train size ratio
+  train_size: 0.8
+  # Weight decay
+  weight_decay: 0.0
+  # C-Index weight
+  weight_c_index: 1.0
+  # Loss weight
+  weight_loss: 0.1

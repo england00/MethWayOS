@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.gene_expression_and_methylation_functions.training_gene_expression_and_methylation import training
-from src.mcat.gene_expression_and_methylation_functions.validation_gene_expression_and_methylation import validation
+from src.mcat.methylation_functions.training_methylation import training
+from src.mcat.methylation_functions.validation_methylation import validation
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.mcat.original_modules.utils import l1_reg
-from src.mcat.gene_expression_and_methylation_modules.mcat_gene_expression_and_methylation import MultimodalCoAttentionTransformer
-from src.mcat.gene_expression_and_methylation_modules.dataset_gene_expression_and_methylation import MultimodalDataset
+from src.mcat.methylation_modules.classifier_methylation import ClassifierMethylation
+from src.mcat.methylation_modules.dataset_methylation import MethylationDataset
 from torch.utils.data import DataLoader
 
 
@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 ''' General '''
 C_INDEX_THRESHOLD = 0.65
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_MULTIMODAL_YAML = '../../config/files/mcat_gene_expression_and_methylation.yaml'
+MCAT_METHYLATION_YAML = '../../config/files/mcat_methylation.yaml'
 PID = None
 
 
@@ -67,8 +67,6 @@ def wandb_init(config):
         config={
             'model': config['model']['name'],
             'dataset': config['dataset']['name'],
-            'gene_expression': config['dataset']['gene_expression'],
-            'gene_expression_signatures': config['dataset']['gene_expression_signatures'],
             'methylation': config['dataset']['methylation'],
             'methylation_signatures': config['dataset']['methylation_signatures'],
             'normalization': config['dataset']['normalize'],
@@ -133,11 +131,10 @@ def main(config_path: str):
 
     ## DATASET
     print('')
-    dataset = MultimodalDataset(config,
-                                classes_number=config['training']['classes_number'],
-                                use_signatures=True,
-                                random_seed=config['dataset']['random_seed'],
-                                remove_incomplete_samples=True)  # Dataset object
+    dataset = MethylationDataset(config,
+                                 classes_number=config['training']['classes_number'],
+                                 use_signatures=True,
+                                 random_seed=config['dataset']['random_seed'])  # Dataset object
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
 
     ## CROSS VALIDATION
@@ -151,13 +148,10 @@ def main(config_path: str):
         print('')
         model_name = config['model']['name']
         print(f'MODEL: {model_name}')
-        model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],
-                                                 n_classes=config['training']['classes_number'],
-                                                 rnaseq_sizes=dataset.gene_expression_signature_sizes,
-                                                 meth_sizes=dataset.methylation_signature_sizes,
-                                                 dropout=config['training']['dropout'],
-                                                 fusion=config['model']['fusion'],
-                                                 device=config['device'])
+        model = ClassifierMethylation(model_size=config['model']['model_size'],
+                                      n_classes=config['training']['classes_number'],
+                                      meth_sizes=dataset.methylation_signature_sizes,
+                                      dropout=config['training']['dropout'])
         print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
         checkpoint = None
         if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
@@ -305,7 +299,7 @@ if __name__ == '__main__':
 
     # Execution
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
-    main(MCAT_MULTIMODAL_YAML)
+    main(MCAT_METHYLATION_YAML)
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT terminated')
 
     # Close LOG file

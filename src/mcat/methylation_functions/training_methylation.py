@@ -1,0 +1,100 @@
+import datetime
+import numpy as np
+import time
+import wandb
+import torch.cuda
+from sksurv.metrics import concordance_index_censored
+
+
+''' TRAINING DEFINITION '''
+def training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function):
+    # Initialization
+    model.train()
+    training_loss = 0.0
+    risk_scores = torch.zeros(len(training_loader), device=config['device'])
+    censorships = torch.zeros(len(training_loader), device=config['device'])
+    event_times = torch.zeros(len(training_loader), device=config['device'])
+
+    # Starting
+    start_batch_time = time.time()
+    for batch_index, (survival_months, survival_class, censorship, methylation_data) in enumerate(training_loader):
+        survival_months = survival_months.to(config['device'], non_blocking=True)
+        survival_class = survival_class.to(config['device'], non_blocking=True)
+        survival_class = survival_class.unsqueeze(0).to(torch.int64)
+        censorship = censorship.type(torch.FloatTensor).to(config['device'], non_blocking=True)
+        methylation_data = [island.to(config['device']) for island in methylation_data]
+        hazards, surv, Y, attention_scores = model(islands=methylation_data)
+
+        # Choosing Loss Function
+        try:
+            if config['training']['loss'] == 'ce':
+                loss = loss_function(Y, survival_class.long())
+            elif config['training']['loss'] == 'ces':
+                loss = loss_function(hazards, surv, survival_class, c=censorship)
+            elif config['training']['loss'] == 'sct':
+                loss = loss_function(Y, survival_class, c=censorship)
+            else:
+                raise RuntimeError(f'Loss "{config["training"]["loss"]}" not implemented')
+        except RuntimeError as e:
+            print(f"Error computing loss, skipping: {e}")
+            continue
+        loss_value = loss.item()
+
+        # Regularization function
+        if reg_function is None:
+            loss_reg = 0
+        else:
+            loss_reg = reg_function(model) * config['training']['lambda']
+
+        # Scores
+        risk = -torch.sum(surv, dim=1)
+        if torch.isnan(risk).any():
+            print(f"NaN detected in risk at batch {batch_index}, skipping")
+            continue
+        if torch.isnan(censorship).any() or torch.isnan(survival_months).any():
+            print(f"NaN detected in censorship or survival_months at batch {batch_index}, skipping")
+            continue
+        risk_scores[batch_index] = risk
+        censorships[batch_index] = censorship
+        event_times[batch_index] = survival_months
+        training_loss += loss_value + loss_reg
+
+        # Logger
+        if (batch_index + 1) % 50 == 0:
+            print(f'--> Batch: {batch_index}, Loss: {loss_value + loss_reg:.4f}, Label: {survival_class.item()}, Survival Months: {survival_months.item():.2f}, Risk: {float(risk.item()):.4f}')
+            end_batch_time = time.time()
+            print(f'\t--> Average Speed: {((end_batch_time - start_batch_time) / 32):.2f}s per batch')
+            print(f'\t--> Time from Last Check: {(end_batch_time - start_batch_time):.2f}s')
+            start_batch_time = time.time()
+        loss = loss / config['training']['grad_acc_step'] + loss_reg
+        loss.backward()
+
+        # Scheduler
+        if (batch_index + 1) % config['training']['grad_acc_step'] == 0:
+            optimizer.step()
+            optimizer.zero_grad()
+
+    # Calculate loss and error for epoch
+    if torch.isnan(training_loss.clone().detach()):
+        print("NaN detected in training_loss, skipping")
+        training_loss = 0.0
+    training_loss /= len(training_loader)
+    risk_scores = risk_scores.detach().cpu().numpy()
+    censorships = censorships.detach().cpu().numpy()
+    event_times = event_times.detach().cpu().numpy()
+    if np.isnan(risk_scores).any() or np.isnan(censorships).any() or np.isnan(event_times).any():
+        print("NaN detected in final metrics, skipping")
+        return
+    training_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
+    if config['training']['scheduler']:
+        lr = optimizer.param_groups[0]["lr"]
+        if config['training']['scheduler'] == 'exp':
+            scheduler.step()
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, lr: {lr:.8f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
+    else:
+        print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Epoch: {epoch + 1}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
+
+    # W&B
+    wandb_enabled = config['wandb']['enabled']
+    if wandb_enabled:
+        wandb.log({"training_loss": training_loss, "training_c_index": training_c_index})

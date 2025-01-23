@@ -106,7 +106,6 @@ def main(config_path: str):
         process_id = f'{socket.gethostname()}_{os.getpid()}'
     else:
         process_id = f'{os.getenv("SLURM_JOB_NAME", "default_job_name")}_{os.getenv("SLURM_JOB_ID", "default_job_id")}'
-    config['dataset']['project'] = 'TCGA-BRCA-GE-ME-27-Cross-Validation'
 
     ## Starting W&B
     print('')

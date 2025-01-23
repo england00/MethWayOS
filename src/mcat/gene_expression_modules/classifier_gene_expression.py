@@ -8,7 +8,7 @@ from src.mcat.original_modules.blocks import AttentionNetGated
 # https://github.com/mahmoodlab/MCAT/blob/master/Model%20Computation%20%2B%20Complexity%20Overview.ipynb
 
 
-''' MultimodalCoAttentionTransformer Definition '''
+''' ClassifierGeneExpression Definition '''
 class ClassifierGeneExpression(nn.Module):
     def __init__(self, rnaseq_sizes: [], model_size: str = 'medium', n_classes: int = 4, dropout: float = 0.25):
         super(ClassifierGeneExpression, self).__init__()
@@ -47,7 +47,7 @@ class ClassifierGeneExpression(nn.Module):
         # Classifier
         self.classifier = nn.Linear(self.model_sizes[1], n_classes)
 
-    def forward(self, genes, inference: bool = False):
+    def forward(self, genes):
         # N Gene Expression Fully connected layers
         G_rnaseq = [self.G[index].forward(rnaseq.type(torch.float32)) for index, rnaseq in enumerate(genes)]
         # G_bag: (Nxd_k)
