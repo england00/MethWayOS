@@ -310,10 +310,10 @@ def test_multimodal_dataset():
     # Loading Configuration file
     with open('../../../config/files/mcat_gene_expression_and_methylation.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
-    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_methylation_and_overall_survival_dataset.csv'
-    config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'
+    config['dataset']['gene_expression'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['gene_expression_signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'
     config['dataset']['methylation'] = '../../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv'
-    config['dataset']['signatures_methylation'] = '../../../data/tables/methylation450_keys.csv'
+    config['dataset']['methylation_signatures'] = '../../../data/tables/methylation450_keys.csv'
 
     # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)
@@ -334,10 +334,10 @@ def test_multimodal_dataset_split():
     # Loading Configuration file
     with open('../../../config/files/mcat_gene_expression_and_methylation.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
-    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_methylation_and_overall_survival_dataset.csv'
-    config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'
+    config['dataset']['gene_expression'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['gene_expression_signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'
     config['dataset']['methylation'] = '../../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv'
-    config['dataset']['signatures_methylation'] = '../../../data/tables/methylation450_keys.csv'
+    config['dataset']['methylation_signatures'] = '../../../data/tables/methylation450_keys.csv'
 
     # Testing
     dataset = MultimodalDataset(config['dataset']['file'], config, use_signatures=True)

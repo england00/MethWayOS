@@ -253,7 +253,7 @@ def test_multimodal_dataset_split():
     # Loading Configuration file
     with open('../../../config/files/mcat.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
-    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_wsi_and_overall_survival_dataset.csv'
     config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
     config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys.csv'
     config['dataset']['decider_only'] = True
@@ -275,7 +275,7 @@ def test_std():
     # Loading Configuration file
     with open('../../../config/files/mcat.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
-    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
+    config['dataset']['file'] = '../../../data/datasets/MCAT_gene_expression_and_wsi_and_overall_survival_dataset.csv'
     config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
     config['dataset']['signatures'] = '../../../data/tables/gene_expression_keys.csv'
     config['dataset']['decider_only'] = True
