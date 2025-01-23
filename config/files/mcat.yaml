@@ -1,0 +1,80 @@
+# Device used to run experiments [cpu, cuda]
+device: cuda
+
+# W&B configuration
+wandb:
+  # Whether enable or not W&B
+  enabled: True
+  # Project name
+  project: TCGA-BRCA-COMP
+
+# Dataset configuration
+dataset:
+  # Name of the dataset (logged on W&B)
+  name: TCGA-BRCA
+  # CSV dataset file
+  file: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
+  # Directory containing slides embeddings
+  patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
+  # Signature of genes to use
+  signatures: ../../data/tables/gene_expression_keys.csv
+  # Whether to use only Decider data or not
+  decider_only: False
+  # Whether to use only diagnostic slides or not. Useful only in TCGA-OV
+  diagnostic_only: False
+  # Whether to use only TCGA data or not
+  tcga_only: True
+  # Whether to normalize genomic data or not. Default is False
+  normalize: False
+  # Whether to standardize genomic data or not. Default is True
+  standardize: True
+
+# Model configuration
+model:
+  # Model name
+  name: MCAT
+  # Path of model checkpoint to load. Set ~ if loading is not necessary
+  load_from_checkpoint: ~
+  # Epoch of checkpointing. Set 0 if saving the model is not necessary
+  checkpoint_epoch: 20
+  # Directory in which model checkpoint will be saved
+  checkpoint_dir: checkpoints/
+  # Fusion mechanism [concat, gated_concat, bilinear]
+  fusion: concat
+  # Model size [small, medium, big]
+  model_size: medium
+
+# Training configuration
+training:
+  # Coefficient used in Cross Entropy Survival loss
+  alpha: 0.85
+  # Batch size
+  batch_size: 1
+  # Classes Number
+  classes_number: 20
+  # How many epochs of training
+  epochs: 25
+  # Coefficient used in exponential lr scheduling
+  gamma: 0.85
+  # Gradient acceleration step
+  grad_acc_step: 8
+  # Regulator coefficient. Set 0.0 if regularization is not needed
+  lambda: 0.00001
+  # ID of the patient to use as test. Set ~ if testing a patient is not needed
+  leave_one_out: ~
+  # Loss to use during training [ce, ces, sct]
+  loss: ces
+  # Learning rate
+  lr: 0.0001
+  # Which optimizer to use [sgd, adam, rms, adamax]
+  optimizer: adam
+  # At which epoch write the attention file
+  output_attn_epoch: 20
+  # Scheduler for learning rate [~, exp, rop]
+  scheduler: exp
+  # Directory in which attention outputs will be saved
+  test_output_dir: outputs/
+  # Train size ratio
+  train_size: 0.8
+  # Weight decay
+  weight_decay: 0.0001
