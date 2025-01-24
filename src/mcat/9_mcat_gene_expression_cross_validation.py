@@ -154,14 +154,14 @@ def main(config_path: str):
                 for lambda_ in grid_search['lambda']:
                     for lr in grid_search['learning_rate']:
                         for weight_decay in grid_search['weight_decay']:
-                            config['training']['alpha'] = alpha
-                            config['training']['dropout'] = dropout
-                            config['training']['gamma'] = gamma
-                            config['training']['lambda'] = lambda_
-                            config['training']['lr'] = lr
-                            config['training']['weight_decay'] = weight_decay
+                            config['training']['alpha'] = float(alpha)
+                            config['training']['dropout'] = float(dropout)
+                            config['training']['gamma'] = float(gamma)
+                            config['training']['lambda'] = float(lambda_)
+                            config['training']['lr'] = float(lr)
+                            config['training']['weight_decay'] = float(weight_decay)
 
-                            title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Cross Validation with Current Configuration started')
+                            title(f'Cross Validation with Current Configuration started')
                             print(f"--> alpha: {alpha}, dropout: {dropout}, gamma: {gamma}, lambda: {lambda_}, lr: {lr}, weight_decay: {weight_decay}")
 
                             ## CROSS VALIDATION
@@ -313,7 +313,7 @@ def main(config_path: str):
                             print(f"\n--> Validation Loss: [", ", ".join(f"{value:.4f}" for value in validation_loss_list), "]")
                             print(f"Mean: {loss_mean:.4f}, Variance: {loss_variance:.4f}, 95% Confidence Interval: [{loss_ci_lower:.4f}, {loss_ci_upper:.4f}]")
 
-                            title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Cross Validation with Current Configuration ended')
+                            title(f'Cross Validation with Current Configuration ended')
                             print(f"--> alpha: {alpha}, dropout: {dropout}, gamma: {gamma}, lambda: {lambda_}, lr: {lr}, weight_decay: {weight_decay}")
 
     # Ending W&B
