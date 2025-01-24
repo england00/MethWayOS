@@ -6,12 +6,12 @@ wandb:
   # Whether enable or not W&B
   enabled: True
   # Project name
-  project: TCGA-BRCA-GE-ME-27-Cross-Validation
+  project: TCGA-BRCA-GE-ME-Cross-Validation
 
 # Dataset configuration
 dataset:
   # Name of the dataset (logged on W&B)
-  name: TCGA-BRCA-GE-ME-27
+  name: TCGA-BRCA-GE-ME
   # CSV Gene Expression main dataset
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
@@ -30,7 +30,7 @@ dataset:
 # Model configuration
 model:
   # Model name
-  name: MCAT
+  name: MCAT with Gene Expression & Methylation
   # Path of model checkpoint to load. Set ~ if loading is not necessary
   load_from_checkpoint: ~
   # Epoch of checkpointing. Set 0 if saving the model is not necessary

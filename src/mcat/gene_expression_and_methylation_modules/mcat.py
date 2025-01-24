@@ -128,19 +128,19 @@ class MultimodalCoAttentionTransformer(nn.Module):
 
         # Survival Layer
         # logits: classifier output
-        # size   --> (1, 4)
+        # size   --> (1, n_classes)
         # domain --> R
         logits = self.classifier(h).unsqueeze(0)
         # hazards: probability of patient death in interval j
-        # size   --> (1, 4)
+        # size   --> (1, n_classes)
         # domain --> [0, 1]
         hazards = torch.sigmoid(logits)
         # survs: probability of patient survival after time t
-        # size   --> (1, 4)
+        # size   --> (1, n_classes)
         # domain --> [0, 1]
         surv = torch.cumprod(1 - hazards, dim=1)
         # Y: predicted probability distribution
-        # size   --> (1, 4)
+        # size   --> (1, n_classes)
         # domain --> [0, 1] (probability distribution)
         Y = F.softmax(logits, dim=1)
 

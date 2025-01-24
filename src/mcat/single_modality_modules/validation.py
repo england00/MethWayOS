@@ -15,15 +15,16 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
     event_times = np.zeros((len(validation_loader)))
 
     # Starting
-    for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(validation_loader):
+    for batch_index, (survival_months, survival_class, censorship, gene_expression_data) in enumerate(validation_loader):
+
+        ''' ######################################### FORWARD PASS ################################################# '''
         survival_months = survival_months.to(config['device'])
         survival_class = survival_class.to(config['device'])
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
         censorship = censorship.type(torch.FloatTensor).to(config['device'])
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
-        methylation_data = [island.to(config['device']) for island in methylation_data]
         with torch.no_grad():
-            hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
+            hazards, surv, Y, attention_scores = model(data=gene_expression_data)
 
         # Choosing Loss Function
         if config['training']['loss'] == 'ce':
@@ -52,6 +53,7 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
         event_times[batch_index] = survival_months.item()
         validation_loss += loss_value + loss_reg
 
+    ''' ############################################## METRICS ##################################################### '''
     # Check for NaN in risk_scores before concordance index
     if np.isnan(risk_scores).any():
         print("Warning: NaN detected in risk_scores. Replacing with zeros.")

@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 import time
 import wandb
 import yaml
@@ -13,9 +12,9 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.original_functions.training import training
-from src.mcat.original_functions.validation import validation
-from src.mcat.original_functions.testing import test
+from src.mcat.original_modules.training import training
+from src.mcat.original_modules.validation import validation
+from src.mcat.original_modules.testing import test
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.mcat.original_modules.utils import l1_reg
 from src.mcat.original_modules.mcat import MultimodalCoAttentionTransformer

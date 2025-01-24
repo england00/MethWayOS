@@ -19,6 +19,8 @@ def test(epoch, config, testing_loader, model, patient, save=False):
 
     # Starting
     for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(testing_loader):
+
+        ''' ######################################### FORWARD PASS ################################################# '''
         survival_months = survival_months.to(config['device'])
         survival_class = survival_class.to(config['device'])
         survival_class = survival_class.unsqueeze(0).to(torch.int64)

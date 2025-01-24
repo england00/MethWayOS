@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.gene_expression_functions.training_gene_expression import training
-from src.mcat.gene_expression_functions.validation_gene_expression import validation
+from src.mcat.single_modality_modules.training import training
+from src.mcat.single_modality_modules.validation import validation
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.original_modules.utils import l1_reg
-from src.mcat.gene_expression_modules.classifier_gene_expression import ClassifierGeneExpression
-from src.mcat.gene_expression_modules.dataset_gene_expression import RnaSeqDataset
+from src.mcat.original_modules.utils import l1_reg, l2_reg
+from src.mcat.single_modality_modules.smt import SingleModalTransformer
+from src.mcat.single_modality_modules.dataset_gene_expression import RnaSeqDataset
 from torch.utils.data import DataLoader
 
 
@@ -148,10 +148,10 @@ def main(config_path: str):
         print('')
         model_name = config['model']['name']
         print(f'MODEL: {model_name}')
-        model = ClassifierGeneExpression(model_size=config['model']['model_size'],
-                                         n_classes=config['training']['classes_number'],
-                                         rnaseq_sizes=dataset.gene_expression_signature_sizes,
-                                         dropout=config['training']['dropout'])
+        model = SingleModalTransformer(model_size=config['model']['model_size'],
+                                       n_classes=config['training']['classes_number'],
+                                       encoder_sizes=dataset.gene_expression_signature_sizes,
+                                       dropout=config['training']['dropout'])
         print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
         checkpoint = None
         if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
@@ -200,7 +200,7 @@ def main(config_path: str):
 
         ## Regularization
         if config['training']['lambda']:
-            reg_function = l1_reg
+            reg_function = l2_reg
         else:
             reg_function = None
 

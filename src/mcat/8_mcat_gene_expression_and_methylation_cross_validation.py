@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.gene_expression_and_methylation_functions.training_gene_expression_and_methylation import training
-from src.mcat.gene_expression_and_methylation_functions.validation_gene_expression_and_methylation import validation
+from src.mcat.gene_expression_and_methylation_modules.training import training
+from src.mcat.gene_expression_and_methylation_modules.validation import validation
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.original_modules.utils import l1_reg
-from src.mcat.gene_expression_and_methylation_modules.mcat_gene_expression_and_methylation import MultimodalCoAttentionTransformer
-from src.mcat.gene_expression_and_methylation_modules.dataset_gene_expression_and_methylation import MultimodalDataset
+from src.mcat.original_modules.utils import l2_reg
+from src.mcat.gene_expression_and_methylation_modules.mcat import MultimodalCoAttentionTransformer
+from src.mcat.gene_expression_and_methylation_modules.dataset import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
@@ -206,7 +206,7 @@ def main(config_path: str):
 
         ## Regularization
         if config['training']['lambda']:
-            reg_function = l1_reg
+            reg_function = l2_reg
         else:
             reg_function = None
 

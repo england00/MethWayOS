@@ -40,6 +40,16 @@ def l1_reg(model):
     return reg
 
 
+def l2_reg(model):
+    reg = None
+    for W in model.parameters():
+        if reg is None:
+            reg = (W ** 2).sum()
+        else:
+            reg = reg + (W ** 2).sum()
+    return reg
+
+
 def init_max_weights(module):
     for m in module.modules():
         if type(m) == nn.Linear:

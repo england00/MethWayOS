@@ -17,13 +17,16 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
 
     # Starting
     start_batch_time = time.time()
-    for batch_index, (survival_months, survival_class, censorship, gene_expression_data) in enumerate(training_loader):
+    for batch_index, (survival_months, survival_class, censorship, gene_expression_data, methylation_data) in enumerate(training_loader):
+
+        ''' ######################################### FORWARD PASS ################################################# '''
         survival_months = survival_months.to(config['device'], non_blocking=True)
         survival_class = survival_class.to(config['device'], non_blocking=True)
         survival_class = survival_class.unsqueeze(0).to(torch.int64)
         censorship = censorship.type(torch.FloatTensor).to(config['device'], non_blocking=True)
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
-        hazards, surv, Y, attention_scores = model(genes=gene_expression_data)
+        methylation_data = [island.to(config['device']) for island in methylation_data]
+        hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
 
         # Choosing Loss Function
         try:
@@ -66,6 +69,8 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             print(f'\t--> Average Speed: {((end_batch_time - start_batch_time) / 32):.2f}s per batch')
             print(f'\t--> Time from Last Check: {(end_batch_time - start_batch_time):.2f}s')
             start_batch_time = time.time()
+
+        ''' ######################################## BACKWARD PASS ################################################# '''
         loss = loss / config['training']['grad_acc_step'] + loss_reg
         loss.backward()
 
@@ -74,6 +79,7 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
             optimizer.step()
             optimizer.zero_grad()
 
+    ''' ############################################## METRICS ##################################################### '''
     # Calculate loss and error for epoch
     if torch.isnan(training_loss.clone().detach()):
         print("NaN detected in training_loss, skipping")

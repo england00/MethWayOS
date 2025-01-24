@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.methylation_functions.training_methylation import training
-from src.mcat.methylation_functions.validation_methylation import validation
+from src.mcat.single_modality_modules.training import training
+from src.mcat.single_modality_modules.validation import validation
 from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.original_modules.utils import l1_reg
-from src.mcat.methylation_modules.classifier_methylation import ClassifierMethylation
-from src.mcat.methylation_modules.dataset_methylation import MethylationDataset
+from src.mcat.original_modules.utils import l1_reg, l2_reg
+from src.mcat.single_modality_modules.smt import SingleModalTransformer
+from src.mcat.single_modality_modules.dataset_methylation import MethylationDataset
 from torch.utils.data import DataLoader
 
 
@@ -148,9 +148,9 @@ def main(config_path: str):
         print('')
         model_name = config['model']['name']
         print(f'MODEL: {model_name}')
-        model = ClassifierMethylation(model_size=config['model']['model_size'],
+        model = SingleModalTransformer(model_size=config['model']['model_size'],
                                       n_classes=config['training']['classes_number'],
-                                      meth_sizes=dataset.methylation_signature_sizes,
+                                      encoder_sizes=dataset.methylation_signature_sizes,
                                       dropout=config['training']['dropout'])
         print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
         checkpoint = None
@@ -200,7 +200,7 @@ def main(config_path: str):
 
         ## Regularization
         if config['training']['lambda']:
-            reg_function = l1_reg
+            reg_function = l2_reg
         else:
             reg_function = None
 
