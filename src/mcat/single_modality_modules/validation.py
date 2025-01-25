@@ -25,6 +25,7 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
         with torch.no_grad():
             hazards, surv, Y, attention_scores = model(data=gene_expression_data)
+            surv = torch.nan_to_num(surv, nan=0.0)
 
         # Choosing Loss Function
         if config['training']['loss'] == 'ce':
@@ -45,20 +46,12 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
 
         # Scores
         risk = -torch.sum(surv, dim=1).cpu().numpy()
-        if np.isnan(risk).any():
-            print(f"Warning: NaN detected in risk at batch {batch_index}. Risk: {risk}")
-            risk = np.nan_to_num(risk, nan=0.0)
         risk_scores[batch_index] = risk.item()
         censorships[batch_index] = censorship.item()
         event_times[batch_index] = survival_months.item()
         validation_loss += loss_value + loss_reg
 
     ''' ############################################## METRICS ##################################################### '''
-    # Check for NaN in risk_scores before concordance index
-    if np.isnan(risk_scores).any():
-        print("Warning: NaN detected in risk_scores. Replacing with zeros.")
-        risk_scores = np.nan_to_num(risk_scores, nan=0.0)
-
     # Calculating Loss and Error
     validation_loss /= len(validation_loader)
     validation_c_index = concordance_index_censored((1 - censorships).astype(bool), event_times, risk_scores)[0]
