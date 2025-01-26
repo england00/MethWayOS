@@ -1,0 +1,34 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250125_163830-08bti91u
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2518870
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-ME-Cross-Validation
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-ME-Cross-Validation/runs/08bti91u
+Traceback (most recent call last):
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/10_mcat_methylation_cross_validation.py", line 332, in <module>
+    main(MCAT_METHYLATION_YAML)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/10_mcat_methylation_cross_validation.py", line 249, in main
+    training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/single_modality_modules/training.py", line 21, in training
+    for batch_index, (survival_months, survival_class, censorship, single_modality_data) in enumerate(training_loader):
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 439, in __iter__
+    return self._get_iterator()
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 387, in _get_iterator
+    return _MultiProcessingDataLoaderIter(self)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1040, in __init__
+    w.start()
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/multiprocessing/context.py", line 224, in _Popen
+    return _default_context.get_context().Process._Popen(process_obj)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/multiprocessing/context.py", line 281, in _Popen
+    return Popen(process_obj)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/multiprocessing/popen_fork.py", line 16, in __init__
+    util._flush_std_streams()
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/multiprocessing/util.py", line 435, in _flush_std_streams
+    sys.stdout.flush()
+  File "/homes/linghilterra/AIforBioinformatics/logs/methods/log_storer.py", line 14, in flush
+    self.terminal.flush()
+OSError: [Errno 122] Disk quota exceeded

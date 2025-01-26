@@ -61,11 +61,11 @@ training:
   # Folds Number
   folds: 7
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75, 0.99]
+  gamma: [0.75, 0.91]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [1e-4]
+  lambda: [0.001]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
@@ -81,7 +81,7 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: [1e-5, 1e-4, 1e-3]
+  weight_decay: [1e-4, 1e-3]
   # C-Index weight
   weight_c_index: 1.0
   # Loss weight

@@ -1,0 +1,25 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250125_163821-k2jwuk5a
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2518868
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-Cross-Validation
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-Cross-Validation/runs/k2jwuk5a
+Traceback (most recent call last):
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_gene_expression_and_methylation_cross_validation.py", line 338, in <module>
+    main(MCAT_MULTIMODAL_YAML)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_gene_expression_and_methylation_cross_validation.py", line 265, in main
+    torch.save({
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/serialization.py", line 628, in save
+    with _open_zipfile_writer(f) as opened_zipfile:
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/serialization.py", line 502, in _open_zipfile_writer
+    return container(name_or_buffer)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/serialization.py", line 473, in __init__
+    super().__init__(torch._C.PyTorchFileWriter(self.name))
+RuntimeError: File ../../src/mcat/checkpoints/model_lucas_job_2518868_4.pt cannot be opened.
+Exception ignored in: <logs.methods.log_storer.DualOutput object at 0x148a1c7ad4b0>
+Traceback (most recent call last):
+  File "/homes/linghilterra/AIforBioinformatics/logs/methods/log_storer.py", line 14, in flush
+    self.terminal.flush()
+OSError: [Errno 122] Disk quota exceeded
