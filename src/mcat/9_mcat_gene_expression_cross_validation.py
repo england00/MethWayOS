@@ -25,7 +25,7 @@ from torch.utils.data import DataLoader
 
 ## CONFIGURATION
 ''' General '''
-C_INDEX_THRESHOLD = 0.65
+C_INDEX_THRESHOLD = 1.0
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 MCAT_GENE_EXPRESSION_YAML = '../../config/files/mcat_gene_expression.yaml'
 PID = None
