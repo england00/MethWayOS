@@ -47,13 +47,13 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.75, 1.0]
+  alpha: [0.75]
   # Batch size
   batch_size: 1
   # Classes Number
   classes_number: 20
   # Dropout
-  dropout: [0.0, 0.125, 0.25]
+  dropout: [0.0]
   # How many epochs of training
   epochs: 100
   # Patience during training
@@ -61,11 +61,11 @@ training:
   # Folds Number
   folds: 7
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75, 0.91]
+  gamma: [0.75, 0.9]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [0.001]
+  lambda: [1e-4, 1e-3]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
