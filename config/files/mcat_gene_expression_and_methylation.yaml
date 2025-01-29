@@ -47,7 +47,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.75]
+  alpha: [1.0]
   # Batch size
   batch_size: 1
   # Classes Number
@@ -61,15 +61,15 @@ training:
   # Folds Number
   folds: 7
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75, 0.9]
+  gamma: [0.75]
   # Gradient acceleration step
-  grad_acc_step: 4
+  grad_acc_step: 64
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [1e-4, 1e-3]
+  lambda: [5e-3, 1e-2, 5e-2]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-4, 1e-3]
+  lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
@@ -81,7 +81,7 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: [1e-4, 1e-3]
+  weight_decay: [1e-4, 5e-4, 1e-3, 5e-3, 1e-2]
   # C-Index weight
   weight_c_index: 1.0
   # Loss weight
