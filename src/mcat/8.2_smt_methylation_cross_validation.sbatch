@@ -31,4 +31,4 @@ echo "Job "$SLURM_JOB_ID" started"
 export PYTHONPATH=/homes/linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /homes/linghilterra/AIforBioinformatics/src/mcat/8_mcat_gene_expression_and_methylation_cross_validation.py
+python /homes/linghilterra/AIforBioinformatics/src/mcat/8.2_smt_methylation_cross_validation.py

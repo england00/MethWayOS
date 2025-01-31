@@ -58,6 +58,7 @@ def calculate_statistics(data):
 
 ''' W&B CONFIGURATION '''
 def wandb_init(config):
+    os.makedirs("./wandb", exist_ok=True)
     slurm_job_name = os.getenv('SLURM_JOB_NAME', 'default_job_name')  # Slurm Job Name
     slurm_job_id = os.getenv('SLURM_JOB_ID', 'default_job_id')  # Slurm Job Id
     wandb.init(
@@ -256,6 +257,7 @@ def main(config_path: str):
                                     validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
                                     # BEST MODEL chosen on VALIDATION Loss or C-Index
+                                    os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
                                     validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
                                     if validation_score > best_score:
                                         best_score = validation_score

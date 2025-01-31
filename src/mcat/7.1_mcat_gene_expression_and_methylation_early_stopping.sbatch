@@ -7,7 +7,7 @@
 
 #SBATCH --partition=all_usr_prod
 #SBATCH --time=24:00:00
-#SBATCH --mem=80G
+#SBATCH --mem=16G
 #SBATCH --array=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
@@ -31,4 +31,4 @@ echo "Job "$SLURM_JOB_ID" started"
 export PYTHONPATH=/homes/linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /homes/linghilterra/AIforBioinformatics/src/mcat/10_mcat_methylation_cross_validation.py
+python /homes/linghilterra/AIforBioinformatics/src/mcat/7.1_mcat_gene_expression_and_methylation_early_stopping.py

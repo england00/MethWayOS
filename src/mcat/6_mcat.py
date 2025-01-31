@@ -35,6 +35,7 @@ def title(text):
 
 ''' W&B CONFIGURATION '''
 def wandb_init(config):
+    os.makedirs("./wandb", exist_ok=True)
     slurm_job_name = os.getenv('SLURM_JOB_NAME', 'default_job_name')  # Slurm Job Name
     slurm_job_id = os.getenv('SLURM_JOB_ID', 'default_job_id')  # Slurm Job Id
     wandb.init(

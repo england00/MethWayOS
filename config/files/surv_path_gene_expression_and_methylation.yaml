@@ -6,16 +6,20 @@ wandb:
   # Whether enable or not W&B
   enabled: True
   # Project name
-  project: TCGA-BRCA-GE-Cross-Validation
+  project: TCGA-BRCA-GE-ME-Cross-Validation
 
 # Dataset configuration
 dataset:
   # Name of the dataset (logged on W&B)
-  name: TCGA-BRCA-GE
+  name: TCGA-BRCA-GE-ME
   # CSV Gene Expression main dataset
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
   gene_expression_signatures: ../../data/tables/gene_expression_keys_methylation.csv
+  # CSV Methylation secondary dataset
+  methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
+  # Methylation signatures
+  methylation_signatures: ../../data/tables/methylation450_keys.csv
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -26,15 +30,15 @@ dataset:
 # Model configuration
 model:
   # Model name
-  name: SMT with Gene Expression
+  name: SurvPath with Gene Expression & Methylation
   # Path of model checkpoint to load. Set ~ if loading is not necessary
   load_from_checkpoint: ~
   # Epoch of checkpointing. Set 0 if saving the model is not necessary
   checkpoint_epoch: 20
   # Directory in which model checkpoint will be saved
-  checkpoint_dir: ../../src/mcat/checkpoints/
+  checkpoint_dir: ../../src/surv_path/checkpoints/
   # Best model file during training (for Early Stopping)
-  checkpoint_best_model: ../../src/mcat/checkpoints/model
+  checkpoint_best_model: ../../src/surv_path/checkpoints/model
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [small, medium, big]
@@ -49,7 +53,7 @@ training:
   # Classes Number
   classes_number: 20
   # Dropout
-  dropout: [0.0, 0.125, 0.25]
+  dropout: [0.25]
   # How many epochs of training
   epochs: 100
   # Patience during training
@@ -57,15 +61,15 @@ training:
   # Folds Number
   folds: 7
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75, 0.99]
+  gamma: [0.9]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [1e-4]
+  lambda: [0.0]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-4, 1e-3]
+  lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
@@ -77,7 +81,7 @@ training:
   # Train size ratio
   train_size: 0.8
   # Weight decay
-  weight_decay: [1e-5, 1e-4, 1e-3]
+  weight_decay: [5e-4, 1e-3, 5e-3, 1e-2]
   # C-Index weight
   weight_c_index: 1.0
   # Loss weight

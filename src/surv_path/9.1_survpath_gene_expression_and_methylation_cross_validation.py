@@ -14,12 +14,12 @@ import torch.optim.lr_scheduler as lrs
 import warnings
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.mcat.single_modality_modules.training import training
-from src.mcat.single_modality_modules.validation import validation
-from src.mcat.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.mcat.original_modules.utils import l1_reg, l2_reg
-from src.mcat.single_modality_modules.smt import SingleModalTransformer
-from src.mcat.single_modality_modules.dataset_gene_expression import RnaSeqDataset
+from src.surv_path.gene_expression_and_methylation_modules.training import training
+from src.surv_path.gene_expression_and_methylation_modules.validation import validation
+from src.surv_path.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
+from src.surv_path.original_modules.utils import l2_reg
+from src.surv_path.gene_expression_and_methylation_modules.surv_path import SurvPath
+from src.surv_path.gene_expression_and_methylation_modules.dataset import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 ''' General '''
 C_INDEX_THRESHOLD = 1.0
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_GENE_EXPRESSION_YAML = '../../config/files/mcat_gene_expression.yaml'
+MCAT_MULTIMODAL_YAML = '../../config/files/surv_path_gene_expression_and_methylation.yaml'
 PID = None
 
 
@@ -58,6 +58,7 @@ def calculate_statistics(data):
 
 ''' W&B CONFIGURATION '''
 def wandb_init(config):
+    os.makedirs("./wandb", exist_ok=True)
     slurm_job_name = os.getenv('SLURM_JOB_NAME', 'default_job_name')  # Slurm Job Name
     slurm_job_id = os.getenv('SLURM_JOB_ID', 'default_job_id')  # Slurm Job Id
     wandb.init(
@@ -69,6 +70,8 @@ def wandb_init(config):
             'dataset': config['dataset']['name'],
             'gene_expression': config['dataset']['gene_expression'],
             'gene_expression_signatures': config['dataset']['gene_expression_signatures'],
+            'methylation': config['dataset']['methylation'],
+            'methylation_signatures': config['dataset']['methylation_signatures'],
             'normalization': config['dataset']['normalize'],
             'standardization': config['dataset']['standardize'],
             'optimizer': config['training']['optimizer'],
@@ -132,10 +135,11 @@ def main(config_path: str):
 
     ## DATASET
     print('')
-    dataset = RnaSeqDataset(config,
-                            classes_number=config['training']['classes_number'],
-                            use_signatures=True,
-                            random_seed=config['dataset']['random_seed'])  # Dataset object
+    dataset = MultimodalDataset(config,
+                                classes_number=config['training']['classes_number'],
+                                use_signatures=True,
+                                random_seed=config['dataset']['random_seed'],
+                                remove_incomplete_samples=True)  # Dataset object
     print(f'--> Using {int(config["training"]["train_size"] * 100)}% training, {100 - int(config["training"]["train_size"] * 100)}% validation')
 
     ## GRID SEARCH
@@ -175,10 +179,12 @@ def main(config_path: str):
                                 print('')
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
-                                model = SingleModalTransformer(model_size=config['model']['model_size'],
-                                                               n_classes=config['training']['classes_number'],
-                                                               encoder_sizes=dataset.gene_expression_signature_sizes,
-                                                               dropout=config['training']['dropout'])
+                                model = SurvPath(n_classes=config['training']['classes_number'],
+                                                 rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                                 meth_sizes=dataset.methylation_signature_sizes,
+                                                 dropout=config['training']['dropout'],
+                                                 fusion=config['model']['fusion'],
+                                                 device=config['device'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
@@ -250,6 +256,7 @@ def main(config_path: str):
                                     validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
                                     # BEST MODEL chosen on VALIDATION Loss or C-Index
+                                    os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
                                     validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
                                     if validation_score > best_score:
                                         best_score = validation_score
@@ -329,7 +336,7 @@ if __name__ == '__main__':
 
     # Execution
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
-    main(MCAT_GENE_EXPRESSION_YAML)
+    main(MCAT_MULTIMODAL_YAML)
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT terminated')
 
     # Close LOG file
