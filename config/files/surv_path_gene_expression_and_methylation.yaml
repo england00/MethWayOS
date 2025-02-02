@@ -55,13 +55,13 @@ training:
   # Dropout
   dropout: [0.0]
   # How many epochs of training
-  epochs: 30
+  epochs: 40
   # Patience during training
   early_stopping_patience: 7
   # Folds Number
   folds: 5
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75]
+  gamma: [0.75, 0.85, 0.95]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
@@ -69,7 +69,7 @@ training:
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-3]
+  lr: [1e-2]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
