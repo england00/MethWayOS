@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 ''' General '''
 C_INDEX_THRESHOLD = 1.0
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_GENE_EXPRESSION_YAML = '../../config/files/mcat_gene_expression.yaml'
+MCAT_GENE_EXPRESSION_YAML = '../../config/files/smt_gene_expression.yaml'
 PID = None
 
 
@@ -166,6 +166,8 @@ def main(config_path: str):
                             print(f"--> alpha: {alpha}, dropout: {dropout}, gamma: {gamma}, lambda: {lambda_}, lr: {lr}, weight_decay: {weight_decay}")
 
                             ## CROSS VALIDATION
+                            training_c_index_list = []
+                            training_loss_list = []
                             validation_c_index_list = []
                             validation_loss_list = []
                             folds = dataset.k_fold_split(dataset, k=config['training']['folds'])
@@ -237,8 +239,10 @@ def main(config_path: str):
                                 training_loader = DataLoader(training_fold, batch_size=config['training']['batch_size'], shuffle=True, num_workers=6, pin_memory=True)
                                 validation_loader = DataLoader(validation_fold, batch_size=config['training']['batch_size'], shuffle=False, num_workers=6, pin_memory=True)
                                 model.train()
-                                best_c_index = 0.0
-                                best_loss = np.inf
+                                best_training_loss = np.inf
+                                best_training_c_index = 0.0
+                                best_validation_loss = np.inf
+                                best_validation_c_index = 0.0
                                 best_score = -np.inf
                                 epochs_without_improvement = 0
                                 patience = config['training']['early_stopping_patience']
@@ -247,7 +251,7 @@ def main(config_path: str):
                                     start_time = time.time()
 
                                     # TRAINING & VALIDATION in this epoch
-                                    training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
+                                    training_loss, training_c_index = training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search=True)
                                     validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
                                     # BEST MODEL chosen on VALIDATION Loss or C-Index
@@ -255,8 +259,10 @@ def main(config_path: str):
                                     validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
                                     if validation_score > best_score:
                                         best_score = validation_score
-                                        best_loss = validation_loss
-                                        best_c_index = validation_c_index
+                                        best_training_loss = training_loss
+                                        best_training_c_index = training_c_index
+                                        best_validation_loss = validation_loss
+                                        best_validation_c_index = validation_c_index
                                         epochs_without_improvement = 0
                                         torch.save({
                                             'epoch': epoch,
@@ -264,14 +270,16 @@ def main(config_path: str):
                                             'model_state_dict': model.state_dict(),
                                             'optimizer_state_dict': optimizer.state_dict(),
                                             'scheduler_state_dict': scheduler.state_dict(),
+                                            'training_loss': training_loss,
+                                            'training_c_index': training_c_index,
                                             'validation_loss': validation_loss,
                                             'validation_c_index': validation_c_index,
                                         }, f'{config["model"]["checkpoint_best_model"]}_{process_id}_{fold_index}.pt')
-                                        print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+                                        print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
                                     else:
                                         epochs_without_improvement += 1
-                                        print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
-                                    print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_loss:.4f}\n\t--> best validation_c_index: {best_c_index:.4f}')
+                                        print(f'--> Score: {validation_score:.4f}. No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+                                    print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_validation_loss:.4f}\n\t--> validation_c_index: {best_validation_c_index:.4f}\n\t--> training_loss: {best_training_loss:.4f}\n\t--> training_c_index: {best_training_c_index:.4f}')
 
                                     # Early stopping
                                     if epochs_without_improvement >= patience:
@@ -298,6 +306,8 @@ def main(config_path: str):
                                 # Final Validation
                                 title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation started (Fold n°{fold_index + 1})')
                                 start_time = time.time()
+                                training_c_index_list.append(best_model_state["training_c_index"])
+                                training_loss_list.append(best_model_state["training_loss"])
                                 validation_loss, validation_c_index = validation('testing', config, validation_loader, model, loss_function, reg_function)
                                 validation_c_index_list.append(validation_c_index)
                                 validation_loss_list.append(validation_loss)
@@ -307,13 +317,24 @@ def main(config_path: str):
 
                             ## Final Metrics
                             title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Metrics')
+                            ''' TRAINING '''
+                            training_loss_list = [tensor.detach().cpu().numpy() for tensor in training_loss_list if isinstance(tensor, torch.Tensor)]
+                            training_c_index_mean, training_c_index_variance, training_c_index_ci_lower, training_c_index_ci_upper = calculate_statistics(training_c_index_list)
+                            training_loss_mean, training_loss_variance, training_loss_ci_lower, training_loss_ci_upper = calculate_statistics(training_loss_list)
+                            print("TRAINING:")
+                            print(f"--> C-Index: [", ", ".join(f"{value:.4f}" for value in training_c_index_list), "]")
+                            print(f"    Mean: {training_c_index_mean:.4f}, Variance: {training_c_index_variance:.4f}, 95% Confidence Interval: [{training_c_index_ci_lower:.4f}, {training_c_index_ci_upper:.4f}]")
+                            print(f"\n--> Loss: [", ", ".join(f"{value:.4f}" for value in training_loss_list), "]")
+                            print(f"    Mean: {training_loss_mean:.4f}, Variance: {training_loss_variance:.4f}, 95% Confidence Interval: [{training_loss_ci_lower:.4f}, {training_loss_ci_upper:.4f}]")
+                            ''' VALIDATION '''
                             validation_loss_list = [tensor.detach().cpu().numpy() for tensor in validation_loss_list if isinstance(tensor, torch.Tensor)]
-                            c_index_mean, c_index_variance, c_index_ci_lower, c_index_ci_upper = calculate_statistics(validation_c_index_list)
-                            loss_mean, loss_variance, loss_ci_lower, loss_ci_upper = calculate_statistics(validation_loss_list)
-                            print(f"--> Validation C-Index: [", ", ".join(f"{value:.4f}" for value in validation_c_index_list), "]")
-                            print(f"Mean: {c_index_mean:.4f}, Variance: {c_index_variance:.4f}, 95% Confidence Interval: [{c_index_ci_lower:.4f}, {c_index_ci_upper:.4f}]")
-                            print(f"\n--> Validation Loss: [", ", ".join(f"{value:.4f}" for value in validation_loss_list), "]")
-                            print(f"Mean: {loss_mean:.4f}, Variance: {loss_variance:.4f}, 95% Confidence Interval: [{loss_ci_lower:.4f}, {loss_ci_upper:.4f}]")
+                            validation_c_index_mean, validation_c_index_variance, validation_c_index_ci_lower, validation_c_index_ci_upper = calculate_statistics(validation_c_index_list)
+                            validation_loss_mean, validation_loss_variance, validation_loss_ci_lower, validation_loss_ci_upper = calculate_statistics(validation_loss_list)
+                            print("\nVALIDATION:")
+                            print(f"--> C-Index: [", ", ".join(f"{value:.4f}" for value in validation_c_index_list), "]")
+                            print(f"    Mean: {validation_c_index_mean:.4f}, Variance: {validation_c_index_variance:.4f}, 95% Confidence Interval: [{validation_c_index_ci_lower:.4f}, {validation_c_index_ci_upper:.4f}]")
+                            print(f"\n--> Loss: [", ", ".join(f"{value:.4f}" for value in validation_loss_list), "]")
+                            print(f"    Mean: {validation_loss_mean:.4f}, Variance: {validation_loss_variance:.4f}, 95% Confidence Interval: [{validation_loss_ci_lower:.4f}, {validation_loss_ci_upper:.4f}]")
 
                             title(f'Cross Validation with Current Configuration ended')
                             print(f"--> alpha: {alpha}, dropout: {dropout}, gamma: {gamma}, lambda: {lambda_}, lr: {lr}, weight_decay: {weight_decay}")

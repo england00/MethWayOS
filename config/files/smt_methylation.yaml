@@ -6,16 +6,16 @@ wandb:
   # Whether enable or not W&B
   enabled: True
   # Project name
-  project: TCGA-BRCA-GE-Cross-Validation
+  project: TCGA-BRCA-ME-Cross-Validation
 
 # Dataset configuration
 dataset:
   # Name of the dataset (logged on W&B)
-  name: TCGA-BRCA-GE
-  # CSV Gene Expression main dataset
-  gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
-  # Gene Expression signatures
-  gene_expression_signatures: ../../data/tables/gene_expression_keys_methylation.csv
+  name: TCGA-BRCA-ME
+  # CSV Methylation secondary dataset
+  methylation: ../../data/datasets/MCAT_methylation450_full_and_overall_survival_dataset.csv
+  # Methylation signatures
+  methylation_signatures: ../../data/tables/methylation450_full_keys.csv
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -26,7 +26,7 @@ dataset:
 # Model configuration
 model:
   # Model name
-  name: SMT with Gene Expression
+  name: SMT with Methylation
   # Path of model checkpoint to load. Set ~ if loading is not necessary
   load_from_checkpoint: ~
   # Epoch of checkpointing. Set 0 if saving the model is not necessary
@@ -43,7 +43,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [1.0]
+  alpha: [0.75, 1.0]
   # Batch size
   batch_size: 1
   # Classes Number
@@ -82,3 +82,5 @@ training:
   weight_c_index: 1.0
   # Loss weight
   weight_loss: 0.1
+  # C-Index difference between Training and Validation
+  weight_difference: 0.5

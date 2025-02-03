@@ -211,7 +211,7 @@ def test_methylation_dataset():
     print('Testing MultimodalDataset...')
 
     # Loading Configuration file
-    with open('../../../config/files/mcat_methylation.yaml') as config_file:
+    with open('../../../config/files/smt_methylation.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     config['dataset']['methylation'] = '../../../data/datasets/MCAT_methylation27_full_and_overall_survival_dataset.csv'
     config['dataset']['methylation_signatures'] = '../../../data/tables/methylation27_full_keys.csv'
@@ -235,7 +235,7 @@ def test_methylation_dataset_split():
     print('Testing MultimodalDataset...')
 
     # Loading Configuration file
-    with open('../../../config/files/mcat_methylation.yaml') as config_file:
+    with open('../../../config/files/smt_methylation.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     config['dataset']['methylation'] = '../../../data/datasets/MCAT_methylation27_full_and_overall_survival_dataset.csv'
     config['dataset']['methylation_signatures'] = '../../../data/tables/methylation27_full_keys.csv'

@@ -197,7 +197,7 @@ def test_rnaseq_dataset():
     print('Testing MultimodalDataset...')
 
     # Loading Configuration file
-    with open('../../../config/files/mcat_gene_expression.yaml') as config_file:
+    with open('../../../config/files/smt_gene_expression.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     config['dataset']['gene_expression'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
     config['dataset']['gene_expression_signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'
@@ -221,7 +221,7 @@ def test_rnaseq_dataset_split():
     print('Testing MultimodalDataset...')
 
     # Loading Configuration file
-    with open('../../../config/files/mcat_gene_expression.yaml') as config_file:
+    with open('../../../config/files/smt_gene_expression.yaml') as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     config['dataset']['gene_expression'] = '../../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv'
     config['dataset']['gene_expression_signatures'] = '../../../data/tables/gene_expression_keys_methylation.csv'

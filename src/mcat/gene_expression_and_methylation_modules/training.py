@@ -7,7 +7,7 @@ from sksurv.metrics import concordance_index_censored
 
 
 ''' TRAINING DEFINITION '''
-def training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function):
+def training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search: bool = False):
     # Initialization
     model.train()
     training_loss = 0.0
@@ -101,3 +101,6 @@ def training(epoch, config, training_loader, model, loss_function, optimizer, sc
     wandb_enabled = config['wandb']['enabled']
     if wandb_enabled:
         wandb.log({"training_loss": training_loss, "training_c_index": training_c_index})
+
+    if grid_search:
+        return training_loss, training_c_index
