@@ -28,6 +28,7 @@ def test(epoch, config, testing_loader, model, patient, save=False):
             print(f'--> Risk: {risk}')
             print(f'--> Y: {Y}')
             print(f'--> Attention Min: {attention_scores["coattn"].min()}, Attention Max: {attention_scores["coattn"].max()}, Attention Mean: {attention_scores["coattn"].mean()}')
+            print(f'--> Full Attention: {attention_scores["coattn"]}')
 
             # Saving Model
             if save:
