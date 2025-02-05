@@ -80,7 +80,7 @@ def main(config_path: str):
     print(f"HOSTNAME: {socket.gethostname()}")
     if socket.gethostname() == 'DELL-XPS-15':
         config['wandb']['enabled'] = False
-        config['dataset']['patches_dir'] = 'D:/Data - Tirocinio/brca/slides/'
+        config['dataset']['patches_dir'] = 'D:\Work\\Università\Magistrale\\6 - Tirocinio\Dati\Altro - Gualtieri\\brca\slides'
 
     # Starting W&B
     print('')
