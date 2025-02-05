@@ -15,9 +15,9 @@ dataset:
   # CSV dataset file
   file: ../../data/datasets/MCAT_gene_expression_and_wsi_and_overall_survival_dataset.csv
   # Directory containing slides embeddings
-  patches_dir: /work/h2020deciderficarra_shared/mgualtieri/brca/slides/
+  patches_dir: /work/h2020deciderficarra_shared/TCGA/BRCA/features_UNI/pt_files
   # Signature of genes to use
-  signatures: ../../data/tables/gene_expression_keys_wsi.csv
+  signatures: ../../data/tables/mcat_signatures.csv
   # Whether to use only Decider data or not
   decider_only: False
   # Whether to use only diagnostic slides or not. Useful only in TCGA-OV
@@ -61,7 +61,7 @@ training:
   # Regulator coefficient. Set 0.0 if regularization is not needed
   lambda: 0.00001
   # ID of the patient to use as test. Set ~ if testing a patient is not needed
-  leave_one_out: ~
+  leave_one_out: 6a186809-3422-41d0-83d2-867145830936
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate

@@ -134,7 +134,7 @@ class MultimodalDataset(Dataset):
             raise ValueError("training_size should be a float between 0 and 1.")
 
         # Get unique patients
-        unique_patients = self.data['patient'].unique()
+        unique_patients = self.data['case_id'].unique()
 
         # Shuffle patients randomly
         np.random.shuffle(unique_patients)
@@ -149,16 +149,16 @@ class MultimodalDataset(Dataset):
         # Filter the data into train and test sets
         testing_dataset = None
         if testing:
-            training_data = self.data[self.data['patient'].isin(training_patients)].copy()
-            training_data = training_data[training_data['patient'] != patient]
-            validation_data = self.data[self.data['patient'].isin(validation_patients)].copy()
-            validation_data = validation_data[validation_data['patient'] != patient]
-            testing_data = self.data[self.data['patient'] == patient].copy()
+            training_data = self.data[self.data['case_id'].isin(training_patients)].copy()
+            training_data = training_data[training_data['case_id'] != patient]
+            validation_data = self.data[self.data['case_id'].isin(validation_patients)].copy()
+            validation_data = validation_data[validation_data['case_id'] != patient]
+            testing_data = self.data[self.data['case_id'] == patient].copy()
             testing_data.reset_index(drop=True, inplace=True)
             testing_dataset = MultimodalDataset.from_dataframe(testing_data, self)
         else:
-            training_data = self.data[self.data['patient'].isin(training_patients)].copy()
-            validation_data = self.data[self.data['patient'].isin(validation_patients)].copy()
+            training_data = self.data[self.data['case_id'].isin(training_patients)].copy()
+            validation_data = self.data[self.data['case_id'].isin(validation_patients)].copy()
 
         # Reset indices for train and test datasets
         training_data.reset_index(drop=True, inplace=True)

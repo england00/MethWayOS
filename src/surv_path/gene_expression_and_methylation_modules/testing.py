@@ -41,6 +41,7 @@ def test(epoch, config, testing_loader, model, patient, save=False):
 
             # Saving Model
             if save:
+                os.makedirs(f"./{config['training']['test_output_dir']}", exist_ok=True)
                 output_file = os.path.join(config['training']['test_output_dir'], f'ATTN_{config["model"]["name"]}_{patient}_{now}_E{epoch}_{batch_index}.pt')
                 print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Saving attention in {output_file}')
                 torch.save(attention_scores['coattn'], output_file)
