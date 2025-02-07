@@ -76,12 +76,12 @@ class SurvPath(nn.Module):
         # Gene Expression Fully connected layers for each group signature
         g_rnaseq = [self.gene_expression_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(genes)] ### each omic signature goes through it's own FC layer
         g_rnaseq_bag = torch.stack(g_rnaseq)
-        print(g_rnaseq_bag.shape)
+        print('g_rnaseq_bag: ', g_rnaseq_bag.shape)
 
         # Methylation Fully connected layer for each signature
         h_meth = [self.methylation_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(islands)]
         h_meth_bag = torch.stack(h_meth)
-        print(h_meth_bag.shape)
+        print('h_meth_bag: ', h_meth_bag.shape)
 
         # Cross-Attention results
         tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=0)

@@ -61,7 +61,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
         self.meth_transformer = nn.TransformerEncoder(path_encoder_layer, num_layers=2)
 
         # Methylation Global Attention Pooling (rho_H)
-        self.meth_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1])
+        self.meth_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1], dropout_p=dropout)
         self.meth_rho = nn.Sequential(*[nn.Linear(self.model_sizes[1], self.model_sizes[1]), nn.ReLU(), nn.Dropout(dropout)])
 
         # Gene Expression Transformer (T_G)
@@ -69,7 +69,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
         self.rnaseq_transformer = nn.TransformerEncoder(rnaseq_encoder_layer, num_layers=2)
 
         # Genomic Global Attention Pooling (rho_G)
-        self.rnaseq_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1])
+        self.rnaseq_attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1], dropout_p=dropout)
         self.rnaseq_rho = nn.Sequential(*[nn.Linear(self.model_sizes[1], self.model_sizes[1]), nn.ReLU(), nn.Dropout(dropout)])
 
         # Fusion Layer

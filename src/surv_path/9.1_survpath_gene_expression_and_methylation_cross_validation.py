@@ -260,7 +260,7 @@ def main(config_path: str):
                                     # BEST MODEL chosen on VALIDATION Loss or C-Index
                                     os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
                                     validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss - config['training']['weight_difference'] * (abs(validation_c_index - training_c_index))
-                                    if validation_score > best_score:
+                                    if validation_score > best_score or (best_score == -np.inf and epoch == starting_epoch):
                                         best_score = validation_score
                                         best_training_loss = training_loss
                                         best_training_c_index = training_c_index
@@ -321,7 +321,7 @@ def main(config_path: str):
                             ## Final Metrics
                             title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Metrics')
                             ''' TRAINING '''
-                            training_loss_list = [tensor.detach().cpu().numpy() for tensor in training_loss_list if isinstance(tensor, torch.Tensor)]
+                            training_loss_list = [tensor.detach().cpu().numpy() if isinstance(tensor, torch.Tensor) else tensor for tensor in training_loss_list]
                             training_c_index_mean, training_c_index_variance, training_c_index_ci_lower, training_c_index_ci_upper = calculate_statistics(training_c_index_list)
                             training_loss_mean, training_loss_variance, training_loss_ci_lower, training_loss_ci_upper = calculate_statistics(training_loss_list)
                             print("TRAINING:")
@@ -330,7 +330,7 @@ def main(config_path: str):
                             print(f"\n--> Loss: [", ", ".join(f"{value:.4f}" for value in training_loss_list), "]")
                             print(f"    Mean: {training_loss_mean:.4f}, Variance: {training_loss_variance:.4f}, 95% Confidence Interval: [{training_loss_ci_lower:.4f}, {training_loss_ci_upper:.4f}]")
                             ''' VALIDATION '''
-                            validation_loss_list = [tensor.detach().cpu().numpy() for tensor in validation_loss_list if isinstance(tensor, torch.Tensor)]
+                            validation_loss_list = [tensor.detach().cpu().numpy() if isinstance(tensor, torch.Tensor) else tensor for tensor in validation_loss_list]
                             validation_c_index_mean, validation_c_index_variance, validation_c_index_ci_lower, validation_c_index_ci_upper = calculate_statistics(validation_c_index_list)
                             validation_loss_mean, validation_loss_variance, validation_loss_ci_lower, validation_loss_ci_upper = calculate_statistics(validation_loss_list)
                             print("\nVALIDATION:")

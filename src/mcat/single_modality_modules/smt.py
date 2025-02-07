@@ -41,7 +41,7 @@ class SingleModalTransformer(nn.Module):
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
 
         # Global Attention Pooling (rho)
-        self.attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1])
+        self.attention_head = AttentionNetGated(n_classes=1, input_dim=self.model_sizes[1], hidden_dim=self.model_sizes[1], dropout_p=dropout)
         self.rho = nn.Sequential(*[nn.Linear(self.model_sizes[1], self.model_sizes[1]), nn.ReLU(), nn.Dropout(dropout)])
 
         # Classifier

@@ -212,7 +212,7 @@ def main(config_path: str):
         # Saving best model dependently on Validation Loss or Validation C-Index
         os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
         validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss - config['training']['weight_difference'] * (abs(validation_c_index - training_c_index))
-        if validation_score > best_score:
+        if validation_score > best_score or (best_score == -np.inf and epoch == starting_epoch):
             best_score = validation_score
             best_training_loss = training_loss
             best_training_c_index = training_c_index

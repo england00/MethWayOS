@@ -11,7 +11,7 @@ from torch.nn.init import xavier_uniform_, constant_, xavier_normal_
 
 
 class AttentionNetGated(nn.Module):
-    def __init__(self, input_dim: int = 256, hidden_dim: int = 256, dropout_p: bool = True, n_classes: int = 1):
+    def __init__(self, input_dim: int = 256, hidden_dim: int = 256, dropout_p: float = 0.25, n_classes: int = 1):
         r"""
         Attention Network with Sigmoid Gating (3 fc layers)
 
@@ -31,9 +31,9 @@ class AttentionNetGated(nn.Module):
             nn.Linear(input_dim, hidden_dim),
             nn.Sigmoid()
         ]
-        if dropout_p:
-            self.attention_a.append(nn.Dropout(0.25))
-            self.attention_b.append(nn.Dropout(0.25))
+
+        self.attention_a.append(nn.Dropout(dropout_p))
+        self.attention_b.append(nn.Dropout(dropout_p))
 
         self.attention_a = nn.Sequential(*self.attention_a)
         self.attention_b = nn.Sequential(*self.attention_b)
