@@ -30,8 +30,8 @@ class SurvPath(nn.Module):
 
         # Parameters
         self.n_classes = n_classes
-        self.projection_dimensionality = 128
-        self.hidden = [128, 128]
+        self.projection_dimensionality = 128                                  # [128, 256, 512]
+        self.hidden = [128, 128]                                              # [128, 128] [256, 256], [512, 512]
         self.gene_groups = len(rnaseq_sizes)
 
         # Gene Expression encoder
@@ -74,38 +74,47 @@ class SurvPath(nn.Module):
 
     def forward(self, islands, genes, inference: bool = False):
         # Gene Expression Fully connected layers for each group signature
-        g_rnaseq = [self.gene_expression_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(genes)] ### each omic signature goes through it's own FC layer
-        g_rnaseq_bag = torch.stack(g_rnaseq)
-        print('g_rnaseq_bag: ', g_rnaseq_bag.shape)
+        g_rnaseq = [self.gene_expression_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(genes)]
+        # G_bag: (Nx1xd_k) --> (1xNxd_k)
+        # N --> columns number in rnaseq signature, d_k --> embedding dimension
+        g_rnaseq_bag = torch.stack(g_rnaseq).squeeze(1).unsqueeze(0)                    # (1xNxd_k)
 
         # Methylation Fully connected layer for each signature
         h_meth = [self.methylation_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(islands)]
-        h_meth_bag = torch.stack(h_meth)
-        print('h_meth_bag: ', h_meth_bag.shape)
+        # H_bag: (Mx1xd_k) --> (1xMxd_k)
+        # M --> columns number in meth signature, d_k --> embedding dimension
+        h_meth_bag = torch.stack(h_meth).squeeze(1).unsqueeze(0)                        # (1xMxd_k)
 
         # Cross-Attention results
-        tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=0)
-        print('tokens: ', tokens.shape)
+        tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=1)                   # (1x[N+M]xd_k)
         tokens = self.identity(tokens)
-        print('tokens identity: ', tokens.shape)
-        multimodal_embedding, self_attention_rnaseq, cross_attention_rnaseq, cross_attention_meth = self.cross_attender(x=tokens, mask=None, return_attention=True)
-        print('multimodal_embedding: ', multimodal_embedding.shape)
-        print('self_attention_rnaseq: ', self_attention_rnaseq)
-        print('cross_attention_rnaseq: ', cross_attention_rnaseq)
-        print('cross_attention_meth: ', cross_attention_meth)
+
+        self_attention_rnaseq = []
+        cross_attention_rnaseq = []
+        cross_attention_meth = []
+        if inference:
+            # multimodal_embedding: (1x[N+M]x[d_k/2])
+            # self_attention_rnaseq: (NxN)
+            # cross_attention_rnaseq: (NxM)
+            # cross_attention_meth: (MxN)
+            # N --> columns number in rnaseq signature, M --> columns number in meth signature, d_k --> embedding dimension
+            multimodal_embedding, self_attention_rnaseq, cross_attention_rnaseq, cross_attention_meth = self.cross_attender(x=tokens, mask=None, return_attention=True)
+        else:
+            # multimodal_embedding: (1x[N+M]x[d_k/2])
+            multimodal_embedding = self.cross_attender(x=tokens, mask=None, return_attention=False)
 
         # Feedforward and Layer Normalization
-        multimodal_embedding = self.feed_forward(multimodal_embedding)
-        multimodal_embedding = self.layer_norm(multimodal_embedding)
+        multimodal_embedding = self.feed_forward(multimodal_embedding)                  # (1x[N+M]x[d_k/2])
+        multimodal_embedding = self.layer_norm(multimodal_embedding)                    # (1x[N+M]x[d_k/2])
 
         # Modality Specific Mean
-        rnaseq_postSA_embedding = multimodal_embedding[:, :self.gene_groups, :]
-        rnaseq_postSA_embedding = torch.mean(rnaseq_postSA_embedding, dim=1)
-        meth_postSA_embed = multimodal_embedding[:, self.gene_groups:, :]
-        meth_postSA_embed = torch.mean(meth_postSA_embed, dim=1)
+        rnaseq_postSA_embedding = multimodal_embedding[:, :self.gene_groups, :]         # (1xNx[d_k/2])
+        rnaseq_postSA_embedding = torch.mean(rnaseq_postSA_embedding, dim=1)            # (1x[d_k/2])
+        meth_postSA_embed = multimodal_embedding[:, self.gene_groups:, :]               # (1xMx[d_k/2])
+        meth_postSA_embed = torch.mean(meth_postSA_embed, dim=1)                        # (1x[d_k/2])
 
         # Modalities Aggregation
-        embedding = torch.cat([rnaseq_postSA_embedding, meth_postSA_embed], dim=1)
+        embedding = torch.cat([rnaseq_postSA_embedding, meth_postSA_embed], dim=1)  # (1x[d_k])
 
         # Survival Layer
         # size   --> (1, n_classes)
@@ -124,10 +133,9 @@ class SurvPath(nn.Module):
         # domain --> [0, 1] (probability distribution)
         Y = F.softmax(logits, dim=1)
 
-        print('hazards: ', hazards.shape)
-        print('surv: ', surv.shape)
-
-        attention_scores = {'self_attention_rnaseq': self_attention_rnaseq, 'cross_attention_rnaseq': cross_attention_rnaseq, 'cross_attention_meth': cross_attention_meth}
+        attention_scores = {}
+        if inference:
+            attention_scores = {'self_attention_rnaseq': self_attention_rnaseq, 'cross_attention_rnaseq': cross_attention_rnaseq, 'cross_attention_meth': cross_attention_meth}
 
         return hazards, surv, Y, attention_scores
 
