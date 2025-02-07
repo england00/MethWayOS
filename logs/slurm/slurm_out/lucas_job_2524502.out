@@ -1,0 +1,112 @@
+Environment conda activated
+Job 2524502 started
+
+#################### [07/02/2025 - 02:51:43] - MCAT started ####################
+HOSTNAME: carabbaggio
+
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: NVIDIA GeForce GTX 1080 Ti
+--> Running on CUDA
+
+DATASET: Loading data
+--> Gene Expression loaded
+--> Methylation loaded
+--> Remaining samples after removing incomplete: 742
+--> Class intervals: [
+	0: [0.00 - 9.68]
+	1: [9.68 - 24.60]
+	2: [24.60 - 30.34]
+	3: [30.34 - 33.52]
+	4: [33.52 - 36.60]
+	5: [36.60 - 39.75]
+	6: [39.75 - 43.45]
+	7: [43.45 - 47.78]
+	8: [47.78 - 51.67]
+	9: [51.67 - 56.66]
+	10: [56.66 - 66.00]
+	11: [66.00 - 78.32]
+	12: [78.32 - 89.10]
+	13: [89.10 - 102.75]
+	14: [102.75 - 122.04]
+	15: [122.04 - 143.07]
+	16: [143.07 - 173.40]
+	17: [173.40 - 206.80]
+	18: [206.80 - 268.52]
+	19: [268.52 - 593.83]
+    ]
+--> Standardizing RNA-seq data
+--> Standardizing Methylation Islands columns from 0 to 10000
+--> Standardizing Methylation Islands columns from 10000 to 20000
+--> Standardizing Methylation Islands columns from 20000 to 30000
+--> Standardizing Methylation Islands columns from 30000 to 33161
+--> Processing Methylation Islands columns from 0 to 10000
+--> Processing Methylation Islands columns from 10000 to 20000
+--> Processing Methylation Islands columns from 20000 to 30000
+--> Processing Methylation Islands columns from 30000 to 33161
+--> RNA-seq loaded
+--> Methylation loaded
+--> Gene Expression Signatures size: [82, 323, 512, 430, 1464, 446]
+--> Methylation Signatures size: [22, 21, 26, 23, 22, 50, 32, 32, 24, 23, 27, 24, 25, 21, 35, 24, 35, 33, 38, 32, 29, 20, 22, 32, 21, 21, 21, 22, 21, 22, 22, 24, 23, 21, 25, 28, 20, 35, 20, 23, 20, 20, 30, 24, 27, 24, 20, 20, 24, 28, 23, 27, 28, 28, 24, 21, 23, 23, 45, 30, 45, 22, 20, 34, 21, 31, 21, 21, 24, 24, 20, 20, 21, 26, 32, 25, 23, 21, 23, 20, 29, 24, 20, 21, 21, 25, 22, 26, 21, 22, 20, 28, 20, 25, 20, 23, 25, 22, 21, 23, 23, 21, 23, 22, 23, 23, 23, 21, 20, 21, 21, 21, 21, 27, 25, 27, 21, 24, 20, 27, 27, 27, 21, 39, 39, 38, 22, 39, 34, 34, 34, 33, 20, 20, 22, 26, 23, 27, 24, 22, 25, 26, 31, 22, 28]
+--> Using 80% training, 20% validation
+
+#################### [07/02/2025 - 02:52:29] - Grid Search #####################
+
+############# Cross Validation with Current Configuration started ##############
+--> alpha: 1.0, dropout: 0.0, gamma: 0.75, lambda: 0.0, lr: 1e-2, weight_decay: 0.0
+
+###################### [07/02/2025 - 02:52:47] - Fold n°1 ######################
+
+MODEL: MCAT with Gene Expression & Methylation
+--> Trainable parameters of MCAT with Gene Expression & Methylation: 5504470
+--> Loss function: CrossEntropySurvivalLoss
+--> Optimizer: adamax
+
+############ [07/02/2025 - 02:52:49] - Training started (Fold n°1) #############
+[07/02/2025 - 02:52:49] - Epoch: 1
+--> Batch: 49, Loss: 0.0000, Label: 3, Survival Months: 31.92, Risk: -9.6116
+	--> Average Speed: 0.21s per batch
+	--> Time from Last Check: 6.87s
+--> Batch: 99, Loss: nan, Label: 5, Survival Months: 39.42, Risk: -0.0000
+	--> Average Speed: 0.19s per batch
+	--> Time from Last Check: 6.22s
+--> Batch: 149, Loss: nan, Label: 6, Survival Months: 40.17, Risk: -0.0000
+	--> Average Speed: 0.19s per batch
+	--> Time from Last Check: 5.97s
+--> Batch: 199, Loss: nan, Label: 17, Survival Months: 186.67, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.61s
+--> Batch: 249, Loss: nan, Label: 2, Survival Months: 25.17, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.71s
+--> Batch: 299, Loss: nan, Label: 12, Survival Months: 83.00, Risk: -0.0000
+	--> Average Speed: 0.19s per batch
+	--> Time from Last Check: 6.06s
+--> Batch: 349, Loss: nan, Label: 17, Survival Months: 190.75, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.65s
+--> Batch: 399, Loss: nan, Label: 14, Survival Months: 103.92, Risk: -0.0000
+	--> Average Speed: 0.20s per batch
+	--> Time from Last Check: 6.40s
+--> Batch: 449, Loss: nan, Label: 2, Survival Months: 25.00, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.77s
+--> Batch: 499, Loss: nan, Label: 5, Survival Months: 37.92, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.66s
+--> Batch: 549, Loss: nan, Label: 13, Survival Months: 96.00, Risk: -0.0000
+	--> Average Speed: 0.18s per batch
+	--> Time from Last Check: 5.65s
+NaN detected in training_loss (float), skipping
+[07/02/2025 - 02:54:00] - Epoch: 1, lr: 0.01000000, training_loss: 0.0000, training_c_index: 0.4724
+[07/02/2025 - 02:54:10] - Epoch: 1, validation_loss: nan, validation_c_index: 0.5000
+--> Score: nan. No improvement in validation_loss or validation_c_index for 1 epoch(s)
+--> Current BEST Score: -inf
+	--> validation_loss: inf
+	--> validation_c_index: 0.0000
+	--> training_loss: inf
+	--> training_c_index: 0.0000
+[07/02/2025 - 02:54:10] - Time elapsed for epoch 1: 81s
+[07/02/2025 - 02:54:10] - Epoch: 2
