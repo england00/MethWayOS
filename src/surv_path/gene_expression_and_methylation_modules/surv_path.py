@@ -4,8 +4,8 @@ import torch.nn.functional as F
 from src.surv_path.original_modules.cross_attention import FeedForward, MMAttentionLayer
 
 
-# MCAT link
-# https://github.com/mahmoodlab/MCAT/blob/master/Model%20Computation%20%2B%20Complexity%20Overview.ipynb
+# SurvPath link
+# https://github.com/mahmoodlab/SurvPath
 
 
 def SNN_Block(dim1, dim2, dropout=0.25):
@@ -23,15 +23,15 @@ def SNN_Block(dim1, dim2, dropout=0.25):
             nn.ELU(),
             nn.AlphaDropout(p=dropout, inplace=False))
 
-''' MultimodalCoAttentionTransformer Definition '''
+''' SurvPath Definition '''
 class SurvPath(nn.Module):
-    def __init__(self, meth_sizes: [], rnaseq_sizes: [], n_classes: int = 4, dropout: float = 0.25, fusion: str = 'concat', device: str = 'cpu'):
+    def __init__(self, meth_sizes: [], rnaseq_sizes: [], n_classes: int = 4, dropout: float = 0.25):
         super(SurvPath, self).__init__()
 
         # Parameters
         self.n_classes = n_classes
-        self.projection_dimensionality = 256
-        self.hidden = [256, 256]
+        self.projection_dimensionality = 128
+        self.hidden = [128, 128]
         self.gene_groups = len(rnaseq_sizes)
 
         # Gene Expression encoder
@@ -76,15 +76,23 @@ class SurvPath(nn.Module):
         # Gene Expression Fully connected layers for each group signature
         g_rnaseq = [self.gene_expression_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(genes)] ### each omic signature goes through it's own FC layer
         g_rnaseq_bag = torch.stack(g_rnaseq)
+        print(g_rnaseq_bag.shape)
 
         # Methylation Fully connected layer for each signature
         h_meth = [self.methylation_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(islands)]
         h_meth_bag = torch.stack(h_meth)
+        print(h_meth_bag.shape)
 
         # Cross-Attention results
-        tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=1)
+        tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=0)
+        print('tokens: ', tokens.shape)
         tokens = self.identity(tokens)
+        print('tokens identity: ', tokens.shape)
         multimodal_embedding, self_attention_rnaseq, cross_attention_rnaseq, cross_attention_meth = self.cross_attender(x=tokens, mask=None, return_attention=True)
+        print('multimodal_embedding: ', multimodal_embedding.shape)
+        print('self_attention_rnaseq: ', self_attention_rnaseq)
+        print('cross_attention_rnaseq: ', cross_attention_rnaseq)
+        print('cross_attention_meth: ', cross_attention_meth)
 
         # Feedforward and Layer Normalization
         multimodal_embedding = self.feed_forward(multimodal_embedding)
@@ -115,6 +123,9 @@ class SurvPath(nn.Module):
         # size   --> (1, n_classes)
         # domain --> [0, 1] (probability distribution)
         Y = F.softmax(logits, dim=1)
+
+        print('hazards: ', hazards.shape)
+        print('surv: ', surv.shape)
 
         attention_scores = {'self_attention_rnaseq': self_attention_rnaseq, 'cross_attention_rnaseq': cross_attention_rnaseq, 'cross_attention_meth': cross_attention_meth}
 

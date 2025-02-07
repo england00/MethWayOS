@@ -15,7 +15,9 @@ dataset:
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation450_full_and_overall_survival_dataset.csv
   # Methylation signatures
-  methylation_signatures: ../../data/signatures/methylation450_full_keys.csv
+  methylation_signatures: ../../data/signatures/methylation_signatures_full_450_full.csv
+  # Number of Methylation Islands per each column of the Methylation dataset
+  methylation_island_number_per_column: 20
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -38,7 +40,7 @@ model:
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [small, medium, big]
-  model_size: medium
+  model_size: small
 
 # Training configuration
 training:

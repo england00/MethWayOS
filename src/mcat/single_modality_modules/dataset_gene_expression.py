@@ -66,7 +66,7 @@ class RnaSeqDataset(Dataset):
         self.gene_expression_signature_sizes = []
         self.gene_expression_signature_data = {}
         signatures_df = pd.read_csv(config['dataset']['gene_expression_signatures'])
-        self.gene_expression_signatures = signatures_df.columns
+        self.gene_expression_signatures = list(signatures_df.columns)
         for signature_name in self.gene_expression_signatures:
             columns = {}
             for gene in signatures_df[signature_name].dropna():

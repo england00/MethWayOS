@@ -23,9 +23,9 @@ from torch.utils.data import DataLoader
 
 ## CONFIGURATION
 ''' General '''
-C_INDEX_THRESHOLD = 0.65
+C_INDEX_THRESHOLD = 1.0
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_MULTIMODAL_YAML = '../../config/files/mcat_gene_expression_and_methylation.yaml'
+MCAT_MULTIMODAL_YAML = '../../config/files/mcat_gene_expression_and_methylation_single_execution.yaml'
 PID = None
 
 
@@ -194,8 +194,10 @@ def main(config_path: str):
     # Training
     title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Training started')
     model.train()
-    best_c_index = 0.0
-    best_loss = np.inf
+    best_validation_c_index = 0.0
+    best_validation_loss = np.inf
+    best_training_loss = np.inf
+    best_training_c_index = 0.0
     best_score = -np.inf
     epochs_without_improvement = 0
     patience = config['training']['early_stopping_patience']
@@ -204,30 +206,34 @@ def main(config_path: str):
         start_time = time.time()
 
         # Training and validation in this epoch
-        training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function)
+        training_loss, training_c_index = training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search=True)
         validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
         # Saving best model dependently on Validation Loss or Validation C-Index
         os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
-        validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
+        validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss - config['training']['weight_difference'] * (abs(validation_c_index - training_c_index))
         if validation_score > best_score:
             best_score = validation_score
-            best_loss = validation_loss
-            best_c_index = validation_c_index
+            best_training_loss = training_loss
+            best_training_c_index = training_c_index
+            best_validation_loss = validation_loss
+            best_validation_c_index = validation_c_index
             epochs_without_improvement = 0
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'scheduler_state_dict': scheduler.state_dict(),
+                'training_loss': training_loss,
+                'training_c_index': training_c_index,
                 'validation_loss': validation_loss,
                 'validation_c_index': validation_c_index,
             }, f'{config["model"]["checkpoint_best_model"]}_{process_id}.pt')
-            print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}')
+            print(f'--> New BEST Validation Score: {validation_score:.4f}, validation_loss: {validation_loss:.4f}, validation_c_index: {validation_c_index:.4f}, training_loss: {training_loss:.4f}, training_c_index: {training_c_index:.4f}')
         else:
             epochs_without_improvement += 1
-            print(f'--> No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
-        print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_loss:.4f}\n\t--> best validation_c_index: {best_c_index:.4f}')
+            print(f'--> Score: {validation_score:.4f}. No improvement in validation_loss or validation_c_index for {epochs_without_improvement} epoch(s)')
+        print(f'--> Current BEST Score: {best_score:.4f}\n\t--> validation_loss: {best_validation_loss:.4f}\n\t--> validation_c_index: {best_validation_c_index:.4f}\n\t--> training_loss: {best_training_loss:.4f}\n\t--> training_c_index: {best_training_c_index:.4f}')
 
         # Early stopping
         if epochs_without_improvement >= patience:

@@ -257,12 +257,12 @@ def main(config_path: str):
                                     start_time = time.time()
 
                                     # TRAINING & VALIDATION in this epoch
-                                    training_loss, training_c_index =  training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search=True)
+                                    training_loss, training_c_index = training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search=True)
                                     validation_loss, validation_c_index = validation(epoch, config, validation_loader, model, loss_function, reg_function)
 
                                     # BEST MODEL chosen on VALIDATION Loss or C-Index
                                     os.makedirs(config["model"]["checkpoint_dir"], exist_ok=True)
-                                    validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss
+                                    validation_score = config['training']['weight_c_index'] * validation_c_index - config['training']['weight_loss'] * validation_loss - config['training']['weight_difference'] * (abs(validation_c_index - training_c_index))
                                     if validation_score > best_score:
                                         best_score = validation_score
                                         best_training_loss = training_loss

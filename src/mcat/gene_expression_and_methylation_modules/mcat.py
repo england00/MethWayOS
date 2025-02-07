@@ -76,12 +76,16 @@ class MultimodalCoAttentionTransformer(nn.Module):
         self.fusion = fusion
         if self.fusion == 'concat':
             self.fusion_layer = ConcatFusion(dims=[self.model_sizes[1], self.model_sizes[1]],
-                                             hidden_size=self.model_sizes[1], output_size=self.model_sizes[1]).to(device=device)
+                                             hidden_size=self.model_sizes[1],
+                                             output_size=self.model_sizes[1]).to(device=device)
         elif self.fusion == 'bilinear':
-            self.fusion_layer = BilinearFusion(dim1=self.model_sizes[1], dim2=self.model_sizes[1], output_size=self.model_sizes[1])
+            self.fusion_layer = BilinearFusion(dim1=self.model_sizes[1],
+                                               dim2=self.model_sizes[1],
+                                               output_size=self.model_sizes[1]).to(device=device)
         elif self.fusion == 'gated_concat':
             self.fusion_layer = GatedConcatFusion(dims=[self.model_sizes[1], self.model_sizes[1]],
-                                                  hidden_size=self.model_sizes[1], output_size=self.model_sizes[1]).to(device=device)
+                                                  hidden_size=self.model_sizes[1],
+                                                  output_size=self.model_sizes[1]).to(device=device)
         else:
             raise RuntimeError(f'Fusion mechanism {self.fusion} not implemented')
 
@@ -92,39 +96,42 @@ class MultimodalCoAttentionTransformer(nn.Module):
         # M Methylation Fully connected layer
         H_meth = [self.H[index].forward(island.type(torch.float32)) for index, island in enumerate(islands)]
         # H_bag: (Mxd_k)
-        H_bag = torch.stack(H_meth).squeeze(1)
+        # M --> columns number in meth signature, d_k --> embedding dimension
+        H_bag = torch.stack(H_meth).squeeze(1)                                          # (Mxd_k)
 
         # N Gene Expression Fully connected layers
         G_rnaseq = [self.G[index].forward(rnaseq.type(torch.float32)) for index, rnaseq in enumerate(genes)]
         # G_bag: (Nxd_k)
-        G_bag = torch.stack(G_rnaseq).squeeze(1)
+        # N --> columns number in rnaseq signature, d_k --> embedding dimension
+        G_bag = torch.stack(G_rnaseq).squeeze(1)                                        # (Nxd_k)
 
         # Co-Attention results
         # H_coattn: Genomic-Guided and Methylation-level Embeddings (Nxd_k)
         # A_coattn: Co-Attention Matrix (NxM)
-        H_coattn, A_coattn = self.co_attention(query=G_bag, key=H_bag, value=H_bag, need_weights=inference)
+        # N --> columns number in rnaseq signature, M --> columns number in meth signature, d_k --> embedding dimension
+        H_co_attention, A_co_attention = self.co_attention(query=G_bag, key=H_bag, value=H_bag, need_weights=inference)
 
-        # Set-Based MIL Transformers
+        # Self-Attention Transformer Encoders
         # Attention is permutation-equivariant, so dimensions are the same (Nxd_k)
-        meth_trans = self.meth_transformer(H_coattn)
+        # N --> columns number in rnaseq signature, d_k --> embedding dimension
+        meth_trans = self.meth_transformer(H_co_attention)
         rnaseq_trans = self.rnaseq_transformer(G_bag)
 
         # Global Attention Pooling
-        A_meth, h_meth = self.meth_attention_head(meth_trans.squeeze(1))
-        A_meth = torch.transpose(A_meth, 1, 0)
-        h_meth = torch.mm(F.softmax(A_meth, dim=1), h_meth)
-        # h_meth: final Methylation embeddings (dk)
-        h_meth = self.meth_rho(h_meth).squeeze()
-
-        A_rnaseq, h_rnaseq = self.rnaseq_attention_head(rnaseq_trans.squeeze(1))
-        A_rnaseq = torch.transpose(A_rnaseq, 1, 0)
-        h_rnaseq = torch.mm(F.softmax(A_rnaseq, dim=1), h_rnaseq)
-        # h_omic: final omics embeddings (dk)
-        h_rnaseq = self.rnaseq_rho(h_rnaseq).squeeze()
+        # Attention Gated Networks
+        A_meth, h_meth = self.meth_attention_head(meth_trans.squeeze(1))                # (Nx1) and (Nxd_k)
+        A_meth = torch.transpose(A_meth, 1, 0)                               # (1xN)
+        h_meth = torch.mm(F.softmax(A_meth, dim=1), h_meth)                             # (1xN) @ (Nxd_k) --> (1xd_k)
+        A_rnaseq, h_rnaseq = self.rnaseq_attention_head(rnaseq_trans.squeeze(1))        # (Nx1) and (Nxd_k)
+        A_rnaseq = torch.transpose(A_rnaseq, 1, 0)                           # (1xN)
+        h_rnaseq = torch.mm(F.softmax(A_rnaseq, dim=1), h_rnaseq)                       # (1xN) @ (Nxd_k) --> (1xd_k)
+        # Final embeddings
+        h_meth = self.meth_rho(h_meth).squeeze()                                        # (1xd_k) --> (d_k)
+        h_rnaseq = self.rnaseq_rho(h_rnaseq).squeeze()                                  # (1xd_k) --> (d_k)
 
         # Fusion Layer
-        # h: final representation (dk)
-        h = self.fusion_layer(h_meth, h_rnaseq)
+        # h: final representation (d_k)
+        h = self.fusion_layer(h_meth, h_rnaseq)                                         # (2d_k) --> (d_k)
 
         # Survival Layer
         # logits: classifier output
@@ -144,7 +151,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
         # domain --> [0, 1] (probability distribution)
         Y = F.softmax(logits, dim=1)
 
-        attention_scores = {'coattn': A_coattn, 'path': A_meth, 'omic': A_rnaseq}
+        attention_scores = {'coattn': A_co_attention, 'path': A_meth, 'omic': A_rnaseq}
 
         return hazards, surv, Y, attention_scores
 

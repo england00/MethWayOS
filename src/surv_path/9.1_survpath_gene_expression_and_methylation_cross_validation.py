@@ -1,17 +1,17 @@
 import datetime
 import os
-import time
-import wandb
-import yaml
 import numpy as np
 import random
 import scipy.stats as stats
 import socket
 import sys
+import time
 import torch.cuda
 import torch.nn as nn
 import torch.optim.lr_scheduler as lrs
 import warnings
+import wandb
+import yaml
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
 from src.surv_path.gene_expression_and_methylation_modules.training import training
@@ -184,9 +184,7 @@ def main(config_path: str):
                                 model = SurvPath(n_classes=config['training']['classes_number'],
                                                  rnaseq_sizes=dataset.gene_expression_signature_sizes,
                                                  meth_sizes=dataset.methylation_signature_sizes,
-                                                 dropout=config['training']['dropout'],
-                                                 fusion=config['model']['fusion'],
-                                                 device=config['device'])
+                                                 dropout=config['training']['dropout'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint

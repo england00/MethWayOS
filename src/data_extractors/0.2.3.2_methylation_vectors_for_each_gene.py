@@ -37,8 +37,7 @@ SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
 
 
 ## FUNCTIONS
-def extract_methylation_vectors(df_gene_expression,
-                                dict_cpg, vector_size):
+def extract_methylation_vectors(df_gene_expression, dict_cpg, vector_size):
     tss_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)
     list_methylation_vectors = []
     chosen_methylation_islands = defaultdict(list)
@@ -75,13 +74,10 @@ def extract_methylation_vectors(df_gene_expression,
                 '''
 
         # Appending each row to the data list
-        list_methylation_vectors.append([gene_info['gene_name'],
-                                         gene_info['gene_id'],
-                                         vector])
+        list_methylation_vectors.append([gene_info['gene_name'], gene_info['gene_id'], vector])
 
     # Converting the list into a DataFrame
-    df_methylation_vectors = pd.DataFrame(list_methylation_vectors,
-                                          columns=['gene_name', 'gene_id', 'beta_values'])
+    df_methylation_vectors = pd.DataFrame(list_methylation_vectors, columns=['gene_name', 'gene_id', 'beta_values'])
 
     return df_methylation_vectors, chosen_methylation_islands
 

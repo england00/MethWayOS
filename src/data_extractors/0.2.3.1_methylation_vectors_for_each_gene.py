@@ -39,7 +39,8 @@ SELECTED_METHYLATION_ISLANDS = 'selected_methylation_islands'
 ## FUNCTIONS
 def extract_methylation_vectors(df_methylation,
                                 df_gene_expression,
-                                dict_cpg, vector_size,
+                                dict_cpg,
+                                vector_size,
                                 methylation_filter='median',
                                 gene_expression_filter='median'):
     tss_index = int((EXTRACTED_SEQUENCE_DIMENSION / 2) - 1)

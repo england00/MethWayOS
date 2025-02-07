@@ -79,16 +79,19 @@ class MethylationDataset(Dataset):
         self.use_signatures = use_signatures
         self.methylation_signature_sizes = []
         self.methylation_signature_data = {}
-        signatures_df = pd.read_csv(config['dataset']['methylation_signatures'])
-        self.methylation_signatures = signatures_df.columns
+        signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
+        self.methylation_signatures = list(signatures_df.columns)
         for signature_name in self.methylation_signatures:
             columns = {}
             for island in signatures_df[signature_name].dropna():
                 island += '_meth'
                 if island in self.methylation.columns:
                     columns[island] = self.methylation[island]
-            self.methylation_signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            self.methylation_signature_sizes.append(self.methylation_signature_data[signature_name].shape[1])
+            dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
+                self.methylation_signature_data[signature_name] = dataframe
+                self.methylation_signature_sizes.append(self.methylation_signature_data[signature_name].shape[1])
+        self.methylation_signatures = list(self.methylation_signature_data.keys())
         print(f'--> Methylation Signatures size: {self.methylation_signature_sizes}')
 
     def __getitem__(self, index):
