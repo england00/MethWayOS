@@ -22,6 +22,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
             self.model_sizes = [512, 512]
 
         # Methylation Encoder
+        '''
         meth_encoders = []
         for meth_size in meth_sizes:
             fc = nn.Sequential(
@@ -36,6 +37,17 @@ class MultimodalCoAttentionTransformer(nn.Module):
             )
             meth_encoders.append(fc)
         self.H = nn.ModuleList(meth_encoders)
+        '''
+        self.H = nn.Sequential(
+                nn.Sequential(
+                    nn.Linear(4, self.model_sizes[0]),
+                    nn.ELU(),
+                    nn.AlphaDropout(p=dropout, inplace=False)),
+                nn.Sequential(
+                    nn.Linear(self.model_sizes[0], self.model_sizes[1]),
+                    nn.ELU(),
+                    nn.AlphaDropout(p=dropout, inplace=False))
+            )
 
         # Gene Expression Encoder
         rnaseq_encoders = []
@@ -94,7 +106,8 @@ class MultimodalCoAttentionTransformer(nn.Module):
 
     def forward(self, islands, genes, inference: bool = False):
         # M Methylation Fully connected layer
-        H_meth = [self.H[index].forward(island.type(torch.float32)) for index, island in enumerate(islands)]
+        # H_meth = [self.H[index].forward(island.type(torch.float32)) for index, island in enumerate(islands)]
+        H_meth = [self.H(island.type(torch.float32)) for island in islands]
         # H_bag: (Mxd_k)
         # M --> columns number in meth signature, d_k --> embedding dimension
         H_bag = torch.stack(H_meth).squeeze(1)                                          # (Mxd_k)
@@ -109,7 +122,8 @@ class MultimodalCoAttentionTransformer(nn.Module):
         # H_coattn: Genomic-Guided and Methylation-level Embeddings (Nxd_k)
         # A_coattn: Co-Attention Matrix (NxM)
         # N --> columns number in rnaseq signature, M --> columns number in meth signature, d_k --> embedding dimension
-        H_co_attention, A_co_attention = self.co_attention(query=G_bag, key=H_bag, value=H_bag, need_weights=inference)
+        H_co_attention, A_co_attention = self.co_attention(query=G_bag, key=H_bag, value=H_bag, need_weights=True)
+        print('MCAT - Coattention: ', A_co_attention.shape)
 
         # Self-Attention Transformer Encoders
         # Attention is permutation-equivariant, so dimensions are the same (Nxd_k)

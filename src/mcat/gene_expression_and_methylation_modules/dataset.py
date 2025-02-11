@@ -5,6 +5,8 @@ import pandas as pd
 import time
 import torch
 import yaml
+from numba.cuda.printimpl import print_item
+
 from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
@@ -168,7 +170,7 @@ class MultimodalDataset(Dataset):
         methylation_data = []
         for signature in self.methylation_signatures:
             signature_data = self.methylation_signature_data[signature][index]
-            methylation_data.append(signature_data)
+            methylation_data.append(torch.tensor([signature_data.mean(), signature_data.std(unbiased=False), signature_data.max(), signature_data.min()], dtype=torch.float32))
 
         return survival_months, survival_class, censorship, gene_expression_data, methylation_data
 
