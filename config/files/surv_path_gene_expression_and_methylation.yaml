@@ -20,10 +20,12 @@ dataset:
   methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
   methylation_signatures: ../../data/signatures/methylation_signatures_full_450_full.csv
+  # Methylation Islands correlation threshold with label
+  methylation_islands_correlation_threshold: 0.13
   # Number of Methylation Islands per each column of the Methylation dataset
   methylation_island_number_per_column: 0
   # Methylation Islands Statistics modality. Default is True
-  methylation_islands_statistics: True
+  methylation_islands_statistics: False
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -65,7 +67,7 @@ training:
   # Folds Number
   folds: 5
   # Coefficient used in exponential lr scheduling
-  gamma: [0.75, 0.85, 0.95]
+  gamma: [0.95, 0.85, 0.75]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
