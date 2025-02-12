@@ -5,8 +5,6 @@ import pandas as pd
 import time
 import torch
 import yaml
-from numba.cuda.printimpl import print_item
-
 from data.methods.csv_dataset_loader import csv_loader
 from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, DataLoader
@@ -127,14 +125,14 @@ class MultimodalDataset(Dataset):
         self.gene_expression_signature_data = {}
         signatures_df = pd.read_csv(config['dataset']['gene_expression_signatures'])
         self.gene_expression_signatures = list(signatures_df.columns)
-        for signature_name in self.gene_expression_signatures:
+        for signature in self.gene_expression_signatures:
             columns = {}
-            for gene in signatures_df[signature_name].dropna():
+            for gene in signatures_df[signature].dropna():
                 gene += '_rnaseq'
                 if gene in self.gene_expression.columns:
                     columns[gene] = self.gene_expression[gene]
-            self.gene_expression_signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature_name].shape[1])
+            self.gene_expression_signature_data[signature] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature].shape[1])
         print(f'--> Gene Expression Signatures size: {self.gene_expression_signature_sizes}')
 
         # METHYLATION: Managing Signatures
@@ -142,16 +140,16 @@ class MultimodalDataset(Dataset):
         self.methylation_signature_data = {}
         signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
         self.methylation_signatures = list(signatures_df.columns)
-        for signature_name in self.methylation_signatures:
+        for signature in self.methylation_signatures:
             columns = {}
-            for island in signatures_df[signature_name].dropna():
+            for island in signatures_df[signature].dropna():
                 island += '_meth'
                 if island in self.methylation.columns:
                     columns[island] = self.methylation[island]
             dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
             if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
-                self.methylation_signature_data[signature_name] = dataframe
-                self.methylation_signature_sizes.append(self.methylation_signature_data[signature_name].shape[1])
+                self.methylation_signature_data[signature] = dataframe
+                self.methylation_signature_sizes.append(self.methylation_signature_data[signature].shape[1])
         self.methylation_signatures = list(self.methylation_signature_data.keys())
         print(f'--> Methylation Signatures size: {self.methylation_signature_sizes}')
 
@@ -170,6 +168,7 @@ class MultimodalDataset(Dataset):
         methylation_data = []
         for signature in self.methylation_signatures:
             signature_data = self.methylation_signature_data[signature][index]
+            ''' methylation_data.append(signature_data) '''
             methylation_data.append(torch.tensor([signature_data.mean(), signature_data.std(unbiased=False), signature_data.max(), signature_data.min()], dtype=torch.float32))
 
         return survival_months, survival_class, censorship, gene_expression_data, methylation_data
