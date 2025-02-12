@@ -21,11 +21,11 @@ dataset:
   # Methylation signatures
   methylation_signatures: ../../data/signatures/methylation_signatures_full_450_full.csv
   # Methylation Islands correlation threshold with label
-  methylation_islands_correlation_threshold: 0.1
+  methylation_islands_correlation_threshold: 0.13
   # Number of Methylation Islands per each column of the Methylation dataset
   methylation_island_number_per_column: 0
   # Methylation Islands Statistics modality. Default is True
-  methylation_islands_statistics: True
+  methylation_islands_statistics: False
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -75,7 +75,7 @@ training:
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-2]
+  lr: [1e-2, 1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
@@ -93,4 +93,4 @@ training:
   # Loss weight
   weight_loss: 0.0
   # C-Index difference between Training and Validation
-  weight_difference: 1.0
+  weight_difference: 0.4
