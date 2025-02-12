@@ -1,0 +1,31 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: luca_inghilterra (luca_inghilterra-unimore). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /homes/linghilterra/AIforBioinformatics/src/mcat/wandb/run-20250211_214557-oyvo1dci
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucas_job_2527211
+wandb:  View project at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-Cross-Validation
+wandb:  View run at https://wandb.ai/luca_inghilterra-unimore/TCGA-BRCA-GE-ME-Cross-Validation/runs/oyvo1dci
+Traceback (most recent call last):
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/7.2_mcat_gene_expression_and_methylation_cross_validation.py", line 361, in <module>
+    main(MCAT_MULTIMODAL_YAML)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/7.2_mcat_gene_expression_and_methylation_cross_validation.py", line 260, in main
+    training_loss, training_c_index = training(epoch, config, training_loader, model, loss_function, optimizer, scheduler, reg_function, grid_search=True)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/gene_expression_and_methylation_modules/training.py", line 29, in training
+    hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/gene_expression_and_methylation_modules/mcat.py", line 136, in forward
+    A_meth, h_meth = self.meth_attention_head(meth_trans.squeeze(1))                # (Nx1) and (Nxd_k)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/homes/linghilterra/AIforBioinformatics/src/mcat/original_modules/blocks.py", line 45, in forward
+    A = a.mul(b)
+  File "/homes/linghilterra/.conda/envs/MachineLearning/lib/python3.10/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 1826564) is killed by signal: Killed. 
+slurmstepd: error: Detected 1 oom_kill event in StepId=2527211.batch. Some of the step tasks have been OOM Killed.
