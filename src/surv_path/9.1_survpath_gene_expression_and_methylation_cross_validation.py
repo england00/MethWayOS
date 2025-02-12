@@ -184,7 +184,8 @@ def main(config_path: str):
                                 model = SurvPath(n_classes=config['training']['classes_number'],
                                                  rnaseq_sizes=dataset.gene_expression_signature_sizes,
                                                  meth_sizes=dataset.methylation_signature_sizes,
-                                                 dropout=config['training']['dropout'])
+                                                 dropout=config['training']['dropout'],
+                                                 methylation_islands_statistics=config['dataset']['methylation_islands_statistics'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint

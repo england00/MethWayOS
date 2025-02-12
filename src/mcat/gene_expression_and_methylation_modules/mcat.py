@@ -11,7 +11,15 @@ from src.mcat.original_modules.fusion import BilinearFusion, ConcatFusion, Gated
 
 ''' MultimodalCoAttentionTransformer Definition '''
 class MultimodalCoAttentionTransformer(nn.Module):
-    def __init__(self, meth_sizes: [], rnaseq_sizes: [], model_size: str = 'medium', n_classes: int = 4, dropout: float = 0.25, fusion: str = 'concat', device: str = 'cpu', methylation_islands_statistics: bool = False):
+    def __init__(self,
+                 meth_sizes: [],
+                 rnaseq_sizes: [],
+                 model_size: str = 'medium',
+                 n_classes: int = 4,
+                 dropout: float = 0.25,
+                 fusion: str = 'concat',
+                 device: str = 'cpu',
+                 methylation_islands_statistics: bool = False):
         super(MultimodalCoAttentionTransformer, self).__init__()
         self.n_classes = n_classes
         if model_size == 'small':
@@ -22,18 +30,20 @@ class MultimodalCoAttentionTransformer(nn.Module):
             self.model_sizes = [512, 512]
 
         # Methylation Encoder
-        self.H = nn.Sequential(
-            nn.Sequential(
-                nn.Linear(4, self.model_sizes[0]),
-                nn.ELU(),
-                nn.AlphaDropout(p=dropout, inplace=False)),
-            nn.Sequential(
-                nn.Linear(self.model_sizes[0], self.model_sizes[1]),
-                nn.ELU(),
-                nn.AlphaDropout(p=dropout, inplace=False))
+        self.methylation_islands_statistics = methylation_islands_statistics
+        if self.methylation_islands_statistics:
+            self.H = nn.Sequential(
+                nn.Sequential(
+                    nn.Linear(4, self.model_sizes[0]),
+                    nn.ELU(),
+                    nn.AlphaDropout(p=dropout, inplace=False)),
+                nn.Sequential(
+                    nn.Linear(self.model_sizes[0], self.model_sizes[1]),
+                    nn.ELU(),
+                    nn.AlphaDropout(p=dropout, inplace=False))
             )
-        '''
-        meth_encoders = []
+        else:
+            meth_encoders = []
             for meth_size in meth_sizes:
                 fc = nn.Sequential(
                     nn.Sequential(
@@ -44,10 +54,9 @@ class MultimodalCoAttentionTransformer(nn.Module):
                         nn.Linear(self.model_sizes[0], self.model_sizes[1]),
                         nn.ELU(),
                         nn.AlphaDropout(p=dropout, inplace=False))
-                )
+                    )
                 meth_encoders.append(fc)
             self.H = nn.ModuleList(meth_encoders)
-        '''
 
         # Gene Expression Encoder
         rnaseq_encoders = []
@@ -106,8 +115,10 @@ class MultimodalCoAttentionTransformer(nn.Module):
 
     def forward(self, islands, genes, inference: bool = False):
         # M Methylation Fully connected layer
-        """ H_meth = [self.H[index].forward(island.type(torch.float32)) for index, island in enumerate(islands)] """
-        H_meth = [self.H(island.type(torch.float32)) for island in islands]
+        if self.methylation_islands_statistics:
+            H_meth = [self.H(island.type(torch.float32)) for island in islands]
+        else:
+            H_meth = [self.H[index].forward(island.type(torch.float32)) for index, island in enumerate(islands)]
         # H_bag: (Mxd_k)
         # M --> columns number in meth signature, d_k --> embedding dimension
         H_bag = torch.stack(H_meth).squeeze(1)                                          # (Mxd_k)

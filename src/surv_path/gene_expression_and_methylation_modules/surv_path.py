@@ -25,7 +25,12 @@ def SNN_Block(dim1, dim2, dropout=0.25):
 
 ''' SurvPath Definition '''
 class SurvPath(nn.Module):
-    def __init__(self, meth_sizes: [], rnaseq_sizes: [], n_classes: int = 4, dropout: float = 0.25):
+    def __init__(self,
+                 meth_sizes: [],
+                 rnaseq_sizes: [],
+                 n_classes: int = 4,
+                 dropout: float = 0.25,
+                 methylation_islands_statistics: bool = False):
         super(SurvPath, self).__init__()
 
         # Parameters
@@ -44,19 +49,20 @@ class SurvPath(nn.Module):
         self.gene_expression_signature_networks = nn.ModuleList(sig_networks)
 
         # Methylation encoder
-        fc_omic = [SNN_Block(dim1=4, dim2=self.hidden[0])]
-        for i, _ in enumerate(self.hidden[1:]):
-            fc_omic.append(SNN_Block(dim1=self.hidden[i], dim2=self.hidden[i + 1], dropout=0.25))
-        self.methylation_signature_networks = nn.Sequential(*fc_omic)
-        '''
-        sig_networks = []
-        for input_dimension in meth_sizes:
-            fc_omic = [SNN_Block(dim1=input_dimension, dim2=self.hidden[0])]
+        self.methylation_islands_statistics = methylation_islands_statistics
+        if self.methylation_islands_statistics:
+            fc_omic = [SNN_Block(dim1=4, dim2=self.hidden[0])]
             for i, _ in enumerate(self.hidden[1:]):
                 fc_omic.append(SNN_Block(dim1=self.hidden[i], dim2=self.hidden[i + 1], dropout=0.25))
-            sig_networks.append(nn.Sequential(*fc_omic))
-        self.methylation_signature_networks = nn.ModuleList(sig_networks)
-        '''
+            self.methylation_signature_networks = nn.Sequential(*fc_omic)
+        else:
+            sig_networks = []
+            for input_dimension in meth_sizes:
+                fc_omic = [SNN_Block(dim1=input_dimension, dim2=self.hidden[0])]
+                for i, _ in enumerate(self.hidden[1:]):
+                    fc_omic.append(SNN_Block(dim1=self.hidden[i], dim2=self.hidden[i + 1], dropout=0.25))
+                sig_networks.append(nn.Sequential(*fc_omic))
+            self.methylation_signature_networks = nn.ModuleList(sig_networks)
 
         # SurvPath Cross Attention
         self.identity = nn.Identity()
@@ -79,23 +85,24 @@ class SurvPath(nn.Module):
         )
 
     def forward(self, islands, genes, inference: bool = False):
+        # Methylation Fully connected layer for each signature
+        if self.methylation_islands_statistics:
+            h_meth = [self.methylation_signature_networks(sig_feat.float()) for sig_feat in islands]
+        else:
+            h_meth = [self.methylation_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(islands)]
+        # H_bag: (Mx1xd_k) --> (1xMxd_k)
+        # M --> columns number in meth signature, d_k --> embedding dimension
+        h_meth_bag = torch.stack(h_meth).squeeze(1).unsqueeze(0)                        # (1xMxd_k)
+
         # Gene Expression Fully connected layers for each group signature
         g_rnaseq = [self.gene_expression_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(genes)]
         # G_bag: (Nx1xd_k) --> (1xNxd_k)
         # N --> columns number in rnaseq signature, d_k --> embedding dimension
         g_rnaseq_bag = torch.stack(g_rnaseq).squeeze(1).unsqueeze(0)                    # (1xNxd_k)
 
-        # Methylation Fully connected layer for each signature
-        ''' h_meth = [self.methylation_signature_networks[idx].forward(sig_feat.float()) for idx, sig_feat in enumerate(islands)] '''
-        h_meth = [self.methylation_signature_networks(sig_feat.float()) for sig_feat in islands]
-        # H_bag: (Mx1xd_k) --> (1xMxd_k)
-        # M --> columns number in meth signature, d_k --> embedding dimension
-        h_meth_bag = torch.stack(h_meth).squeeze(1).unsqueeze(0)                        # (1xMxd_k)
-
         # Cross-Attention results
         tokens = torch.cat([g_rnaseq_bag, h_meth_bag], dim=1)                   # (1x[N+M]xd_k)
         tokens = self.identity(tokens)
-
         self_attention_rnaseq = []
         cross_attention_rnaseq = []
         cross_attention_meth = []

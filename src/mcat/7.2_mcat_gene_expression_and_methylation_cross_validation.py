@@ -187,7 +187,8 @@ def main(config_path: str):
                                                                          meth_sizes=dataset.methylation_signature_sizes,
                                                                          dropout=config['training']['dropout'],
                                                                          fusion=config['model']['fusion'],
-                                                                         device=config['device'])
+                                                                         device=config['device'],
+                                                                         methylation_islands_statistics=config['dataset']['methylation_islands_statistics'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
