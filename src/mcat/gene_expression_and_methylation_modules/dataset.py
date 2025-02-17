@@ -43,13 +43,20 @@ class MultimodalDataset(Dataset):
             print(f'--> Remaining samples after removing incomplete: {len(self.gene_expression)}')
 
         # GENERAL: Managing Classes creation (based with Gene Expression)
-        self.classes_number = classes_number
-        survival_class, class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
-        self.gene_expression['survival_class'] = survival_class
-        print('--> Class intervals: [')
-        for i in range(0, classes_number):
-            print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
-        print('    ]')
+        #self.classes_number = classes_number
+        #self.gene_expression['survival_class'], class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
+        #print('--> Class intervals: [')
+        #for i in range(0, classes_number):
+        #    print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
+        #print('    ]')
+
+        intervals = [0, 12, 36, 60, np.inf]
+        labels = [0, 1, 2, 3]
+        survival_class = pd.cut(self.gene_expression['survival_months'], bins=intervals, labels=labels, right=True)
+        class_frequencies = survival_class.value_counts()
+        print('--> Class intervals: ', class_frequencies)
+        self.gene_expression['survival_class'] = survival_class.cat.codes.astype('int64')
+
         self.survival_months = self.gene_expression['survival_months'].values
         self.survival_class = self.gene_expression['survival_class'].values
         self.censorship = self.gene_expression['censorship'].values
@@ -239,6 +246,7 @@ class MultimodalDataset(Dataset):
         # GENERAL: Extract unique patient IDs and their corresponding survival class labels
         unique_patients = ge_dataframe['case_id'].unique()
         patient_survival_class = ge_dataframe.groupby('case_id')['survival_class'].first().loc[unique_patients]
+        print(patient_survival_class)
 
         # GENERAL: Define stratified k-fold split
         stratified_k_fold = StratifiedKFold(n_splits=k, shuffle=True, random_state=self.random_seed)
