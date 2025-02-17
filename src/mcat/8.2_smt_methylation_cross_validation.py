@@ -180,9 +180,10 @@ def main(config_path: str):
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
                                 model = SingleModalTransformer(model_size=config['model']['model_size'],
-                                                              n_classes=config['training']['classes_number'],
-                                                              encoder_sizes=dataset.methylation_signature_sizes,
-                                                              dropout=config['training']['dropout'])
+                                                               n_classes=config['training']['classes_number'],
+                                                               encoder_sizes=dataset.methylation_signature_sizes,
+                                                               dropout=config['training']['dropout'],
+                                                               methylation_islands_statistics=config['dataset']['methylation_islands_statistics'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint

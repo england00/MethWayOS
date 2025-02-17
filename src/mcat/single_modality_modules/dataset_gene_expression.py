@@ -4,7 +4,7 @@ import time
 import torch
 import yaml
 from data.methods.csv_dataset_loader import csv_loader
-from sklearn.model_selection import KFold
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -75,7 +75,7 @@ class RnaSeqDataset(Dataset):
                     columns[gene] = self.gene_expression[gene]
             self.gene_expression_signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
             self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature_name].shape[1])
-        print(f'--> Gene Expression Signatures size: {self.gene_expression_signature_sizes}')
+        print(f'--> {len(self.gene_expression_signature_sizes)} Gene Expression Signatures with sizes: {self.gene_expression_signature_sizes}')
 
     def __getitem__(self, index):
         survival_months = self.survival_months[index]
@@ -98,15 +98,17 @@ class RnaSeqDataset(Dataset):
         if not 0 < training_size < 1:
             raise ValueError("training_size should be a float between 0 and 1.")
 
-        # GENERAL: Get unique patients and Shuffle randomly
+        # GENERAL: Get unique patients and their corresponding survival class labels
         unique_patients = self.gene_expression['case_id'].unique()
-        np.random.seed(self.random_seed)
-        np.random.shuffle(unique_patients)
-        training_patient_count = int(len(unique_patients) * training_size)
+        patient_survival_class = self.gene_expression.groupby('case_id')['survival_class'].first().loc[unique_patients]
 
-        # GENERAL: Split patients into train and validation sets
-        training_patients = unique_patients[:training_patient_count]
-        testing_patients = unique_patients[training_patient_count:]
+        # GENERAL: Perform stratified split
+        training_patients, testing_patients = train_test_split(
+            unique_patients,
+            train_size=training_size,
+            stratify=patient_survival_class,
+            random_state=self.random_seed
+        )
 
         # GENERAL: Filter and Reset indices for training datasets
         training_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(training_patients)].reset_index(drop=True)
@@ -128,13 +130,16 @@ class RnaSeqDataset(Dataset):
         # GENERAL: Extract dataframes from training dataset
         ge_dataframe = training_dataset.gene_expression
 
-        # GENERAL: Extract unique patient IDs
+        # GENERAL: Extract unique patient IDs and their corresponding survival class labels
         unique_patients = ge_dataframe['case_id'].unique()
-        k_fold = KFold(n_splits=k, shuffle=True, random_state=self.random_seed)
+        patient_survival_class = ge_dataframe.groupby('case_id')['survival_class'].first().loc[unique_patients]
+
+        # GENERAL: Define stratified k-fold split
+        stratified_k_fold = StratifiedKFold(n_splits=k, shuffle=True, random_state=self.random_seed)
 
         # GENERAL: Extract folds
         folds = []
-        for training_indices, validation_indices in k_fold.split(unique_patients):
+        for training_indices, validation_indices in stratified_k_fold.split(unique_patients, patient_survival_class):
             # GENERAL: Splitting patients into train and validation sets
             training_patients = unique_patients[training_indices]
             validation_patients = unique_patients[validation_indices]

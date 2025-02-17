@@ -10,7 +10,12 @@ from src.mcat.original_modules.blocks import AttentionNetGated
 
 ''' SingleModalTransformer Definition '''
 class SingleModalTransformer(nn.Module):
-    def __init__(self, encoder_sizes: [], model_size: str = 'medium', n_classes: int = 4, dropout: float = 0.25):
+    def __init__(self,
+                 encoder_sizes: [],
+                 model_size: str = 'medium',
+                 n_classes: int = 4,
+                 dropout: float = 0.25,
+                 methylation_islands_statistics: bool = False):
         super(SingleModalTransformer, self).__init__()
         self.n_classes = n_classes
         if model_size == 'small':
@@ -21,11 +26,11 @@ class SingleModalTransformer(nn.Module):
             self.model_sizes = [512, 512]
 
         # Input Encoder
-        encoders = []
-        for rnaseq_size in encoder_sizes:
-            fc = nn.Sequential(
+        self.methylation_islands_statistics = methylation_islands_statistics
+        if self.methylation_islands_statistics:
+            self.E = nn.Sequential(
                 nn.Sequential(
-                    nn.Linear(rnaseq_size, self.model_sizes[0]),
+                    nn.Linear(4, self.model_sizes[0]),
                     nn.ELU(),
                     nn.AlphaDropout(p=dropout, inplace=False)),
                 nn.Sequential(
@@ -33,8 +38,21 @@ class SingleModalTransformer(nn.Module):
                     nn.ELU(),
                     nn.AlphaDropout(p=dropout, inplace=False))
             )
-            encoders.append(fc)
-        self.E = nn.ModuleList(encoders)
+        else:
+            encoders = []
+            for rnaseq_size in encoder_sizes:
+                fc = nn.Sequential(
+                    nn.Sequential(
+                        nn.Linear(rnaseq_size, self.model_sizes[0]),
+                        nn.ELU(),
+                        nn.AlphaDropout(p=dropout, inplace=False)),
+                    nn.Sequential(
+                        nn.Linear(self.model_sizes[0], self.model_sizes[1]),
+                        nn.ELU(),
+                        nn.AlphaDropout(p=dropout, inplace=False))
+                )
+                encoders.append(fc)
+            self.E = nn.ModuleList(encoders)
 
         # Transformer (T)
         encoder_layer = nn.TransformerEncoderLayer(d_model=self.model_sizes[1], nhead=8, dim_feedforward=512, dropout=dropout, activation='relu')
@@ -48,8 +66,11 @@ class SingleModalTransformer(nn.Module):
         self.classifier = nn.Linear(self.model_sizes[1], n_classes)
 
     def forward(self, data):
-        # N Gene Expression Fully connected layers
-        E = [self.E[index].forward(rnaseq.type(torch.float32)) for index, rnaseq in enumerate(data)]
+        # N Fully connected layers
+        if self.methylation_islands_statistics:
+            E = [self.E(value.type(torch.float32)) for value in data]
+        else:
+            E = [self.E[index].forward(value.type(torch.float32)) for index, value in enumerate(data)]
         # E_bag: (Nxd_k)
         E_bag = torch.stack(E).squeeze(1)
 
