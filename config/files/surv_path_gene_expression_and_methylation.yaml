@@ -25,7 +25,7 @@ dataset:
   # Number of Methylation Islands per each column of the Methylation dataset
   methylation_island_number_per_column: 0
   # Methylation Islands Statistics modality. Default is True
-  methylation_islands_statistics: False
+  methylation_islands_statistics: True
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -53,7 +53,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.5]
+  alpha: [0.25, 0.5, 1.0]
   # Batch size
   batch_size: 1
   # Classes Number
@@ -75,7 +75,7 @@ training:
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-2, 1e-3]
+  lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
