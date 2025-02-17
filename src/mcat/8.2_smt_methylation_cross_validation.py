@@ -176,6 +176,7 @@ def main(config_path: str):
 
                                 ## MODEL
                                 print('')
+                                set_seed(config['dataset']['random_seed'])
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
                                 model = SingleModalTransformer(model_size=config['model']['model_size'],

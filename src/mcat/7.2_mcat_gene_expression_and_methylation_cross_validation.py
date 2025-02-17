@@ -179,6 +179,7 @@ def main(config_path: str):
 
                                 ## MODEL
                                 print('')
+                                set_seed(config['dataset']['random_seed'])
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
                                 model = MultimodalCoAttentionTransformer(model_size=config['model']['model_size'],

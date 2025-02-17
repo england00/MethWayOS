@@ -179,6 +179,7 @@ def main(config_path: str):
 
                                 ## MODEL
                                 print('')
+                                set_seed(config['dataset']['random_seed'])
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
                                 model = SurvPath(n_classes=config['training']['classes_number'],
@@ -355,9 +356,9 @@ if __name__ == '__main__':
     sys.stdout = DualOutput(sys.stdout, logfile)
 
     # Execution
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT started')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - SurvPath started')
     main(MCAT_MULTIMODAL_YAML)
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MCAT terminated')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - SurvPath terminated')
 
     # Close LOG file
     sys.stdout = sys.__stdout__
