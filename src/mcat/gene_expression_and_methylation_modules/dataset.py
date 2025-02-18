@@ -256,9 +256,6 @@ class MultimodalDataset(Dataset):
         # GENERAL: Extract folds
         folds = []
         for training_indices, validation_indices in stratified_k_fold.split(unique_patients, patient_survival_class):
-            print('TRAIN: ', len(training_indices))
-            print('VAL: ', len(validation_indices))
-            print(np.unique(patient_survival_class.iloc[validation_indices], return_counts=True))
 
             # GENERAL: Splitting patients into train and validation sets
             training_patients = unique_patients[training_indices]
