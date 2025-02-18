@@ -44,12 +44,22 @@ class MultimodalDataset(Dataset):
 
         # GENERAL: Managing Classes creation (based with Gene Expression)
         self.classes_number = classes_number
-        survival_class, class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
-        self.gene_expression['survival_class'] = survival_class
-        print('--> Class intervals: [')
-        for i in range(0, classes_number):
-            print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
-        print('    ]')
+        if self.classes_number != 4 and self.classes_number >= 2:
+            self.gene_expression['survival_class'], class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
+            print('--> Class intervals: [')
+            for i in range(0, classes_number):
+                print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
+            print('    ]')
+        else:
+            intervals = [0, 12, 36, 60, np.inf]
+            labels = ['[0, 12) --> High Risk',
+                      '[12, 36) --> Medium Risk',
+                      '[36, 60) --> Low Risk',
+                      '[60, inf) --> No Risk']
+            survival_class = pd.cut(self.gene_expression['survival_months'], bins=intervals, labels=labels, right=False)
+            class_frequencies = survival_class.value_counts()
+            print('--> Class intervals: ', class_frequencies)
+            self.gene_expression['survival_class'] = survival_class.cat.codes.astype('int64')
         self.survival_months = self.gene_expression['survival_months'].values
         self.survival_class = self.gene_expression['survival_class'].values
         self.censorship = self.gene_expression['censorship'].values
