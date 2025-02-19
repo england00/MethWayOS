@@ -142,8 +142,11 @@ class MultimodalDataset(Dataset):
                 gene += '_rnaseq'
                 if gene in self.gene_expression.columns:
                     columns[gene] = self.gene_expression[gene]
-            self.gene_expression_signature_data[signature] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature].shape[1])
+            dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            if dataframe.shape[0] != 0:
+                self.gene_expression_signature_data[signature] = dataframe
+                self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature].shape[1])
+        self.gene_expression_signatures = list(self.gene_expression_signature_data.keys())
         print(f'--> {len(self.gene_expression_signature_sizes)} Gene Expression Signatures with sizes: {self.gene_expression_signature_sizes}')
 
         # METHYLATION: Managing Signatures
