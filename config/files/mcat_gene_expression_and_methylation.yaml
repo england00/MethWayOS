@@ -16,6 +16,8 @@ dataset:
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/mcat_signatures_transformed.csv
+  # Gene Expression correlation threshold with label
+  gene_expression_correlation_threshold: 0.1
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
@@ -48,12 +50,12 @@ model:
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [super_small, small, medium, big]
-  model_size: super_small
+  model_size: small
 
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.25]
+  alpha: [1.0]
   # Batch size
   batch_size: 1
   # Classes Number. Default is 4
@@ -67,15 +69,15 @@ training:
   # Folds Number
   folds: 5
   # Coefficient used in exponential lr scheduling
-  gamma: [0.9]
+  gamma: [0.75]
   # Gradient acceleration step
-  grad_acc_step: 4
+  grad_acc_step: 8
   # Regulator coefficient. Set 0.0 if regularization is not needed
   lambda: [0.0]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-4]
+  lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
@@ -93,4 +95,4 @@ training:
   # Loss weight
   weight_loss: 0.0
   # C-Index difference between Training and Validation
-  weight_difference: 0.0
+  weight_difference: 0.25
