@@ -22,9 +22,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
                  methylation_islands_statistics: bool = False):
         super(MultimodalCoAttentionTransformer, self).__init__()
         self.n_classes = n_classes
-        if model_size == 'super_small':
-            self.model_sizes = [8, 8]
-        elif model_size == 'small':
+        if model_size == 'small':
             self.model_sizes = [128, 128]
         elif model_size == 'medium':
             self.model_sizes = [256, 256]

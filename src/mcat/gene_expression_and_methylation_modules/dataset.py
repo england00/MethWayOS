@@ -194,10 +194,8 @@ class MultimodalDataset(Dataset):
                 for island in signatures_df[signature].dropna():
                     island += '_meth'
                     if island in self.methylation.columns:
-                        if self.methylation[island].std() > 0 and pd.Series(self.survival_months,
-                                                                            index=self.methylation.index).std() > 0:
-                            correlation = self.methylation[island].corr(
-                                pd.Series(self.survival_months, index=self.methylation.index))
+                        if self.methylation[island].std() > 0 and pd.Series(self.survival_months, index=self.methylation.index).std() > 0:
+                            correlation = self.methylation[island].corr(pd.Series(self.survival_months, index=self.methylation.index))
                         else:
                             correlation = 0
                         if abs(correlation) >= config['dataset']['methylation_islands_correlation_threshold']:

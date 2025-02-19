@@ -17,7 +17,7 @@ dataset:
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/mcat_signatures_transformed.csv
   # Gene Expression correlation threshold with label
-  gene_expression_correlation_threshold: 0.1
+  gene_expression_correlation_threshold: 0.05
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
@@ -49,7 +49,7 @@ model:
   checkpoint_best_model: ../../src/mcat/checkpoints/model
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
-  # Model size [super_small, small, medium, big]
+  # Model size [small, medium, big]
   model_size: small
 
 # Training configuration

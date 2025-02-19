@@ -136,14 +136,22 @@ class MultimodalDataset(Dataset):
         self.gene_expression_signature_data = {}
         signatures_df = pd.read_csv(config['dataset']['gene_expression_signatures'])
         self.gene_expression_signatures = list(signatures_df.columns)
-        for signature_name in self.gene_expression_signatures:
+        for signature in self.gene_expression_signatures:
             columns = {}
-            for gene in signatures_df[signature_name].dropna():
+            for gene in signatures_df[signature].dropna():
                 gene += '_rnaseq'
                 if gene in self.gene_expression.columns:
-                    columns[gene] = self.gene_expression[gene]
-            self.gene_expression_signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature_name].shape[1])
+                    if self.gene_expression[gene].std() > 0 and pd.Series(self.survival_months, index=self.gene_expression.index).std() > 0:
+                        correlation = self.gene_expression[gene].corr(pd.Series(self.survival_months, index=self.gene_expression.index))
+                    else:
+                        correlation = 0
+                    if abs(correlation) >= config['dataset']['gene_expression_correlation_threshold']:
+                        columns[gene] = self.gene_expression[gene]
+            dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            if dataframe.shape[0] != 0:
+                self.gene_expression_signature_data[signature] = dataframe
+                self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature].shape[1])
+        self.gene_expression_signatures = list(self.gene_expression_signature_data.keys())
         print(f'--> {len(self.gene_expression_signature_sizes)} Gene Expression Signatures with sizes: {self.gene_expression_signature_sizes}')
 
         # METHYLATION: Managing Signatures
@@ -152,33 +160,65 @@ class MultimodalDataset(Dataset):
         signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
         self.methylation_signatures = list(signatures_df.columns)
         for signature in self.methylation_signatures:
-            columns = {}
-            for island in signatures_df[signature].dropna():
-                island += '_meth'
-                if island in self.methylation.columns:
-                    if self.methylation[island].std() > 0 and pd.Series(self.survival_months, index=self.methylation.index).std() > 0:
-                        correlation = self.methylation[island].corr(pd.Series(self.survival_months, index=self.methylation.index))
+            if str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv':
+                if signature in self.gene_expression_signatures:
+                    columns = {}
+                    for island in signatures_df[signature].dropna():
+                        island += '_meth'
+                        if island in self.methylation.columns:
+                            if self.methylation[island].std() > 0 and pd.Series(self.survival_months,
+                                                                                index=self.methylation.index).std() > 0:
+                                correlation = self.methylation[island].corr(
+                                    pd.Series(self.survival_months, index=self.methylation.index))
+                            else:
+                                correlation = 0
+                            if abs(correlation) >= config['dataset']['methylation_islands_correlation_threshold']:
+                                columns[island] = self.methylation[island]
+                    if config['dataset']['methylation_islands_statistics']:
+                        dataframe = pd.DataFrame(columns)
                     else:
-                        correlation = 0
-                    if abs(correlation) >= config['dataset']['methylation_islands_correlation_threshold']:
-                        columns[island] = self.methylation[island]
-            if config['dataset']['methylation_islands_statistics']:
-                dataframe = pd.DataFrame(columns)
+                        dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+                    if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
+                        if config['dataset']['methylation_islands_statistics']:
+                            tensor_data = torch.tensor(dataframe.values, dtype=torch.float32)
+                            mean_values = torch.mean(tensor_data, dim=1, keepdim=True)
+                            std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
+                            max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
+                            min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
+                            summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                            self.methylation_signature_data[signature] = summary_tensor
+                            self.methylation_signature_sizes.append(summary_tensor.shape[1])
+                        else:
+                            self.methylation_signature_data[signature] = dataframe
+                            self.methylation_signature_sizes.append(self.methylation_signature_data[signature].shape[1])
             else:
-                dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
+                columns = {}
+                for island in signatures_df[signature].dropna():
+                    island += '_meth'
+                    if island in self.methylation.columns:
+                        if self.methylation[island].std() > 0 and pd.Series(self.survival_months, index=self.methylation.index).std() > 0:
+                            correlation = self.methylation[island].corr(pd.Series(self.survival_months, index=self.methylation.index))
+                        else:
+                            correlation = 0
+                        if abs(correlation) >= config['dataset']['methylation_islands_correlation_threshold']:
+                            columns[island] = self.methylation[island]
                 if config['dataset']['methylation_islands_statistics']:
-                    tensor_data = torch.tensor(dataframe.values, dtype=torch.float32)
-                    mean_values = torch.mean(tensor_data, dim=1, keepdim=True)
-                    std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
-                    max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
-                    min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
-                    summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
-                    self.methylation_signature_data[signature] = summary_tensor
-                    self.methylation_signature_sizes.append(summary_tensor.shape[1])
+                    dataframe = pd.DataFrame(columns)
                 else:
-                    self.methylation_signature_data[signature] = dataframe
-                    self.methylation_signature_sizes.append(self.methylation_signature_data[signature].shape[1])
+                    dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+                if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
+                    if config['dataset']['methylation_islands_statistics']:
+                        tensor_data = torch.tensor(dataframe.values, dtype=torch.float32)
+                        mean_values = torch.mean(tensor_data, dim=1, keepdim=True)
+                        std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
+                        max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
+                        min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
+                        summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                        self.methylation_signature_data[signature] = summary_tensor
+                        self.methylation_signature_sizes.append(summary_tensor.shape[1])
+                    else:
+                        self.methylation_signature_data[signature] = dataframe
+                        self.methylation_signature_sizes.append(self.methylation_signature_data[signature].shape[1])
         self.methylation_signatures = list(self.methylation_signature_data.keys())
         print(f'--> {len(self.methylation_signature_sizes)} Methylation Signatures with sizes: {self.methylation_signature_sizes}')
 
