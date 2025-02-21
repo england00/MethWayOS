@@ -1,0 +1,65 @@
+Environment conda activated
+Job 2529717 started
+
+#################### [18/02/2025 - 02:47:04] - MCAT started ####################
+HOSTNAME: carabbaggio
+
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: NVIDIA GeForce GTX 1080 Ti
+--> Running on CUDA
+
+DATASET: Loading data
+--> Gene Expression loaded
+--> Methylation loaded
+--> Remaining samples after removing incomplete: 742
+--> Class intervals:  survival_months
+3    355
+2    208
+1    139
+0     33
+Name: count, dtype: int64
+--> Standardizing RNA-seq data
+--> Standardizing Methylation Islands columns from 0 to 10000
+--> Standardizing Methylation Islands columns from 10000 to 20000
+--> Standardizing Methylation Islands columns from 20000 to 30000
+--> Standardizing Methylation Islands columns from 30000 to 33161
+--> Processing Methylation Islands columns from 0 to 10000
+--> Processing Methylation Islands columns from 10000 to 20000
+--> Processing Methylation Islands columns from 20000 to 30000
+--> Processing Methylation Islands columns from 30000 to 33161
+--> RNA-seq loaded
+--> Methylation loaded
+--> 6 Gene Expression Signatures with sizes: [82, 323, 512, 430, 1464, 446]
+--> 27 Methylation Signatures with sizes: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+--> Using 80% training, 20% validation
+
+#################### [18/02/2025 - 02:47:53] - Grid Search #####################
+
+############# Cross Validation with Current Configuration started ##############
+--> alpha: 0.25, dropout: 0.0, gamma: 0.75, lambda: 0.0, lr: 1e-2, weight_decay: 0.0
+case_id
+7f97971b-2818-4e4b-9c9e-7c0246f9484c    1
+34a74805-300c-4773-ab59-2085fcc2e6cc    3
+6cdc0d53-f813-4101-81e5-9bee68270536    3
+4922cddc-575c-4b8a-8245-ce5f6876760c    0
+8a0ef221-8070-43fc-9d98-def90abe4871    3
+                                       ..
+805bfe39-3695-43c2-93e4-d66d0559b89f    2
+2b19a6b4-7a17-4452-b4aa-6fc18adc0c3c    2
+5cbf0aea-ebb4-4005-bdd5-14ef2dc6826c    3
+c3a981c7-f148-4252-bd50-af8a49ec0df8    3
+6d4860b2-21c6-4b7b-9093-2f32700d0612    3
+Name: survival_class, Length: 742, dtype: int64
+
+###################### [18/02/2025 - 02:48:10] - Fold n°1 ######################
+
+MODEL: MCAT with Gene Expression & Methylation
+--> Trainable parameters of MCAT with Gene Expression & Methylation: 1544342
+--> Loss function: CrossEntropySurvivalLoss
+--> Optimizer: adamax
+
+############ [18/02/2025 - 02:48:11] - Training started (Fold n°1) #############
+[18/02/2025 - 02:48:11] - Epoch: 1
