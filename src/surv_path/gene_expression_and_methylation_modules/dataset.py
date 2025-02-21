@@ -160,7 +160,8 @@ class MultimodalDataset(Dataset):
         signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
         self.methylation_signatures = list(signatures_df.columns)
         for signature in self.methylation_signatures:
-            if str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv':
+            if (str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv' or
+                str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/gene_expression_keys_methylation_transformed.csv'):
                 if signature in self.gene_expression_signatures:
                     columns = {}
                     for island in signatures_df[signature].dropna():
