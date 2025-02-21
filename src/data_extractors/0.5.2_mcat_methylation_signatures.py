@@ -16,7 +16,7 @@ MODE = 'full'   # ['full', 'promoters']
 TYPE = '450full' # ['27', '27full', '450', '450full']
 
 # MCAT/SurvPath Original Signatures
-############## [        'full'       ,     'promoters'    ]
+############## [        'full'       ,     'promoters'   ]
 # [    '27'    ,         1478        ,        817        ]
 # [            , 1.6400541271989175  , 1.0514075887392902]
 # [  '27full'  ,         2680        ,        817        ]
