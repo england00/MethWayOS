@@ -15,15 +15,15 @@ dataset:
   # CSV Gene Expression main dataset
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
-  gene_expression_signatures: ../../data/signatures/mcat_signatures.csv
+  gene_expression_signatures: ../../data/signatures/gene_expression_keys_methylation_transformed.csv
   # Gene Expression correlation threshold with label
   gene_expression_correlation_threshold: 0.0
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
-  methylation_signatures: ../../data/signatures/methylation_signatures_full_450_full.csv
+  methylation_signatures: ../../data/signatures/methylation_signatures_complete.csv
   # Methylation Islands correlation threshold with label
-  methylation_islands_correlation_threshold: 0.15
+  methylation_islands_correlation_threshold: 0.0
   # Number of Methylation Islands per each column of the Methylation dataset
   methylation_island_number_per_column: 0
   # Methylation Islands Statistics modality. Default is True
@@ -75,7 +75,7 @@ training:
   # Regulator coefficient. Set 0.0 if regularization is not needed
   lambda: [0.0]
   # Loss to use during training [ce, ces, sct]
-  loss: sct
+  loss: ces
   # Learning rate
   lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
