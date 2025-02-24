@@ -160,17 +160,14 @@ class MultimodalDataset(Dataset):
         signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
         self.methylation_signatures = list(signatures_df.columns)
         for signature in self.methylation_signatures:
-            if (str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv' or
-                str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/gene_expression_keys_methylation_transformed.csv'):
+            if str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv' or str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/gene_expression_keys_methylation_transformed.csv':
                 if signature in self.gene_expression_signatures:
                     columns = {}
                     for island in signatures_df[signature].dropna():
                         island += '_meth'
                         if island in self.methylation.columns:
-                            if self.methylation[island].std() > 0 and pd.Series(self.survival_months,
-                                                                                index=self.methylation.index).std() > 0:
-                                correlation = self.methylation[island].corr(
-                                    pd.Series(self.survival_months, index=self.methylation.index))
+                            if self.methylation[island].std() > 0 and pd.Series(self.survival_months, index=self.methylation.index).std() > 0:
+                                correlation = self.methylation[island].corr(pd.Series(self.survival_months, index=self.methylation.index))
                             else:
                                 correlation = 0
                             if abs(correlation) >= config['dataset']['methylation_islands_correlation_threshold']:
@@ -186,7 +183,8 @@ class MultimodalDataset(Dataset):
                             std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
                             max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
                             min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
-                            summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                            valid_counts = torch.sum(~torch.isnan(tensor_data), dim=1, keepdim=True)
+                            summary_tensor = torch.cat([mean_values, std_values, max_values, min_values, valid_counts], dim=1)
                             self.methylation_signature_data[signature] = summary_tensor
                             self.methylation_signature_sizes.append(summary_tensor.shape[1])
                         else:
@@ -214,7 +212,8 @@ class MultimodalDataset(Dataset):
                         std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
                         max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
                         min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
-                        summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                        valid_counts = torch.sum(~torch.isnan(tensor_data), dim=1, keepdim=True)
+                        summary_tensor = torch.cat([mean_values, std_values, max_values, min_values, valid_counts], dim=1)
                         self.methylation_signature_data[signature] = summary_tensor
                         self.methylation_signature_sizes.append(summary_tensor.shape[1])
                     else:

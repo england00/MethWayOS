@@ -160,9 +160,8 @@ class MultimodalDataset(Dataset):
         signatures_df = pd.read_csv(config['dataset']['methylation_signatures'], dtype=str)
         self.methylation_signatures = list(signatures_df.columns)
         for signature in self.methylation_signatures:
-            if (str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv' or
-                str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/gene_expression_keys_methylation_transformed.csv'):
-                if signature in self.gene_expression_signatures :
+            if str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/mcat_signatures_transformed.csv' or str(config['dataset']['gene_expression_signatures']) == '../../data/signatures/gene_expression_keys_methylation_transformed.csv':
+                if signature in self.gene_expression_signatures:
                     columns = {}
                     for island in signatures_df[signature].dropna():
                         island += '_meth'
@@ -184,7 +183,8 @@ class MultimodalDataset(Dataset):
                             std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
                             max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
                             min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
-                            summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                            valid_counts = torch.sum(~torch.isnan(tensor_data), dim=1, keepdim=True)
+                            summary_tensor = torch.cat([mean_values, std_values, max_values, min_values, valid_counts], dim=1)
                             self.methylation_signature_data[signature] = summary_tensor
                             self.methylation_signature_sizes.append(summary_tensor.shape[1])
                         else:
@@ -205,15 +205,15 @@ class MultimodalDataset(Dataset):
                     dataframe = pd.DataFrame(columns)
                 else:
                     dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-                if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(
-                        config['dataset']['methylation_island_number_per_column']):
+                if dataframe.shape[0] != 0 and dataframe.shape[1] >= int(config['dataset']['methylation_island_number_per_column']):
                     if config['dataset']['methylation_islands_statistics']:
                         tensor_data = torch.tensor(dataframe.values, dtype=torch.float32)
                         mean_values = torch.mean(tensor_data, dim=1, keepdim=True)
                         std_values = torch.std(tensor_data, dim=1, unbiased=False, keepdim=True)
                         max_values = torch.max(tensor_data, dim=1, keepdim=True)[0]
                         min_values = torch.min(tensor_data, dim=1, keepdim=True)[0]
-                        summary_tensor = torch.cat([mean_values, std_values, max_values, min_values], dim=1)
+                        valid_counts = torch.sum(~torch.isnan(tensor_data), dim=1, keepdim=True)
+                        summary_tensor = torch.cat([mean_values, std_values, max_values, min_values, valid_counts], dim=1)
                         self.methylation_signature_data[signature] = summary_tensor
                         self.methylation_signature_sizes.append(summary_tensor.shape[1])
                     else:

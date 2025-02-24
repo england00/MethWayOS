@@ -51,7 +51,7 @@ class SurvPath(nn.Module):
         # Methylation encoder
         self.methylation_islands_statistics = methylation_islands_statistics
         if self.methylation_islands_statistics:
-            fc_omic = [SNN_Block(dim1=4, dim2=self.hidden[0])]
+            fc_omic = [SNN_Block(dim1=5, dim2=self.hidden[0])]
             for i, _ in enumerate(self.hidden[1:]):
                 fc_omic.append(SNN_Block(dim1=self.hidden[i], dim2=self.hidden[i + 1], dropout=0.25))
             self.methylation_signature_networks = nn.Sequential(*fc_omic)

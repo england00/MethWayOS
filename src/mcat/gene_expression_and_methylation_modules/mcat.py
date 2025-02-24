@@ -34,7 +34,7 @@ class MultimodalCoAttentionTransformer(nn.Module):
         if self.methylation_islands_statistics:
             self.H = nn.Sequential(
                 nn.Sequential(
-                    nn.Linear(4, self.model_sizes[0]),
+                    nn.Linear(5, self.model_sizes[0]),
                     nn.ELU(),
                     nn.AlphaDropout(p=dropout, inplace=False)),
                 nn.Sequential(
