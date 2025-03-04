@@ -17,7 +17,7 @@ dataset:
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/gene_expression_keys_methylation_transformed.csv
   # Gene Expression correlation threshold with label
-  gene_expression_correlation_threshold: 0.0
+  gene_expression_correlation_threshold: 0.10
   # CSV Methylation secondary dataset
   methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
@@ -27,7 +27,7 @@ dataset:
   # Number of Methylation Islands per each column of the Methylation dataset
   methylation_island_number_per_column: 0
   # Methylation Islands Statistics modality. Default is True
-  methylation_islands_statistics: False
+  methylation_islands_statistics: True
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -61,7 +61,7 @@ training:
   # Classes Number. Default is 4
   classes_number: 4
   # Dropout
-  dropout: [0.0]
+  dropout: [0.0, 0.25]
   # How many epochs of training
   epochs: 100
   # Patience during training
@@ -69,11 +69,11 @@ training:
   # Folds Number
   folds: 5
   # Coefficient used in exponential lr scheduling
-  gamma: [0.9]
+  gamma: [0.75, 0.85, 0.95]
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [0.0]
+  lambda: [0.001]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
