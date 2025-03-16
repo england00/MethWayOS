@@ -16,6 +16,8 @@ dataset:
   gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/mcat_signatures.csv
+  # Gene Expression correlation threshold with label
+  gene_expression_correlation_threshold: 0.0
   # Whether to normalize genomic data or not. Default is False
   normalize: False
   # Whether to standardize genomic data or not. Default is True
@@ -43,11 +45,11 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [1.0]
+  alpha: [0.3]
   # Batch size
   batch_size: 1
   # Classes Number
-  classes_number: 20
+  classes_number: 4
   # Dropout
   dropout: [0.0, 0.1, 0.25]
   # How many epochs of training
@@ -61,11 +63,11 @@ training:
   # Gradient acceleration step
   grad_acc_step: 4
   # Regulator coefficient. Set 0.0 if regularization is not needed
-  lambda: [0.0]
+  lambda: [0.001]
   # Loss to use during training [ce, ces, sct]
   loss: ces
   # Learning rate
-  lr: [1e-2, 1e-3]
+  lr: [1e-3]
   # Which optimizer to use [sgd, adam, rms, adamax]
   optimizer: adamax
   # At which epoch write the attention file
@@ -83,4 +85,4 @@ training:
   # Loss weight
   weight_loss: 0.0
   # C-Index difference between Training and Validation
-  weight_difference: 1.0
+  weight_difference: 0.25

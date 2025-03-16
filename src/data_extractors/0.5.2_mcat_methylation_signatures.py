@@ -29,6 +29,7 @@ TYPE = '450full' # ['27', '27full', '450', '450full']
 ''' Input Datastore '''
 CPG950_CODING_GENES = 'cpg950_coding_genes'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
+FUNCTIONAL_GROUPS_SUBDIVISION = 'MCAT_selected_methylation_islands'
 
 ''' Input Keys'''
 METHYLATION_27_KEYS = 'methylation27_keys'
@@ -48,6 +49,7 @@ METHYLATION_SIGNATURES_FULL_27 = 'methylation_signatures_full_27'
 METHYLATION_SIGNATURES_FULL_27_FULL = 'methylation_signatures_full_27_full'
 METHYLATION_SIGNATURES_FULL_450 = 'methylation_signatures_full_450'
 METHYLATION_SIGNATURES_FULL_450_FULL = 'methylation_signatures_full_450_full'
+METHYLATION_SIGNATURES_WITH_FUNCTIONAL_GROUPS = 'methylation_signatures_with_functional_group'
 
 
 ## MAIN
@@ -97,20 +99,35 @@ if __name__ == "__main__":
                 genes_methylation_sites_dictionary[gene] = []
             genes_methylation_sites_dictionary[gene].append(methylation_site)
 
-    # Genes Dictionary Selection
+    # Genes Dictionary Selection (CpG sites per Gene)
     genes = []
     for column in gene_expression_list_dataframe.columns:
         for gene in gene_expression_list_dataframe[column]:
             if gene != '':
                 genes.append(gene)
     buffer = {}
-    for key, value in genes_methylation_sites_dictionary.items():
-        if key in genes:
-            buffer[key] = value
-    genes_methylation_sites_dictionary = buffer
+    for gene, cpg_list in genes_methylation_sites_dictionary.items():
+        if gene in genes:
+            buffer[gene] = cpg_list
+    cpg_per_genes = buffer
+
+    # Genes Dictionary Selection (CpG sites per Functional Group)
+    genes_dictionary = {}
+    for column in gene_expression_list_dataframe.columns:
+        genes_dictionary[column] = []
+        for gene in gene_expression_list_dataframe[column]:
+            if gene != '':
+                genes_dictionary[column].append(gene)
+    buffer = {}
+    for functional_group, genes_list in genes_dictionary.items():
+        buffer[functional_group] = []
+        for gene, cpg_list in genes_methylation_sites_dictionary.items():
+            if gene in genes_list:
+                buffer[functional_group].extend(cpg_list)
+    cpg_per_functional_group = buffer
 
     # Storing dataset inside a CSV file
-    methylation_dataframe = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in genes_methylation_sites_dictionary.items()]))
+    methylation_dataframe = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in cpg_per_genes.items()]))
     if MODE == 'promoters':
         if TYPE == '27':
             methylation_dataframe.to_csv(table_paths[METHYLATION_SIGNATURES_PROMOTERS_27], index=False)
@@ -137,6 +154,9 @@ if __name__ == "__main__":
         elif TYPE == '450full':
             methylation_dataframe.to_csv(table_paths[METHYLATION_SIGNATURES_FULL_450_FULL], index=False)
             print(f"Data has been correctly saved inside {table_paths[METHYLATION_SIGNATURES_FULL_450_FULL]} file")
+    methylation_dataframe = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in cpg_per_functional_group.items()]))
+    methylation_dataframe.to_csv(table_paths[METHYLATION_SIGNATURES_WITH_FUNCTIONAL_GROUPS], index=False)
+    print(f"Data has been correctly saved inside {table_paths[METHYLATION_SIGNATURES_WITH_FUNCTIONAL_GROUPS]} file")
 
     # Close LOG file
     sys.stdout = sys.__stdout__

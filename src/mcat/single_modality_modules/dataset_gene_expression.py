@@ -25,12 +25,22 @@ class RnaSeqDataset(Dataset):
 
         # GENERAL: Managing Classes creation (based with Gene Expression)
         self.classes_number = classes_number
-        survival_class, class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
-        self.gene_expression['survival_class'] = survival_class
-        print('--> Class intervals: [')
-        for i in range(0, classes_number):
-            print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
-        print('    ]')
+        if self.classes_number != 4 and self.classes_number >= 2:
+            self.gene_expression['survival_class'], class_intervals = pd.qcut(self.gene_expression['survival_months'], q=self.classes_number, retbins=True, labels=False)
+            print('--> Class intervals: [')
+            for i in range(0, classes_number):
+                print('\t{}: [{:.2f} - {:.2f}]'.format(i, class_intervals[i], class_intervals[i + 1]))
+            print('    ]')
+        else:
+            intervals = [0, 12, 36, 60, np.inf]
+            labels = ['[0, 12) --> High Risk',
+                      '[12, 36) --> Medium Risk',
+                      '[36, 60) --> Low Risk',
+                      '[60, inf) --> No Risk']
+            survival_class = pd.cut(self.gene_expression['survival_months'], bins=intervals, labels=labels, right=False)
+            class_frequencies = survival_class.value_counts()
+            print('--> Class intervals: ', class_frequencies)
+            self.gene_expression['survival_class'] = survival_class.cat.codes.astype('int64')
         self.survival_months = self.gene_expression['survival_months'].values
         self.survival_class = self.gene_expression['survival_class'].values
         self.censorship = self.gene_expression['censorship'].values
@@ -67,14 +77,22 @@ class RnaSeqDataset(Dataset):
         self.gene_expression_signature_data = {}
         signatures_df = pd.read_csv(config['dataset']['gene_expression_signatures'])
         self.gene_expression_signatures = list(signatures_df.columns)
-        for signature_name in self.gene_expression_signatures:
+        for signature in self.gene_expression_signatures:
             columns = {}
-            for gene in signatures_df[signature_name].dropna():
+            for gene in signatures_df[signature].dropna():
                 gene += '_rnaseq'
                 if gene in self.gene_expression.columns:
-                    columns[gene] = self.gene_expression[gene]
-            self.gene_expression_signature_data[signature_name] = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
-            self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature_name].shape[1])
+                    if self.gene_expression[gene].std() > 0 and pd.Series(self.survival_months, index=self.gene_expression.index).std() > 0:
+                        correlation = self.gene_expression[gene].corr(pd.Series(self.survival_months, index=self.gene_expression.index))
+                    else:
+                        correlation = 0
+                    if abs(correlation) >= config['dataset']['gene_expression_correlation_threshold']:
+                        columns[gene] = self.gene_expression[gene]
+            dataframe = torch.tensor(pd.DataFrame(columns).values, dtype=torch.float32)
+            if dataframe.shape[0] != 0:
+                self.gene_expression_signature_data[signature] = dataframe
+                self.gene_expression_signature_sizes.append(self.gene_expression_signature_data[signature].shape[1])
+        self.gene_expression_signatures = list(self.gene_expression_signature_data.keys())
         print(f'--> {len(self.gene_expression_signature_sizes)} Gene Expression Signatures with sizes: {self.gene_expression_signature_sizes}')
 
     def __getitem__(self, index):

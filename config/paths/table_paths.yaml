@@ -1,24 +1,62 @@
-﻿gene_expression_lungs: '../../data/tables/ale_gene_expression_lungs.csv'
-gene_expression_tss: '../../data/tables/gene_expression_tss.csv'
+﻿### TABLE PATHS
+
+## MCAT Signatures for Genes
+# Original
+mcat_signatures: '../../data/signatures/mcat_signatures.csv'
+# Original - Genes transposed on per column
+mcat_signatures_transformed: '../../data/signatures/mcat_signatures_transformed.csv'
+# Others
+# All protein coding genes in a column
+gene_expression_keys_methylation: '../../data/signatures/gene_expression_keys_methylation.csv'
+gene_expression_keys_wsi: '../../data/signatures/gene_expression_keys_wsi.csv'
+# All protein coding genes in a column - Genes transposed on per column
+gene_expression_keys_methylation_transformed: '../../data/signatures/gene_expression_keys_methylation_transformed.csv'
+
+
+## SurvPath Signatures for Genes
+# Original
+survpath_signatures: '../../data/signatures/survpath_signatures.csv'
+# Original - Genes transposed in columns
+survpath_signatures_transformed: '../../data/signatures/survpath_signatures_transformed.csv'
+# Original - Pathways
+survpath_pathway_combine_signatures: '../../data/signatures/survpath_pathway_combine_signatures.csv'
+survpath_pathway_hallmarks_signatures: '../../data/signatures/survpath_pathway_hallmarks_signatures.csv'
+survpath_pathway_xena_signatures: '../../data/signatures/survpath_pathway_xena_signatures.csv'
+
+
+## MCAT/SurvPath Signatures for Methylation
+# 27k CpP sites only on promoters and gene associated
+methylation_signatures_promoters_27: '../../data/signatures/methylation_signatures_promoters_27.csv'
+# 27k CpP sites only on promoters
+methylation_signatures_promoters_27_full: '../../data/signatures/methylation_signatures_promoters_27_full.csv'
+# 450k CpP sites only on promoters and gene associated
+methylation_signatures_promoters_450: '../../data/signatures/methylation_signatures_promoters_450.csv'
+# 450k CpP sites only on promoters
+methylation_signatures_promoters_450_full: '../../data/signatures/methylation_signatures_promoters_450_full.csv'
+# 27k CpP sites of full genome in associated genes
+methylation_signatures_full_27: '../../data/signatures/methylation_signatures_full_27.csv'
+# 27k CpP sites of full genome
+methylation_signatures_full_27_full: '../../data/signatures/methylation_signatures_full_27_full.csv'
+# 450k CpP sites of full genome in associated genes
+methylation_signatures_full_450: '../../data/signatures/methylation_signatures_full_450.csv'
+# 450k CpP sites of full genome
+methylation_signatures_full_450_full: '../../data/signatures/methylation_signatures_full_450_full.csv'
+# For MCAT/SurvPath with 450k CpG islands divided by functional group
+methylation_signatures_with_functional_group: '../../data/signatures/methylation_signatures_with_functional_group.csv'
+# Others
+# 27k CpG sites in a column only for selected genes
+methylation27_keys: '../../data/signatures/methylation27_keys.csv'
+# 27k CpG sites in a column
+methylation27_full_keys: '../../data/signatures/methylation27_full_keys.csv'
+# 450k CpG sites in a column only for selected genes
+methylation450_keys: '../../data/signatures/methylation450_keys.csv'
+# 450k CpG sites in a column
+methylation450_full_keys: '../../data/signatures/methylation450_full_keys.csv'
+
+
+# Ale's Signatures
+gene_expression_lungs: '../../data/tables/ale_gene_expression_lungs.csv'
 methylation_lungs: '../../data/tables/ale_methylation_lungs.csv'
+gene_expression_tss: '../../data/tables/gene_expression_tss.csv'
 methylation_vectors_for_each_gene: '../../data/tables/methylation_vectors_for_each_gene.csv'
 methylation_vectors_for_each_gene_full: '../../data/tables/methylation_vectors_for_each_gene_full.csv'
-gene_expression_keys_methylation: '../../data/signatures/gene_expression_keys_methylation.csv'
-gene_expression_keys_methylation_transformed: '../../data/signatures/gene_expression_keys_methylation_transformed.csv'
-gene_expression_keys_wsi: '../../data/signatures/gene_expression_keys_wsi.csv'
-methylation27_keys: '../../data/signatures/methylation27_keys.csv'
-methylation27_full_keys: '../../data/signatures/methylation27_full_keys.csv'
-methylation450_keys: '../../data/signatures/methylation450_keys.csv'
-methylation450_full_keys: '../../data/signatures/methylation450_full_keys.csv'
-mcat_signatures: '../../data/signatures/mcat_signatures.csv'
-mcat_signatures_transformed: '../../data/signatures/mcat_signatures_transformed.csv'
-survpath_signatures: '../../data/signatures/survpath_signatures.csv'
-survpath_signatures_transformed: '../../data/signatures/survpath_signatures_transformed.csv'
-methylation_signatures_promoters_27: '../../data/signatures/methylation_signatures_promoters_27.csv'
-methylation_signatures_promoters_27_full: '../../data/signatures/methylation_signatures_promoters_27_full.csv'
-methylation_signatures_promoters_450: '../../data/signatures/methylation_signatures_promoters_450.csv'
-methylation_signatures_promoters_450_full: '../../data/signatures/methylation_signatures_promoters_450_full.csv'
-methylation_signatures_full_27: '../../data/signatures/methylation_signatures_full_27.csv'
-methylation_signatures_full_27_full: '../../data/signatures/methylation_signatures_full_27_full.csv'
-methylation_signatures_full_450: '../../data/signatures/methylation_signatures_full_450.csv'
-methylation_signatures_full_450_full: '../../data/signatures/methylation_signatures_full_450_full.csv'

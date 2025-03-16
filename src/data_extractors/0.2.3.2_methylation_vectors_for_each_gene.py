@@ -34,6 +34,7 @@ METHYLATION_ALE = 'methylation_lungs'
 ''' Output Data '''
 METHYLATION_VECTORS_FOR_EACH_GENE_FULL = 'methylation_vectors_for_each_gene_full'
 SELECTED_METHYLATION_ISLANDS_FULL = 'selected_methylation_islands_full'
+MCAT_SELECTED_METHYLATION_ISLANDS = 'MCAT_selected_methylation_islands'
 
 
 ## FUNCTIONS
@@ -101,7 +102,7 @@ if __name__ == "__main__":
     dataframe_methylation_vectors, dictionary_selected_methylation_islands = extract_methylation_vectors(
         dataframe_gene_expression,
         cpg950_coding_genes_dictionary,
-        vector_size=500)
+        vector_size=1000)
 
     # Storing data inside a CSV table and a JSON list
     dataframe_methylation_vectors.to_csv(table_paths[METHYLATION_VECTORS_FOR_EACH_GENE_FULL], index=False)
