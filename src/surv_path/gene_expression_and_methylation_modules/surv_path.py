@@ -35,8 +35,8 @@ class SurvPath(nn.Module):
 
         # Parameters
         self.n_classes = n_classes
-        self.projection_dimensionality = 128                                  # [128, 256, 512]
-        self.hidden = [128, 128]                                              # [128, 128] [256, 256], [512, 512]
+        self.projection_dimensionality = 256                                  # [128, 256, 512]
+        self.hidden = [256, 256]                                              # [128, 128] [256, 256], [512, 512]
         self.gene_groups = len(rnaseq_sizes)
 
         # Gene Expression encoder

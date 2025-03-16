@@ -1,0 +1,52 @@
+Environment conda activated
+Job 2542060 started
+
+################## [16/03/2025 - 03:52:49] - SurvPath started ##################
+HOSTNAME: rezzonico
+
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: Quadro RTX 5000
+--> Running on CUDA
+
+DATASET: Loading data
+--> Gene Expression loaded
+--> Methylation loaded
+--> Remaining samples after removing incomplete: 742
+--> Class intervals:  survival_months
+[60, inf) --> No Risk       355
+[36, 60) --> Low Risk       208
+[12, 36) --> Medium Risk    139
+[0, 12) --> High Risk        40
+Name: count, dtype: int64
+--> Standardizing RNA-seq data
+--> Standardizing Methylation Islands columns from 0 to 10000
+--> Standardizing Methylation Islands columns from 10000 to 20000
+--> Standardizing Methylation Islands columns from 20000 to 30000
+--> Standardizing Methylation Islands columns from 30000 to 33161
+--> Processing Methylation Islands columns from 0 to 10000
+--> Processing Methylation Islands columns from 10000 to 20000
+--> Processing Methylation Islands columns from 20000 to 30000
+--> Processing Methylation Islands columns from 30000 to 33161
+--> RNA-seq loaded
+--> Methylation loaded
+--> 281 Gene Expression Signatures with sizes: [2, 5, 8, 3, 3, 1, 4, 4, 4, 3, 4, 9, 3, 2, 13, 1, 27, 11, 13, 17, 32, 4, 4, 5, 9, 14, 50, 6, 2, 2, 2, 2, 11, 29, 18, 10, 17, 11, 18, 63, 4, 6, 14, 10, 10, 12, 2, 9, 4, 3, 2, 9, 5, 2, 11, 20, 7, 2, 3, 3, 1, 17, 19, 12, 2, 4, 14, 1, 1, 13, 5, 4, 5, 2, 20, 4, 6, 10, 25, 1, 4, 25, 4, 14, 14, 4, 7, 10, 10, 10, 49, 1, 28, 1, 2, 9, 2, 10, 3, 44, 1, 1, 2, 2, 17, 17, 4, 2, 8, 8, 4, 64, 8, 17, 9, 9, 2, 3, 15, 3, 2, 9, 11, 14, 1, 4, 6, 19, 4, 1, 5, 3, 14, 2, 11, 2, 2, 10, 8, 10, 10, 13, 11, 6, 2, 2, 2, 3, 3, 3, 5, 5, 5, 5, 6, 3, 18, 10, 5, 2, 9, 1, 12, 14, 2, 1, 32, 8, 8, 16, 69, 2, 6, 5, 23, 23, 4, 2, 5, 3, 3, 3, 2, 4, 2, 3, 3, 7, 3, 19, 4, 1, 20, 3, 7, 6, 3, 9, 9, 11, 2, 5, 38, 21, 1, 4, 1, 15, 8, 6, 5, 2, 10, 14, 10, 6, 4, 4, 4, 3, 17, 3, 3, 4, 4, 5, 2, 10, 1, 10, 5, 5, 54, 5, 6, 6, 9, 13, 5, 4, 6, 6, 8, 2, 15, 7, 3, 8, 2, 3, 2, 7, 7, 6, 6, 7, 7, 6, 4, 8, 15, 10, 6, 18, 11, 4, 25, 25, 5, 2, 7, 15, 10, 6, 16, 24, 1, 28, 18, 5, 34]
+--> 278 Methylation Signatures with sizes: [6, 18, 22, 32, 53, 4, 17, 33, 14, 14, 29, 20, 9, 6, 66, 2, 196, 40, 72, 122, 279, 19, 41, 40, 84, 108, 383, 36, 11, 5, 10, 11, 79, 170, 45, 55, 139, 24, 151, 515, 35, 45, 97, 63, 48, 96, 75, 48, 27, 9, 59, 13, 5, 68, 169, 63, 7, 13, 19, 1, 74, 127, 79, 27, 25, 51, 7, 4, 20, 21, 8, 6, 20, 169, 27, 29, 45, 136, 4, 19, 182, 13, 93, 99, 58, 77, 35, 57, 49, 365, 1, 281, 7, 18, 60, 4, 9, 5, 137, 2, 11, 5, 102, 117, 18, 28, 44, 77, 29, 532, 59, 102, 21, 50, 1, 2, 107, 7, 3, 57, 52, 67, 4, 14, 41, 70, 34, 7, 46, 24, 107, 8, 64, 11, 1, 52, 39, 57, 49, 108, 97, 24, 7, 1, 1, 20, 8, 22, 40, 35, 45, 40, 30, 38, 151, 28, 15, 1, 47, 12, 21, 67, 5, 2, 232, 47, 37, 90, 567, 1, 22, 15, 191, 107, 10, 4, 39, 36, 36, 25, 8, 21, 7, 21, 9, 73, 38, 92, 6, 85, 7, 7, 37, 13, 64, 17, 35, 7, 43, 234, 156, 1, 25, 23, 104, 38, 22, 17, 17, 34, 97, 78, 61, 27, 23, 9, 6, 40, 8, 12, 30, 14, 6, 3, 64, 4, 42, 31, 36, 428, 16, 36, 29, 90, 77, 22, 9, 24, 24, 16, 6, 107, 65, 32, 53, 7, 1, 32, 17, 22, 23, 28, 70, 25, 25, 11, 26, 78, 109, 42, 132, 21, 22, 143, 143, 13, 3, 47, 110, 71, 18, 53, 181, 1, 187, 117, 31, 204]
+--> Using 80% training, 20% validation
+
+#################### [16/03/2025 - 03:53:33] - Grid Search #####################
+
+############# Cross Validation with Current Configuration started ##############
+--> alpha: 0.3, dropout: 0.0, gamma: 0.75, lambda: 0.0001, lr: 1e-2, weight_decay: 0.0
+
+###################### [16/03/2025 - 03:53:53] - Fold n°1 ######################
+
+MODEL: SurvPath with Gene Expression & Methylation
+--> Trainable parameters of SurvPath with Gene Expression & Methylation: 41752644
+--> Loss function: CrossEntropySurvivalLoss
+--> Optimizer: adamax
+
+############ [16/03/2025 - 03:53:55] - Training started (Fold n°1) #############
+[16/03/2025 - 03:53:55] - Epoch: 1
