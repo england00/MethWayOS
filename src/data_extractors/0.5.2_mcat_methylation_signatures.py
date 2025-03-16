@@ -39,6 +39,9 @@ METHYLATION_450_FULL_KEYS = 'methylation450_full_keys'
 GENE_EXPRESSION_KEYS_METHYLATION = 'gene_expression_keys_methylation'
 MCAT_SIGNATURES = 'mcat_signatures'
 SURVPATH_SIGNATURES = 'survpath_signatures'
+SURVPATH_PATHWAY_COMBINE_SIGNATURES = 'survpath_pathway_combine_signatures'
+SURVPATH_PATHWAY_HALLMARKS_SIGNATURES = 'survpath_pathway_hallmarks_signatures'
+SURVPATH_PATHWAY_XENA_SIGNATURES = 'survpath_pathway_xena_signatures'
 
 ''' Output Keys '''
 METHYLATION_SIGNATURES_PROMOTERS_27 = 'methylation_signatures_promoters_27'
@@ -50,6 +53,9 @@ METHYLATION_SIGNATURES_FULL_27_FULL = 'methylation_signatures_full_27_full'
 METHYLATION_SIGNATURES_FULL_450 = 'methylation_signatures_full_450'
 METHYLATION_SIGNATURES_FULL_450_FULL = 'methylation_signatures_full_450_full'
 METHYLATION_SIGNATURES_WITH_FUNCTIONAL_GROUPS = 'methylation_signatures_with_functional_group'
+METHYLATION_SIGNATURES_WITH_PATHWAY_COMBINE = 'methylation_signatures_with_pathway_combine'
+METHYLATION_SIGNATURES_WITH_PATHWAY_HALLMARKS = 'methylation_signatures_with_pathway_hallmarks'
+METHYLATION_SIGNATURES_WITH_PATHWAY_XENA = 'methylation_signatures_with_pathway_xena'
 
 
 ## MAIN
