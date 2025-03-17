@@ -244,17 +244,19 @@ class MultimodalDataset(Dataset):
     def __len__(self):
         return len(self.gene_expression)
 
-    def split(self, training_size):
+    def split(self, training_size, patient: str = ''):
         # GENERAL: Ensure training_size is a valid ratio
         if not 0 < training_size < 1:
             raise ValueError("training_size should be a float between 0 and 1.")
 
         # GENERAL: Get unique patients and their corresponding survival class labels
         unique_patients = self.gene_expression['case_id'].unique()
+        if patient and patient in unique_patients:
+            unique_patients = unique_patients[unique_patients != patient]
         patient_survival_class = self.gene_expression.groupby('case_id')['survival_class'].first().loc[unique_patients]
 
         # GENERAL: Perform stratified split
-        training_patients, testing_patients = train_test_split(
+        training_patients, validation_patients = train_test_split(
             unique_patients,
             train_size=training_size,
             stratify=patient_survival_class,
@@ -267,27 +269,34 @@ class MultimodalDataset(Dataset):
         training_data_meth = training_data_meth.set_index('case_id').reindex(training_data_ge['case_id']).reset_index()
 
         # GENERAL: Filter and Reset indices for testing datasets
-        testing_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(testing_patients)].reset_index(drop=True)
-        testing_data_meth = self.methylation[self.methylation['case_id'].isin(testing_patients)].reset_index(drop=True)
-        testing_data_meth = testing_data_meth.set_index('case_id').reindex(testing_data_ge['case_id']).reset_index()
+        validation_data_ge = self.gene_expression[self.gene_expression['case_id'].isin(validation_patients)].reset_index(drop=True)
+        validation_data_meth = self.methylation[self.methylation['case_id'].isin(validation_patients)].reset_index(drop=True)
+        validation_data_meth = validation_data_meth.set_index('case_id').reindex(validation_data_ge['case_id']).reset_index()
 
         # GENERAL: Create new instances of MultimodalDataset with the train and validation data
         training_dataset = MultimodalDataset.from_dataframes(training_data_ge, training_data_meth, self)
-        testing_dataset = MultimodalDataset.from_dataframes(testing_data_ge, testing_data_meth, self)
+        validation_dataset = MultimodalDataset.from_dataframes(validation_data_ge, validation_data_meth, self)
 
-        return training_dataset, testing_dataset
+        return training_dataset, validation_dataset
 
-    def k_fold_split(self, training_dataset, k):
+    def k_fold_split(self, dataset, k, patient: str = ''):
         # GENERAL: Ensure k is a valid ratio
         if k < 2:
             raise ValueError("Number of folds k must be at least 2")
 
         # GENERAL: Extract dataframes from training dataset
-        ge_dataframe = training_dataset.gene_expression
-        meth_dataframe = training_dataset.methylation
+        ge_dataframe = dataset.gene_expression
+        meth_dataframe = dataset.methylation
 
         # GENERAL: Extract unique patient IDs and their corresponding survival class labels
         unique_patients = ge_dataframe['case_id'].unique()
+        testing_set = None
+        if patient and patient in unique_patients:
+            unique_patients = unique_patients[unique_patients != patient]
+            testing_ge = ge_dataframe[ge_dataframe['case_id'] == patient].reset_index(drop=True)
+            testing_meth = meth_dataframe[meth_dataframe['case_id'] == patient].reset_index(drop=True)
+            testing_meth = testing_meth.set_index('case_id').reindex(testing_ge['case_id']).reset_index()
+            testing_set = MultimodalDataset.from_dataframes(testing_ge, testing_meth, self)
         patient_survival_class = ge_dataframe.groupby('case_id')['survival_class'].first().loc[unique_patients]
 
         # GENERAL: Define stratified k-fold split
@@ -318,7 +327,7 @@ class MultimodalDataset(Dataset):
             # GENERAL: Storing current fold
             folds.append((training_fold, validation_fold))
 
-        return folds
+        return folds, testing_set
 
     @classmethod
     def from_dataframes(cls, ge_dataframe, meth_dataframe, original_instance):

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=lucas_job
+#SBATCH --job-name=MCAT
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=271539@studenti.unimore.it
 #SBATCH --account=tesi_linghilterra

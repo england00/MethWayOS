@@ -16,6 +16,7 @@ sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
 from src.surv_path.gene_expression_and_methylation_modules.training import training
 from src.surv_path.gene_expression_and_methylation_modules.validation import validation
+from src.surv_path.gene_expression_and_methylation_modules.testing import testing
 from src.surv_path.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
 from src.surv_path.original_modules.utils import l2_reg
 from src.surv_path.gene_expression_and_methylation_modules.surv_path import SurvPath
@@ -96,6 +97,7 @@ def wandb_init(config):
             'dropout': config['training']['dropout'],
             'classes_number': config['training']['classes_number'],
             'folds': config['training']['folds'],
+            'leave_one_out': config['dataset']['leave_one_out'],
         }
     )
 
@@ -177,7 +179,10 @@ def main(config_path: str):
                             training_loss_list = []
                             validation_c_index_list = []
                             validation_loss_list = []
-                            folds = dataset.k_fold_split(dataset, k=config['training']['folds'])
+                            testing_loader = None
+                            folds, testing_set = dataset.k_fold_split(dataset, k=config['training']['folds'], patient=config['dataset']['leave_one_out'])
+                            if config['dataset']['leave_one_out']:
+                                testing_loader = DataLoader(testing_set, batch_size=config['training']['batch_size'], shuffle=False, num_workers=6, pin_memory=True)
                             for fold_index, (training_fold, validation_fold) in enumerate(folds):
                                 title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Fold n°{fold_index + 1}')
 
@@ -323,6 +328,15 @@ def main(config_path: str):
                                 end_time = time.time()
                                 print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Validation: {end_time - start_time:.0f}s')
                                 title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Validation completed (Fold n°{fold_index + 1})')
+
+                                # Testing with patient
+                                if config['dataset']['leave_one_out']:
+                                    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing started (Fold n°{fold_index + 1})')
+                                    start_time = time.time()
+                                    testing(best_model_state["epoch"] + 1, config, testing_loader, model, config['dataset']['leave_one_out'], process_id, fold_index, testing_set.gene_expression_signatures, testing_set.methylation_signatures, save=True)
+                                    end_time = time.time()
+                                    print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Time elapsed for Testing: {end_time - start_time:.0f}s')
+                                    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing completed (Fold n°{fold_index + 1})')
 
                             ## Final Metrics
                             title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Final Metrics')

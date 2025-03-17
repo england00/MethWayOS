@@ -4,8 +4,6 @@ import numpy as np
 import torch
 import torch.cuda
 from sksurv.metrics import concordance_index_censored
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 ''' VALIDATION DEFINITION '''
@@ -58,18 +56,6 @@ def validation(epoch, config, validation_loader, model, loss_function, reg_funct
         censorships[batch_index] = censorship.item()
         event_times[batch_index] = survival_months.item()
         validation_loss += loss_value + loss_reg
-
-        '''
-        if epoch == 'testing':
-            #print(attention_scores['coattn'])
-
-            tensor_np = attention_scores['coattn'].cpu().numpy()
-
-            plt.figure(figsize=(10, 4))
-            sns.heatmap(tensor_np, cmap="coolwarm", annot=True, fmt=".4f", linewidths=0.5)
-            plt.title("Heatmap del Tensore")
-            plt.show()
-        '''
 
     ''' ############################################## METRICS ##################################################### '''
     # Calculating Loss and Error

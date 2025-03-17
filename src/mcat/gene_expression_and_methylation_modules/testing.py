@@ -1,18 +1,12 @@
 import datetime
 import os
 import torch.cuda
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-'''
- if leave_one_out:
-     save = False
-     if (epoch + 1) % config['training']['output_attn_epoch'] == 0:
-         save = True
-     testing_patient = config['training']['leave_one_out']
-     test(epoch + 1, config, testing_loader, model, testing_patient, save=save)
- '''
 
 ''' TESTING DEFINITION '''
-def test(epoch, config, testing_loader, model, patient, save=False):
+def testing(epoch, config, testing_loader, model, patient, process_id, fold_index, rnaseq_signatures, cpg_signatures, save=False):
     # Initialization
     model.eval()
     now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -28,20 +22,23 @@ def test(epoch, config, testing_loader, model, patient, save=False):
         gene_expression_data = [gene.to(config['device']) for gene in gene_expression_data]
         methylation_data = [island.to(config['device']) for island in methylation_data]
         print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Testing Batch Index: {batch_index}, Survival months: {survival_months.item()}, Survival class: {survival_class.item()}, Censorship: {censorship.item()}')
-
-        # Testing
         with torch.no_grad():
-            hazards, surveys, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data, inference=True)
-            risk = -torch.sum(surveys, dim=1).cpu().numpy()
+            hazards, surv, Y, attention_scores = model(islands=methylation_data, genes=gene_expression_data, inference=True)
+            surv = torch.nan_to_num(surv, nan=0.0)
+            risk = -torch.sum(surv, dim=1).cpu().numpy()
             print(f'--> Hazards: {hazards}')
-            print(f'--> Surveys: {surveys}')
+            print(f'--> Surveys: {surv}')
             print(f'--> Risk: {risk}')
             print(f'--> Y: {Y}')
-            print(f'--> Attention Min: {attention_scores["coattn"].min()}, Attention Max: {attention_scores["coattn"].max()}, Attention Mean: {attention_scores["coattn"].mean()}')
+            print(f'--> Co-Attention Min: {attention_scores["coattn"].min()}, Co-Attention Max: {attention_scores["coattn"].max()}, Co-Attention Mean: {attention_scores["coattn"].mean()}')
 
             # Saving Model
             if save:
-                os.makedirs(f"./{config['training']['test_output_dir']}", exist_ok=True)
-                output_file = os.path.join(config['training']['test_output_dir'], f'ATTN_{config["model"]["name"]}_{patient}_{now}_E{epoch}_{batch_index}.pt')
-                print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Saving attention in {output_file}')
-                torch.save(attention_scores['coattn'], output_file)
+                tensor_np = attention_scores['coattn'].cpu().numpy()
+                plt.figure(figsize=(10, 4))
+                sns.heatmap(tensor_np, cmap="coolwarm", annot=True, fmt=".4f", linewidths=0.5, xticklabels=cpg_signatures, yticklabels=rnaseq_signatures)
+                plt.title("Co-Attention Heatmap")
+                os.makedirs(config['training']['test_output_dir'], exist_ok=True)
+                plt.savefig(os.path.join(config['training']['test_output_dir'], f'{patient}_{process_id}_{fold_index}.png'), dpi=300, bbox_inches="tight")
+                torch.save(attention_scores['coattn'], os.path.join(config['training']['test_output_dir'], f'{patient}_{process_id}_{fold_index}.pt'))
+                print(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - Saving Co-Attention matrix in {os.path.join(config["training"]["test_output_dir"], f"{patient}_{process_id}_{fold_index}.pt")}')

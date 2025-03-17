@@ -34,6 +34,8 @@ dataset:
   standardize: True
   # Random Seed
   random_seed: 42
+  # ID of the patient to use as test. Set ~ if testing a patient is not needed
+  leave_one_out: 6a186809-3422-41d0-83d2-867145830936
 
 # Model configuration
 model:
@@ -63,9 +65,9 @@ training:
   # Dropout
   dropout: [0.0, 0.125, 0.25]
   # How many epochs of training
-  epochs: 100
+  epochs: 1
   # Patience during training
-  early_stopping_patience: 10
+  early_stopping_patience: 1
   # Folds Number
   folds: 5
   # Coefficient used in exponential lr scheduling
@@ -85,7 +87,7 @@ training:
   # Scheduler for learning rate [~, exp]
   scheduler: exp
   # Directory in which attention outputs will be saved
-  test_output_dir: outputs/
+  test_output_dir: ../../src/surv_path/checkpoints/outputs/
   # Train size ratio
   train_size: 0.8
   # Weight decay
