@@ -44,8 +44,8 @@ def testing(epoch, config, testing_loader, model, patient, process_id, fold_inde
             if save:
                 '''RNA-Seq Self-Attention'''
                 tensor_np = attention_scores['self_attention_rnaseq'].cpu().numpy()
-                plt.figure(figsize=(10, 4))
-                sns.heatmap(tensor_np, cmap="coolwarm", annot=True, fmt=".4f", linewidths=0.5)
+                plt.figure(figsize=(12, 8))
+                sns.heatmap(tensor_np, cmap="coolwarm", annot=False, fmt=".4f", linewidths=0.2, xticklabels=rnaseq_signatures, yticklabels=rnaseq_signatures)
                 plt.title("RNA-Seq Self-Attention Heatmap")
                 os.makedirs(config['training']['test_output_dir'], exist_ok=True)
                 plt.savefig(os.path.join(config['training']['test_output_dir'], f'RNA_Seq_Self_Attention_{patient}_{process_id}_{fold_index}.png'), dpi=300, bbox_inches="tight")
@@ -54,8 +54,8 @@ def testing(epoch, config, testing_loader, model, patient, process_id, fold_inde
 
                 '''RNA-Seq Cross-Attention'''
                 tensor_np = attention_scores['cross_attention_rnaseq'].cpu().numpy()
-                plt.figure(figsize=(10, 4))
-                sns.heatmap(tensor_np, cmap="coolwarm", annot=True, fmt=".4f", linewidths=0.5)
+                plt.figure(figsize=(12, 8))
+                sns.heatmap(tensor_np, cmap="coolwarm", annot=False, fmt=".4f", linewidths=0.2, xticklabels=cpg_signatures, yticklabels=rnaseq_signatures)
                 plt.title("RNA-Seq Cross-Attention Heatmap")
                 os.makedirs(config['training']['test_output_dir'], exist_ok=True)
                 plt.savefig(os.path.join(config['training']['test_output_dir'], f'RNA_Seq_Cross_Attention_{patient}_{process_id}_{fold_index}.png'), dpi=300, bbox_inches="tight")
@@ -64,8 +64,8 @@ def testing(epoch, config, testing_loader, model, patient, process_id, fold_inde
 
                 '''CpG Sites Cross-Attention'''
                 tensor_np = attention_scores['cross_attention_meth'].cpu().numpy()
-                plt.figure(figsize=(10, 4))
-                sns.heatmap(tensor_np, cmap="coolwarm", annot=True, fmt=".4f", linewidths=0.5)
+                plt.figure(figsize=(12, 8))
+                sns.heatmap(tensor_np, cmap="coolwarm", annot=False, fmt=".4f", linewidths=0.2, xticklabels=rnaseq_signatures, yticklabels=cpg_signatures)
                 plt.title("CpG Sites Cross-Attention Heatmap")
                 os.makedirs(config['training']['test_output_dir'], exist_ok=True)
                 plt.savefig(os.path.join(config['training']['test_output_dir'], f'CpG_Sites_Cross_Attention_{patient}_{process_id}_{fold_index}.png'), dpi=300, bbox_inches="tight")
