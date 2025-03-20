@@ -44,11 +44,11 @@ def process_patient(meth_patient, os_datastore, meth_keys):
             buffer = [meth_patient['info']['case_id']]
             # Survival Months
             if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
-                buffer.append(round(float(patient['last_check']['days_to_death']) / 12, 2))  # Adding 'survival_months'
+                buffer.append(round(float(patient['last_check']['days_to_death']) / 30, 2))  # Adding 'survival_months'
                 buffer.append(0.0)  # Adding 'censorship'
             else:  # ALIVE cases
                 buffer.append(
-                    round(float(patient['last_check']['days_to_last_followup']) / 12, 2))  # Adding 'survival_months'
+                    round(float(patient['last_check']['days_to_last_followup']) / 30, 2))  # Adding 'survival_months'
                 buffer.append(1.0)  # Adding 'censorship'
             # Methylation Islands
             for key in meth_keys:
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     table_paths = yaml_loader(TABLE_PATHS_YAML)
 
     # Storing data from JSON datastores
-    methylation_datastore = json_loader(datastore_paths[METHYLATION_FULL_450])
+    methylation_datastore = json_loader(datastore_paths[GENE_ASSOCIATED_METHYLATION_450])
     overall_survival_datastore = json_loader(datastore_paths[OVERALL_SURVIVAL])
 
     # Creating the dataset with METHYLATION as feature vector and OVERALL SURVIVAL as label
@@ -98,12 +98,12 @@ if __name__ == "__main__":
     print(f"Loaded {len(dataset)} samples")
 
     # Storing dataset inside a CSV file
-    csv_storer(table_paths[METHYLATION_450_FULL_KEYS], methylation_keys, ["methylation_island"], keys_mode=True)
+    csv_storer(table_paths[METHYLATION_450_KEYS], methylation_keys, ["methylation_island"], keys_mode=True)
     # csv_storer(dataset_paths[METHYLATION_450_FULL_MCAT], dataset)
     methylation_keys = (['case_id', 'survival_months', 'censorship'] + [key + '_meth' for key in methylation_keys])
     dataframe = pd.DataFrame(dataset, columns=methylation_keys)
-    dataframe.to_csv(dataset_paths[METHYLATION_450_FULL_MCAT], index=True)
-    print(f"Data has been correctly saved inside {dataset_paths[METHYLATION_450_FULL_MCAT]} file")
+    dataframe.to_csv(dataset_paths[METHYLATION_450_MCAT], index=True)
+    print(f"Data has been correctly saved inside {dataset_paths[METHYLATION_450_MCAT]} file")
 
     # Close LOG file
     sys.stdout = sys.__stdout__

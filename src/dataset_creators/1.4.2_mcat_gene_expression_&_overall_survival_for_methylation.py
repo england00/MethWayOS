@@ -33,10 +33,10 @@ def process_patient(ge_patient, os_datastore, ge_keys):
             buffer = [ge_patient['info']['case_id']]
             # Survival Months
             if patient['last_check']['vital_status'] == 'Dead':  # DEAD cases
-                buffer.append(round(float(patient['last_check']['days_to_death']) / 12, 2))  # Adding 'survival_months'
+                buffer.append(round(float(patient['last_check']['days_to_death']) / 30, 2))  # Adding 'survival_months'
                 buffer.append(0.0)  # Adding 'censorship'
             else:  # ALIVE cases
-                buffer.append(round(float(patient['last_check']['days_to_last_followup']) / 12, 2))  # Adding 'survival_months'
+                buffer.append(round(float(patient['last_check']['days_to_last_followup']) / 30, 2))  # Adding 'survival_months'
                 buffer.append(1.0)  # Adding 'censorship'
             # Gene Expression RNASeq
             for key in ge_keys:
