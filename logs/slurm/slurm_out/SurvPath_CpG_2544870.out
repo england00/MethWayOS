@@ -1,0 +1,95 @@
+Environment conda activated
+Job 2544870 started
+
+################## [20/03/2025 - 22:57:34] - SurvPath started ##################
+HOSTNAME: gervasoni
+
+WANDB: setting up for report
+
+CUDA: available
+--> Device count: 1
+--> Using device: Quadro RTX 5000
+--> Running on CUDA
+
+DATASET: Loading data
+--> Gene Expression loaded
+--> Methylation loaded
+--> Remaining samples after removing incomplete: 742
+--> Class intervals:  survival_months
+[12, 36) --> Medium Risk    376
+[60, inf) --> No Risk       141
+[36, 60) --> Low Risk       116
+[0, 12) --> High Risk       109
+Name: count, dtype: int64
+--> Standardizing RNA-seq data
+--> Standardizing Methylation Islands columns from 0 to 10000
+--> Standardizing Methylation Islands columns from 10000 to 20000
+--> Standardizing Methylation Islands columns from 20000 to 30000
+--> Standardizing Methylation Islands columns from 30000 to 33161
+--> Processing Methylation Islands columns from 0 to 10000
+--> Processing Methylation Islands columns from 10000 to 20000
+--> Processing Methylation Islands columns from 20000 to 30000
+--> Processing Methylation Islands columns from 30000 to 33161
+--> RNA-seq loaded
+--> Methylation loaded
+--> 281 Gene Expression Signatures with sizes: [2, 5, 8, 3, 3, 1, 4, 4, 4, 3, 4, 9, 3, 2, 13, 1, 27, 11, 13, 17, 32, 4, 4, 5, 9, 14, 50, 6, 2, 2, 2, 2, 11, 29, 18, 10, 17, 11, 18, 63, 4, 6, 14, 10, 10, 12, 2, 9, 4, 3, 2, 9, 5, 2, 11, 20, 7, 2, 3, 3, 1, 17, 19, 12, 2, 4, 14, 1, 1, 13, 5, 4, 5, 2, 20, 4, 6, 10, 25, 1, 4, 25, 4, 14, 14, 4, 7, 10, 10, 10, 49, 1, 28, 1, 2, 9, 2, 10, 3, 44, 1, 1, 2, 2, 17, 17, 4, 2, 8, 8, 4, 64, 8, 17, 9, 9, 2, 3, 15, 3, 2, 9, 11, 14, 1, 4, 6, 19, 4, 1, 5, 3, 14, 2, 11, 2, 2, 10, 8, 10, 10, 13, 11, 6, 2, 2, 2, 3, 3, 3, 5, 5, 5, 5, 6, 3, 18, 10, 5, 2, 9, 1, 12, 14, 2, 1, 32, 8, 8, 16, 69, 2, 6, 5, 23, 23, 4, 2, 5, 3, 3, 3, 2, 4, 2, 3, 3, 7, 3, 19, 4, 1, 20, 3, 7, 6, 3, 9, 9, 11, 2, 5, 38, 21, 1, 4, 1, 15, 8, 6, 5, 2, 10, 14, 10, 6, 4, 4, 4, 3, 17, 3, 3, 4, 4, 5, 2, 10, 1, 10, 5, 5, 54, 5, 6, 6, 9, 13, 5, 4, 6, 6, 8, 2, 15, 7, 3, 8, 2, 3, 2, 7, 7, 6, 6, 7, 7, 6, 4, 8, 15, 10, 6, 18, 11, 4, 25, 25, 5, 2, 7, 15, 10, 6, 16, 24, 1, 28, 18, 5, 34]
+--> 278 Methylation Signatures with sizes: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+--> Using 80% training, 20% validation
+
+#################### [20/03/2025 - 22:58:20] - Grid Search #####################
+
+############# Cross Validation with Current Configuration started ##############
+--> alpha: 0.3, dropout: 0.0, gamma: 0.95, lambda: 0.0, lr: 1e-3, weight_decay: 0.0
+
+###################### [20/03/2025 - 22:58:41] - Fold n°1 ######################
+
+MODEL: SurvPath with Gene Expression & Methylation
+--> Trainable parameters of SurvPath with Gene Expression & Methylation: 19431236
+--> Loss function: CrossEntropySurvivalLoss
+--> Optimizer: adamax
+
+############ [20/03/2025 - 22:58:43] - Training started (Fold n°1) #############
+[20/03/2025 - 22:58:43] - Epoch: 1
+--> Batch: 49, Loss: 0.1879, Label: 1, Survival Months: 16.27, Risk: -2.5228
+	--> Average Speed: 0.71s per batch
+	--> Time from Last Check: 22.59s
+--> Batch: 99, Loss: 0.3774, Label: 3, Survival Months: 109.43, Risk: -3.1743
+	--> Average Speed: 0.60s per batch
+	--> Time from Last Check: 19.10s
+--> Batch: 149, Loss: 0.0462, Label: 1, Survival Months: 20.37, Risk: -3.4907
+	--> Average Speed: 0.60s per batch
+	--> Time from Last Check: 19.07s
+--> Batch: 199, Loss: 0.3124, Label: 3, Survival Months: 171.87, Risk: -3.3515
+	--> Average Speed: 0.65s per batch
+	--> Time from Last Check: 20.87s
+--> Batch: 249, Loss: 0.3374, Label: 3, Survival Months: 60.23, Risk: -3.0353
+	--> Average Speed: 0.61s per batch
+	--> Time from Last Check: 19.50s
+--> Batch: 299, Loss: 1.9672, Label: 2, Survival Months: 54.97, Risk: -3.2942
+	--> Average Speed: 0.63s per batch
+	--> Time from Last Check: 20.18s
+--> Batch: 349, Loss: 0.0648, Label: 1, Survival Months: 21.97, Risk: -3.4048
+	--> Average Speed: 0.59s per batch
+	--> Time from Last Check: 19.02s
+--> Batch: 399, Loss: 0.1146, Label: 2, Survival Months: 52.83, Risk: -3.3929
+	--> Average Speed: 0.59s per batch
+	--> Time from Last Check: 18.99s
+--> Batch: 449, Loss: 0.0629, Label: 1, Survival Months: 21.57, Risk: -3.3175
+	--> Average Speed: 0.60s per batch
+	--> Time from Last Check: 19.34s
+--> Batch: 499, Loss: 0.3071, Label: 3, Survival Months: 67.77, Risk: -3.3163
+	--> Average Speed: 0.62s per batch
+	--> Time from Last Check: 19.76s
+--> Batch: 549, Loss: 0.0745, Label: 1, Survival Months: 14.43, Risk: -3.3332
+	--> Average Speed: 0.63s per batch
+	--> Time from Last Check: 20.16s
+[20/03/2025 - 23:02:40] - Epoch: 1, lr: 0.00100000, training_loss: 0.3821, training_c_index: 0.5017
+[20/03/2025 - 23:03:16] - Epoch: 1, validation_loss: 0.2932, validation_c_index: 0.4891
+--> New BEST Validation Score: 0.4860, validation_loss: 0.2932, validation_c_index: 0.4891, training_loss: 0.3821, training_c_index: 0.5017
+--> Current BEST Score: 0.4860
+	--> validation_loss: 0.2932
+	--> validation_c_index: 0.4891
+	--> training_loss: 0.3821
+	--> training_c_index: 0.5017
+[20/03/2025 - 23:03:17] - Time elapsed for epoch 1: 274s
+[20/03/2025 - 23:03:17] - Epoch: 2
