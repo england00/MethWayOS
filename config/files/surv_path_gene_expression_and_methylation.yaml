@@ -13,13 +13,13 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA-GE-ME
   # CSV Gene Expression main dataset
-  gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset.csv
+  gene_expression: ../../data/datasets/MCAT_gene_expression_and_overall_survival_dataset_GBMLGG.csv
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/survpath_pathway_xena_signatures.csv
   # Gene Expression correlation threshold with label
   gene_expression_correlation_threshold: 0.0
   # CSV Methylation secondary dataset
-  methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset.csv
+  methylation: ../../data/datasets/MCAT_methylation450_and_overall_survival_dataset_GBMLGG.csv
   # Methylation signatures
   methylation_signatures: ../../data/signatures/methylation_signatures_with_pathway_xena.csv
   # Methylation Islands correlation threshold with label
@@ -57,7 +57,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.3]
+  alpha: [0.4]
   # Batch size
   batch_size: 1
   # Classes Number. Default is 4
