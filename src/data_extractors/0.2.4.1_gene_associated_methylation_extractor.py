@@ -12,7 +12,7 @@ DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
+CANCER_TYPE = 'KIRCKIRP'   # [BRCA, GBMLGG, LUADLUST, KIRCKIRP]
 
 ''' Input Data '''
 MCAT_SELECTED_METHYLATION_ISLANDS = 'MCAT_selected_methylation_islands'
@@ -78,7 +78,7 @@ if __name__ == "__main__":
                 buffer.append({'case_id': patient['cases'][0]['case_id'],
                                'file_name': patient['file_name'],
                                'file_id': patient['file_id']})
-        elif CANCER_TYPE == 'GBMLGG':
+        elif CANCER_TYPE == 'GBMLGG' or CANCER_TYPE == 'LUADLUST' or CANCER_TYPE == 'KIRCKIRP':
             if patient['associated_entities'][0]['case_id'] in case_ids:
                 buffer.append({'case_id': patient['associated_entities'][0]['case_id'],
                                'file_name': patient['file_name'],

@@ -65,7 +65,7 @@ def detect_namespace_gbmlgg(root):
     elif root.tag.startswith("{http://tcga.nci/bcr/xml/clinical/lgg/"):
         return "lgg"
     else:
-        raise GeneralError("Unsupported XML format")
+        raise ValueError("Unsupported XML format")
 
 
 def namespaces_gbmlgg(ns):
@@ -84,38 +84,173 @@ def namespaces_gbmlgg(ns):
     }
 
 
-def followup_versions_gbmlgg(spaces, patient, ns):
-    versions = ['follow_up_v1.0']
-    for item in versions:
-        if patient.find(f'{ns}:follow_ups/{item}:follow_up/clin_shared:vital_status', spaces) is not None:
-            return item
-
-
-def data_store_gbmlgg(path, root, ns):
-    if root.find(f'{ns}:patient', namespaces_gbmlgg(ns)) is None:
+def get_latest_followup_version_gbmlgg(spaces, patient, ns):
+    followups = patient.findall(f'{ns}:follow_ups/follow_up_v1.0:follow_up', spaces)
+    if not followups:
         return None
-    patient_element = root.find(f'{ns}:patient', namespaces_gbmlgg(ns))
-    version = followup_versions_gbmlgg(namespaces_gbmlgg(ns), patient_element, ns)
 
-    if version:
+    dead_followups = [f for f in followups if f.find('clin_shared:vital_status', spaces).text == "Dead"]
+    if dead_followups:
+        return max(dead_followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+    return max(followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+
+def data_store_gbmlgg(path, root):
+    ns = detect_namespace_gbmlgg(root)
+    namespaces = namespaces_gbmlgg(ns)
+
+    patient_element = root.find(f'{ns}:patient', namespaces)
+    if patient_element is None:
+        return None
+
+    latest_followup = get_latest_followup_version_gbmlgg(namespaces, patient_element, ns)
+
+    if latest_followup:
         last_check = {
-            'vital_status': patient_element.find(f'{ns}:follow_ups/{version}:follow_up/clin_shared:vital_status',
-                                                 namespaces_gbmlgg(ns)).text,
-            'days_to_last_followup': patient_element.find(
-                f'{ns}:follow_ups/{version}:follow_up/clin_shared:days_to_last_followup', namespaces_gbmlgg(ns)).text,
-            'days_to_death': patient_element.find(f'{ns}:follow_ups/{version}:follow_up/clin_shared:days_to_death',
-                                                  namespaces_gbmlgg(ns)).text,
+            'vital_status': latest_followup.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': latest_followup.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': latest_followup.find('clin_shared:days_to_death', namespaces).text,
         }
     else:
         last_check = {
-            'vital_status': patient_element.find('clin_shared:vital_status', namespaces_gbmlgg(ns)).text,
-            'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup', namespaces_gbmlgg(ns)).text,
-            'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces_gbmlgg(ns)).text,
+            'vital_status': patient_element.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces).text,
         }
 
     return {'info': path, 'last_check': last_check}
 
 
+## LUAD & LUSC
+def detect_namespace_luadlusc(root):
+    if root.tag.startswith("{http://tcga.nci/bcr/xml/clinical/lusc/"):
+        return "lusc"
+    elif root.tag.startswith("{http://tcga.nci/bcr/xml/clinical/luad/"):
+        return "luad"
+    else:
+        raise ValueError("Unsupported XML format")
+
+
+def namespaces_luadlusc(ns):
+    base_url = f"http://tcga.nci/bcr/xml/clinical/{ns}/2.7"
+    return {
+        'admin': 'http://tcga.nci/bcr/xml/administration/2.7',
+        ns: base_url,
+        f'{ns}_nte': f'{base_url}/shared/new_tumor_event/2.7/1.0',
+        'clin_shared': 'http://tcga.nci/bcr/xml/clinical/shared/2.7',
+        'nte': 'http://tcga.nci/bcr/xml/clinical/shared/new_tumor_event/2.7',
+        'rad': 'http://tcga.nci/bcr/xml/clinical/radiation/2.7',
+        'rx': 'http://tcga.nci/bcr/xml/clinical/pharmaceutical/2.7',
+        'shared': 'http://tcga.nci/bcr/xml/shared/2.7',
+        'follow_up_v1.0': f'{base_url}/followup/2.7/1.0',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    }
+
+
+def get_latest_followup_version_luadlusc(spaces, patient, ns):
+    followups = patient.findall(f'{ns}:follow_ups/follow_up_v1.0:follow_up', spaces)
+    if not followups:
+        return None
+
+    dead_followups = [f for f in followups if f.find('clin_shared:vital_status', spaces).text == "Dead"]
+    if dead_followups:
+        return max(dead_followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+    return max(followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+
+def data_store_luadlusc(path, root):
+    ns = detect_namespace_luadlusc(root)
+    namespaces = namespaces_luadlusc(ns)
+
+    if root.find(f'{ns}:patient', namespaces) is None:
+        return None
+
+    patient_element = root.find(f'{ns}:patient', namespaces)
+    latest_followup = get_latest_followup_version_luadlusc(namespaces, patient_element, ns)
+
+    if latest_followup:
+        last_check = {
+            'vital_status': latest_followup.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': latest_followup.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': latest_followup.find('clin_shared:days_to_death', namespaces).text,
+        }
+    else:
+        last_check = {
+            'vital_status': patient_element.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces).text,
+        }
+
+    return {'info': path, 'last_check': last_check}
+
+
+## KIRC & KIRP
+def detect_namespace_kirckirp(root):
+    if root.tag.startswith("{http://tcga.nci/bcr/xml/clinical/kirc/"):
+        return "kirc"
+    elif root.tag.startswith("{http://tcga.nci/bcr/xml/clinical/kirp/"):
+        return "kirp"
+    else:
+        raise ValueError("Unsupported XML format")
+
+
+def namespaces_kirckirp(ns):
+    base_url = f"http://tcga.nci/bcr/xml/clinical/{ns}/2.7"
+    return {
+        'admin': 'http://tcga.nci/bcr/xml/administration/2.7',
+        ns: base_url,
+        f'{ns}_nte': f'{base_url}/shared/new_tumor_event/2.7/1.0',
+        'clin_shared': 'http://tcga.nci/bcr/xml/clinical/shared/2.7',
+        'nte': 'http://tcga.nci/bcr/xml/clinical/shared/new_tumor_event/2.7',
+        'rad': 'http://tcga.nci/bcr/xml/clinical/radiation/2.7',
+        'rx': 'http://tcga.nci/bcr/xml/clinical/pharmaceutical/2.7',
+        'shared': 'http://tcga.nci/bcr/xml/shared/2.7',
+        'follow_up_v1.0': f'{base_url}/followup/2.7/1.0',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    }
+
+
+def get_latest_followup_version_kirckirp(spaces, patient, ns):
+    followups = patient.findall(f'{ns}:follow_ups/follow_up_v1.0:follow_up', spaces)
+    if not followups:
+        return None
+
+    dead_followups = [f for f in followups if f.find('clin_shared:vital_status', spaces).text == "Dead"]
+    if dead_followups:
+        return max(dead_followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+    return max(followups, key=lambda f: int(f.find('clin_shared:days_to_last_followup', spaces).text or "0"))
+
+
+def data_store_kirckirp(path, root):
+    ns = detect_namespace_kirckirp(root)
+    namespaces = namespaces_kirckirp(ns)
+
+    patient_element = root.find(f'{ns}:patient', namespaces)
+    if patient_element is None:
+        return None
+
+    latest_followup = get_latest_followup_version_kirckirp(namespaces, patient_element, ns)
+
+    if latest_followup:
+        last_check = {
+            'vital_status': latest_followup.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': latest_followup.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': latest_followup.find('clin_shared:days_to_death', namespaces).text,
+        }
+    else:
+        last_check = {
+            'vital_status': patient_element.find('clin_shared:vital_status', namespaces).text,
+            'days_to_last_followup': patient_element.find('clin_shared:days_to_last_followup', namespaces).text,
+            'days_to_death': patient_element.find('clin_shared:days_to_death', namespaces).text,
+        }
+
+    return {'info': path, 'last_check': last_check}
+
+
+## GENERAL XML LOADER
 def xml_loader(path, cancer_type: str = "BRCA"):
     """
         :param cancer_type:
@@ -129,9 +264,14 @@ def xml_loader(path, cancer_type: str = "BRCA"):
             print(f"Data has been correctly loaded from {path} file")
             return data_store_brca(path, root)
         elif cancer_type == "GBMLGG":
-            ns = detect_namespace_gbmlgg(root)
             print(f"Data has been correctly loaded from {path} file")
-            return data_store_gbmlgg(path, root, ns)
+            return data_store_gbmlgg(path, root)
+        elif cancer_type == "LUADLUST":
+            print(f"Data has been correctly loaded from {path} file")
+            return data_store_luadlusc(path, root)
+        elif cancer_type == "KIRCKIRP":
+            print(f"Data has been correctly loaded from {path} file")
+            return data_store_kirckirp(path, root)
     except FileNotFoundError as e:
         logging.error(str(e))
         raise GeneralError(f"{path} file doesn't exist") from None

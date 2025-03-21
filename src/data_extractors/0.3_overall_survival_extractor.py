@@ -13,7 +13,7 @@ DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
+CANCER_TYPE = 'KIRCKIRP'   # [BRCA, GBMLGG, LUADLUST, KIRCKIRP]
 
 ''' Input Data & Output Datastore '''
 OVERALL_SURVIVAL = 'overall_survival'
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     for item in overall_survival_list:
         if CANCER_TYPE == 'BRCA':
             buffer.append({'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
-        elif CANCER_TYPE == 'GBMLGG':
+        elif CANCER_TYPE == 'GBMLGG' or CANCER_TYPE == 'LUADLUST' or CANCER_TYPE == 'KIRCKIRP':
             buffer.append({'case_id': item['associated_entities'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
     overall_survival_list = buffer
 

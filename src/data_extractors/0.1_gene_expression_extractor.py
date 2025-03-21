@@ -14,7 +14,7 @@ DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
-CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
+CANCER_TYPE = 'KIRCKIRP'   # [BRCA, GBMLGG, LUADLUST, KIRCKIRP]
 
 ''' Input Data'''
 GENE_EXPRESSION = 'gene_expression'  # Also Output
@@ -98,7 +98,7 @@ if __name__ == "__main__":
                 buffer.append({'case_id': dictionary['cases'][0]['case_id'],
                                'file_name': dictionary['file_name'],
                                'file_id': dictionary['file_id']})
-        elif CANCER_TYPE == 'GBMLGG':
+        elif CANCER_TYPE == 'GBMLGG' or CANCER_TYPE == 'LUADLUST' or CANCER_TYPE == 'KIRCKIRP':
             if dictionary['associated_entities'][0]['case_id'] in case_ids:
                 buffer.append({'case_id': dictionary['associated_entities'][0]['case_id'],
                                'file_name': dictionary['file_name'],
