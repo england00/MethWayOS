@@ -12,8 +12,10 @@ DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
 
 ''' Input Data '''
+MCAT_SELECTED_METHYLATION_ISLANDS = 'MCAT_selected_methylation_islands'
 METHYLATION = 'methylation'
 METHYLATION_NAMES = 'methylation_names'
 OVERALL_SURVIVAL = 'overall_survival'
@@ -71,10 +73,16 @@ if __name__ == "__main__":
     methylation_list = json_loader(json_paths[METHYLATION])
     buffer = []
     for patient in methylation_list:
-        if patient['cases'][0]['case_id'] in case_ids:
-            buffer.append({'case_id': patient['cases'][0]['case_id'],
-                           'file_name': patient['file_name'],
-                           'file_id': patient['file_id']})
+        if CANCER_TYPE == 'BRCA':
+            if patient['cases'][0]['case_id'] in case_ids:
+                buffer.append({'case_id': patient['cases'][0]['case_id'],
+                               'file_name': patient['file_name'],
+                               'file_id': patient['file_id']})
+        elif CANCER_TYPE == 'GBMLGG':
+            if patient['associated_entities'][0]['case_id'] in case_ids:
+                buffer.append({'case_id': patient['associated_entities'][0]['case_id'],
+                               'file_name': patient['file_name'],
+                               'file_id': patient['file_id']})
     methylation_list = buffer
 
     # Removing duplicates, taking only one case_id for each-one
@@ -89,7 +97,7 @@ if __name__ == "__main__":
     methylation_list = buffer
 
     # Searching only TXT paths with the right 'case_id', also selecting some chosen islands to store
-    dictionary_selected_methylation_islands = json_loader(datastore_paths[SELECTED_METHYLATION_ISLANDS_FULL])
+    dictionary_selected_methylation_islands = json_loader(datastore_paths[MCAT_SELECTED_METHYLATION_ISLANDS])
     i = 0
     methylation_datastore = []
     for path in directory_loader(directories_paths[METHYLATION]):
@@ -106,7 +114,7 @@ if __name__ == "__main__":
     methylation_datastore = common_keys_filter(methylation_datastore)
 
     # Storing the datastore inside a JSON file
-    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_BINARY_CLASSIFICATION], methylation_datastore)
+    json_storer(datastore_paths[GENE_ASSOCIATED_METHYLATION_450], methylation_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

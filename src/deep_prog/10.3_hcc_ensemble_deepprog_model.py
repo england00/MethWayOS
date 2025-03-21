@@ -12,7 +12,7 @@ TSV_FILES = OrderedDict([
     ('METH', 'DeepProg_methylation.tsv'),
     ('RNA', 'DeepProg_gene_expression.tsv'),
 ])
-assert(isfile(PATH_DATA + "DeepProg_hcc_survival.tsv"))
+assert(isfile(PATH_DATA + "DeepProg_overall_survival.tsv"))
 SURVIVAL_TSV = 'DeepProg_overall_survival.tsv'
 PROJECT_NAME = 'test_hcc_stacked'
 EPOCHS = 10             # Autoencoder epochs. Other hyperparameters can be fine-tuned

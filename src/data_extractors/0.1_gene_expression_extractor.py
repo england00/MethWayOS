@@ -14,12 +14,16 @@ DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
 TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
+CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
 
 ''' Input Data'''
 GENE_EXPRESSION = 'gene_expression'  # Also Output
 GENE_EXPRESSION_TSS = 'gene_expression_tss'
 GENE_EXPRESSION_TSS_NAMES = 'gene_expression_tss_names'
 OVERALL_SURVIVAL = 'overall_survival'
+
+''' Output Datastore '''
+GENE_EXPRESSION_MCAT = 'gene_expression_MCAT'
 
 
 ## FUNCTIONS
@@ -89,10 +93,16 @@ if __name__ == "__main__":
     gene_expression_list = json_loader(json_paths[GENE_EXPRESSION])
     buffer = []
     for dictionary in gene_expression_list:
-        if dictionary['cases'][0]['case_id'] in case_ids:
-            buffer.append({'case_id': dictionary['cases'][0]['case_id'],
-                           'file_name': dictionary['file_name'],
-                           'file_id': dictionary['file_id']})
+        if CANCER_TYPE == 'BRCA':
+            if dictionary['cases'][0]['case_id'] in case_ids:
+                buffer.append({'case_id': dictionary['cases'][0]['case_id'],
+                               'file_name': dictionary['file_name'],
+                               'file_id': dictionary['file_id']})
+        elif CANCER_TYPE == 'GBMLGG':
+            if dictionary['associated_entities'][0]['case_id'] in case_ids:
+                buffer.append({'case_id': dictionary['associated_entities'][0]['case_id'],
+                               'file_name': dictionary['file_name'],
+                               'file_id': dictionary['file_id']})
     gene_expression_list = buffer
 
     # Removing duplicates, taking only one case_id for each-one
@@ -121,7 +131,7 @@ if __name__ == "__main__":
     print(f"Loaded {i} paths")
 
     # Storing the datastore inside a JSON file
-    json_storer(datastore_paths[GENE_EXPRESSION], gene_expression_datastore)
+    json_storer(datastore_paths[GENE_EXPRESSION_MCAT], gene_expression_datastore)
 
     # Close LOG file
     sys.stdout = sys.__stdout__

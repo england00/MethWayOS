@@ -32,6 +32,7 @@ def standard_scale_dataframe(df):
     cols_to_scale = [col for col in df.columns if col != "Samples"]
     scaler = StandardScaler()
     df[cols_to_scale] = scaler.fit_transform(df[cols_to_scale])
+    df[cols_to_scale] = df[cols_to_scale].round(4)
 
     return df
 

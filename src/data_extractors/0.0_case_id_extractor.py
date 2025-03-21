@@ -9,6 +9,7 @@ from logs.methods.log_storer import *
 ''' General '''
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
 
 ''' Input JSON file'''
 GENE_EXPRESSION = 'gene_expression'
@@ -70,8 +71,11 @@ if __name__ == "__main__":
     for file in data:
         buffer = []
         for item in data[file]:
-            buffer.append(
-                {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
+            if CANCER_TYPE == 'BRCA':
+                buffer.append({'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'],
+                               'file_id': item['file_id']})
+            elif CANCER_TYPE == 'GBMLGG':
+                buffer.append({'case_id': item['associated_entities'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
         data[file] = buffer
 
     # Printing data

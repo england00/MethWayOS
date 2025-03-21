@@ -8,11 +8,12 @@ from logs.methods.log_storer import *
 
 ## CONFIGURATION
 ''' General '''
-ALIVE_THRESHOLD = 1825  # NOTE: 1825 days with MLP, 0 with MCAT
+ALIVE_THRESHOLD = 0  # NOTE: 1825 days with MLP, 0 with MCAT
 DATASTORE_PATHS_YAML = '../../config/paths/datastore_paths.yaml'
 DIRECTORIES_PATHS_YAML = '../../config/paths/directories_paths.yaml'
 JSON_PATHS_YAML = '../../config/paths/json_paths.yaml'
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
+CANCER_TYPE = 'GBMLGG'   # [BRCA, GBMLGG]
 
 ''' Input Data & Output Datastore '''
 OVERALL_SURVIVAL = 'overall_survival'
@@ -34,8 +35,10 @@ if __name__ == "__main__":
     overall_survival_list = json_loader(json_paths[OVERALL_SURVIVAL])
     buffer = []
     for item in overall_survival_list:
-        buffer.append(
-            {'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
+        if CANCER_TYPE == 'BRCA':
+            buffer.append({'case_id': item['cases'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
+        elif CANCER_TYPE == 'GBMLGG':
+            buffer.append({'case_id': item['associated_entities'][0]['case_id'], 'file_name': item['file_name'], 'file_id': item['file_id']})
     overall_survival_list = buffer
 
     # Loading all the XML paths
@@ -43,16 +46,18 @@ if __name__ == "__main__":
     i = 0
     overall_survival_datastore = []
     for path in file_paths:
-        if xml_loader(path) is not None:
+        if xml_loader(path, cancer_type=CANCER_TYPE) is not None:
             i += 1
-            overall_survival_datastore.append(xml_loader(path))
+            overall_survival_datastore.append(xml_loader(path, cancer_type=CANCER_TYPE))
     print(f"Loaded {i} paths")
 
     # Selecting only DEAD cases
     buffer = []
     for dictionary in overall_survival_datastore:
-        if (dictionary['last_check']['vital_status'] == 'Dead'                                      # DEAD
-                or int(dictionary['last_check']['days_to_last_followup']) >= ALIVE_THRESHOLD):      # ALIVE
+        if ((dictionary['last_check']['days_to_last_followup'] is not None or dictionary['last_check']['days_to_death'] is not None)
+            and (dictionary['last_check']['vital_status'] == 'Dead'                                     # DEAD
+            or (dictionary['last_check']['vital_status'] == 'Alive'
+            and int(dictionary['last_check']['days_to_last_followup']) >= ALIVE_THRESHOLD))):           # ALIVE
             buffer.append(dictionary)
             # Adding for each dictionary 'case_id', 'file_name' and 'file_id'
             file_name = dictionary['info'].split('/')[len(dictionary['info'].split('/')) - 1]

@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # Storing data inside a CSV table and a JSON list
     dataframe_methylation_vectors.to_csv(table_paths[METHYLATION_VECTORS_FOR_EACH_GENE_FULL], index=False)
     print(f"Data has been correctly saved inside {table_paths[METHYLATION_VECTORS_FOR_EACH_GENE_FULL]} file")
-    json_storer(datastore_paths[SELECTED_METHYLATION_ISLANDS_FULL], dictionary_selected_methylation_islands)
+    json_storer(datastore_paths[MCAT_SELECTED_METHYLATION_ISLANDS], dictionary_selected_methylation_islands)
 
     # Close LOG file
     sys.stdout = sys.__stdout__
