@@ -6,18 +6,18 @@ from simdeep.simdeep_boosting import SimDeepBoosting
 
 ## CONFIGURATION
 PATH_DATA = '../../data/datasets/'
-assert(isfile(PATH_DATA + "/DeepProg_methylation.tsv"))
-assert(isfile(PATH_DATA + "/DeepProg_gene_expression.tsv"))
+assert(isfile(PATH_DATA + "/KIRCKIRP_DeepProg_methylation.tsv"))
+assert(isfile(PATH_DATA + "/KIRCKIRP_DeepProg_gene_expression.tsv"))
 TSV_FILES = OrderedDict([
-    ('METH', 'DeepProg_methylation.tsv'),
-    ('RNA', 'DeepProg_gene_expression.tsv'),
+    ('METH', 'KIRCKIRP_DeepProg_methylation.tsv'),
+    ('RNA', 'KIRCKIRP_DeepProg_gene_expression.tsv'),
 ])
-assert(isfile(PATH_DATA + "DeepProg_overall_survival.tsv"))
-SURVIVAL_TSV = 'DeepProg_overall_survival.tsv'
-PROJECT_NAME = 'test_hcc_stacked'
-EPOCHS = 10             # Autoencoder epochs. Other hyperparameters can be fine-tuned
+assert(isfile(PATH_DATA + "KIRCKIRP_DeepProg_overall_survival.tsv"))
+SURVIVAL_TSV = 'KIRCKIRP_DeepProg_overall_survival.tsv'
+PROJECT_NAME = 'test_KIRCKIRP_stacked'
+EPOCHS = 25             # Autoencoder epochs. Other hyperparameters can be fine-tuned
 SEED = 10045            # Random seed used for reproducibility
-NB_ITERATION = 10       # Number of models to be fitted using only a subset of the training data
+NB_ITERATION = 9       # Number of models to be fitted using only a subset of the training data
 NB_THREADS = 2          # These treads define the number of threads to be used to compute survival function
 PATH_RESULTS = "./results/"
 SURVIVAL_FLAG = {
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     ''' TESTING '''
     # MODEL: loading testing dataset
     boosting.load_new_test_dataset(
-        {'RNA': 'DeepProg_gene_expression.tsv'},
+        {'RNA': 'KIRCKIRP_DeepProg_gene_expression.tsv'},
         'test_RNA_only',
         SURVIVAL_TSV,
     )
