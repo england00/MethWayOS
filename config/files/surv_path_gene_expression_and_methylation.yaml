@@ -13,13 +13,13 @@ dataset:
   # Name of the dataset (logged on W&B)
   name: TCGA-BRCA-GE-ME
   # CSV Gene Expression main dataset
-  gene_expression: ../../data/datasets/KIRCKIRP_MCAT_gene_expression_and_overall_survival_dataset.csv
+  gene_expression: ../../data/datasets/GBMLGG_MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
   gene_expression_signatures: ../../data/signatures/survpath_pathway_xena_signatures.csv
   # Gene Expression correlation threshold with label
   gene_expression_correlation_threshold: 0.0
   # CSV Methylation secondary dataset
-  methylation: ../../data/datasets/KIRCKIRP_MCAT_methylation450_and_overall_survival_dataset.csv
+  methylation: ../../data/datasets/GBMLGG_MCAT_methylation450_and_overall_survival_dataset.csv
   # Methylation signatures
   methylation_signatures: ../../data/signatures/methylation_signatures_with_pathway_xena.csv
   # Methylation Islands correlation threshold with label
@@ -35,7 +35,7 @@ dataset:
   # Random Seed
   random_seed: 42
   # ID of the patient to use as test. Set ~ if testing a patient is not needed [BRCA: 6a186809-3422-41d0-83d2-867145830936, GBMLGG: ae081e4a-efa9-4b52-b15e-29085c0612d3, LUADLUST: dbd5b0de-94c9-45dd-afb3-6820a7ecaca2, KIRCKIRP: d66c9261-6c0c-44b0-92fa-a43757f34cb2]
-  leave_one_out: d66c9261-6c0c-44b0-92fa-a43757f34cb2
+  leave_one_out: ae081e4a-efa9-4b52-b15e-29085c0612d3
 
 # Model configuration
 model:
@@ -57,7 +57,7 @@ model:
 # Training configuration
 training:
   # Coefficient used in Cross Entropy Survival loss
-  alpha: [0.215]
+  alpha: [0.8]
   # Batch size
   batch_size: 1
   # Classes Number. Default is 4
