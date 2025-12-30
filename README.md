@@ -3,7 +3,7 @@
 <!-- HEADER STYLE: COMPACT -->
 <img src="docs/logo.jpg" width="30%" align="left" style="margin-right: 15px">
 
-# METHWAYOS
+# MethWayOS
 <em></em>
 
 <!-- BADGES -->
