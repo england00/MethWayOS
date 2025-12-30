@@ -1,11 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from src.surv_path.original_modules.cross_attention import FeedForward, MMAttentionLayer
-
-
-# SurvPath link
-# https://github.com/mahmoodlab/SurvPath
+from src.methway_os.original_modules.cross_attention import FeedForward, MMAttentionLayer
 
 
 def SNN_Block(dim1, dim2, dropout=0.25):
@@ -23,15 +19,16 @@ def SNN_Block(dim1, dim2, dropout=0.25):
             nn.ELU(),
             nn.AlphaDropout(p=dropout, inplace=False))
 
-''' SurvPath Definition '''
-class SurvPath(nn.Module):
+
+''' MethWayOS Definition '''
+class MethWayOS(nn.Module):
     def __init__(self,
                  meth_sizes: [],
                  rnaseq_sizes: [],
                  n_classes: int = 4,
                  dropout: float = 0.25,
                  methylation_islands_statistics: bool = False):
-        super(SurvPath, self).__init__()
+        super(MethWayOS, self).__init__()
 
         # Parameters
         self.n_classes = n_classes
@@ -64,7 +61,7 @@ class SurvPath(nn.Module):
                 sig_networks.append(nn.Sequential(*fc_omic))
             self.methylation_signature_networks = nn.ModuleList(sig_networks)
 
-        # SurvPath Cross Attention
+        # MethWayOS Cross Attention
         self.identity = nn.Identity()
         self.cross_attender = MMAttentionLayer(
             dim=self.projection_dimensionality,

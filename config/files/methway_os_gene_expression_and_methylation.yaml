@@ -15,7 +15,7 @@ dataset:
   # CSV Gene Expression main dataset
   gene_expression: ../../data/datasets/GBMLGG_MCAT_gene_expression_and_overall_survival_dataset.csv
   # Gene Expression signatures
-  gene_expression_signatures: ../../data/signatures/survpath_pathway_xena_signatures.csv
+  gene_expression_signatures: ../../data/signatures/methway_os_pathway_xena_signatures.csv
   # Gene Expression correlation threshold with label
   gene_expression_correlation_threshold: 0.0
   # CSV Methylation secondary dataset
@@ -40,15 +40,15 @@ dataset:
 # Model configuration
 model:
   # Model name
-  name: SurvPath with Gene Expression & Methylation
+  name: MethWayOS with Gene Expression & Methylation
   # Path of model checkpoint to load. Set ~ if loading is not necessary
   load_from_checkpoint: ~
   # Epoch of checkpointing. Set 0 if saving the model is not necessary
   checkpoint_epoch: 20
   # Directory in which model checkpoint will be saved
-  checkpoint_dir: ../../src/surv_path/checkpoints/
+  checkpoint_dir: ../../src/methway_os/checkpoints/
   # Best model file during training (for Early Stopping)
-  checkpoint_best_model: ../../src/surv_path/checkpoints/model
+  checkpoint_best_model: ../../src/methway_os/checkpoints/model
   # Fusion mechanism [concat, gated_concat, bilinear]
   fusion: concat
   # Model size [small, medium, big]
@@ -87,7 +87,7 @@ training:
   # Scheduler for learning rate [~, exp]
   scheduler: exp
   # Directory in which attention outputs will be saved
-  test_output_dir: ../../src/surv_path/checkpoints/outputs/
+  test_output_dir: ../../src/methway_os/checkpoints/outputs/
   # Train size ratio
   train_size: 0.8
   # Weight decay

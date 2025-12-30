@@ -14,13 +14,13 @@ import wandb
 import yaml
 sys.path.append('/homes/linghilterra/AIforBioinformatics')
 from logs.methods.log_storer import DualOutput
-from src.surv_path.gene_expression_and_methylation_modules.training import training
-from src.surv_path.gene_expression_and_methylation_modules.validation import validation
-from src.surv_path.gene_expression_and_methylation_modules.testing import testing
-from src.surv_path.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
-from src.surv_path.original_modules.utils import l2_reg
-from src.surv_path.gene_expression_and_methylation_modules.surv_path import SurvPath
-from src.surv_path.gene_expression_and_methylation_modules.dataset import MultimodalDataset
+from src.methway_os.gene_expression_and_methylation_modules.training import training
+from src.methway_os.gene_expression_and_methylation_modules.validation import validation
+from src.methway_os.gene_expression_and_methylation_modules.testing import testing
+from src.methway_os.original_modules.loss import CrossEntropySurvivalLoss, SurvivalClassificationTobitLoss
+from src.methway_os.original_modules.utils import l2_reg
+from src.methway_os.gene_expression_and_methylation_modules.methway_os import MethWayOS
+from src.methway_os.gene_expression_and_methylation_modules.dataset import MultimodalDataset
 from torch.utils.data import DataLoader
 
 
@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader
 ''' General '''
 C_INDEX_THRESHOLD = 1.0
 LOG_PATH = f'../../logs/files/{os.path.basename(__file__)}.txt'
-MCAT_MULTIMODAL_YAML = '../../config/files/surv_path_gene_expression_and_methylation.yaml'
+MCAT_MULTIMODAL_YAML = '../../config/files/methway_os_gene_expression_and_methylation.yaml'
 PID = None
 
 
@@ -191,11 +191,11 @@ def main(config_path: str):
                                 set_seed(config['dataset']['random_seed'])
                                 model_name = config['model']['name']
                                 print(f'MODEL: {model_name}')
-                                model = SurvPath(n_classes=config['training']['classes_number'],
-                                                 rnaseq_sizes=dataset.gene_expression_signature_sizes,
-                                                 meth_sizes=dataset.methylation_signature_sizes,
-                                                 dropout=config['training']['dropout'],
-                                                 methylation_islands_statistics=config['dataset']['methylation_islands_statistics'])
+                                model = MethWayOS(n_classes=config['training']['classes_number'],
+                                                  rnaseq_sizes=dataset.gene_expression_signature_sizes,
+                                                  meth_sizes=dataset.methylation_signature_sizes,
+                                                  dropout=config['training']['dropout'],
+                                                  methylation_islands_statistics=config['dataset']['methylation_islands_statistics'])
                                 print(f'--> Trainable parameters of {model_name}: {model.get_trainable_parameters()}')
                                 checkpoint = None
                                 if config['model']['load_from_checkpoint'] is not None:  # Starting Model from Checkpoint
@@ -374,9 +374,9 @@ if __name__ == '__main__':
     sys.stdout = DualOutput(sys.stdout, logfile)
 
     # Execution
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - SurvPath started')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MethWayOS started')
     main(MCAT_MULTIMODAL_YAML)
-    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - SurvPath terminated')
+    title(f'[{datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")}] - MethWayOS terminated')
 
     # Close LOG file
     sys.stdout = sys.__stdout__

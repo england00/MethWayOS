@@ -15,7 +15,7 @@ TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 MODE = 'full'   # ['full', 'promoters']
 TYPE = '450full' # ['27', '27full', '450', '450full']
 
-# MCAT/SurvPath Original Signatures
+# MCAT/MethWayOS Original Signatures
 ############## [        'full'       ,     'promoters'   ]
 # [    '27'    ,         1478        ,        817        ]
 # [            , 1.6400541271989175  , 1.0514075887392902]
@@ -38,10 +38,10 @@ METHYLATION_450_KEYS = 'methylation450_keys'
 METHYLATION_450_FULL_KEYS = 'methylation450_full_keys'
 GENE_EXPRESSION_KEYS_METHYLATION = 'gene_expression_keys_methylation'
 MCAT_SIGNATURES = 'mcat_signatures'
-SURVPATH_SIGNATURES = 'survpath_signatures'
-SURVPATH_PATHWAY_COMBINE_SIGNATURES = 'survpath_pathway_combine_signatures'
-SURVPATH_PATHWAY_HALLMARKS_SIGNATURES = 'survpath_pathway_hallmarks_signatures'
-SURVPATH_PATHWAY_XENA_SIGNATURES = 'survpath_pathway_xena_signatures'
+METHWAYOS_SIGNATURES = 'methwayos_signatures'
+METHWAYOS_PATHWAY_COMBINE_SIGNATURES = 'methwayos_pathway_combine_signatures'
+METHWAYOS_PATHWAY_HALLMARKS_SIGNATURES = 'methwayos_pathway_hallmarks_signatures'
+METHWAYOS_PATHWAY_XENA_SIGNATURES = 'methwayos_pathway_xena_signatures'
 
 ''' Output Keys '''
 METHYLATION_SIGNATURES_PROMOTERS_27 = 'methylation_signatures_promoters_27'

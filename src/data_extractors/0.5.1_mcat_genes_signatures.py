@@ -13,12 +13,12 @@ TABLE_PATHS_YAML = '../../config/paths/table_paths.yaml'
 ''' Input Keys'''
 GENE_EXPRESSION_KEYS_METHYLATION = 'gene_expression_keys_methylation'
 MCAT_SIGNATURES = 'mcat_signatures'
-SURVPATH_SIGNATURES = 'survpath_signatures'
+METHWAYOS_SIGNATURES = 'methwayos_signatures'
 
 ''' Output Keys'''
 GENE_EXPRESSION_KEYS_METHYLATION_TRANSFORMED = 'gene_expression_keys_methylation_transformed'
 MCAT_SIGNATURES_TRANSFORMED = 'mcat_signatures_transformed'
-SURVPATH_SIGNATURES_TRANSFORMED = 'survpath_signatures_transformed'
+METHWAYOS_SIGNATURES_TRANSFORMED = 'methwayos_signatures_transformed'
 
 
 ## MAIN

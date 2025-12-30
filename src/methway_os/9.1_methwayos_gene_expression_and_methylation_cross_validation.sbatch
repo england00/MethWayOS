@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=SurvPath_CpG
+#SBATCH --job-name=MethWayOS
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=271539@studenti.unimore.it
 #SBATCH --account=tesi_linghilterra
@@ -31,4 +31,4 @@ echo "Job "$SLURM_JOB_ID" started"
 export PYTHONPATH=/homes/linghilterra/AIforBioinformatics:$PYTHONPATH
 
 # Run Python Script
-python /homes/linghilterra/AIforBioinformatics/src/surv_path/9.1_survpath_gene_expression_and_methylation_cross_validation.py
+python /homes/linghilterra/AIforBioinformatics/src/methway_os/9.1_methwayos_gene_expression_and_methylation_cross_validation.py

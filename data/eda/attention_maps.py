@@ -8,8 +8,8 @@ from sympy import false
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # Carica il file .pt
-#data = torch.load(r"C:\Users\lucai\Desktop\Magistrale\Tirocinio\AIforBioinformatics\src\surv_path\checkpoints\outputs\RNA_Seq_Cross_Attention_6a186809-3422-41d0-83d2-867145830936_SurvPath_CpG_2545321_3.pt", map_location=torch.device("cuda"))
-#data = torch.load(r"C:\Users\lucai\Desktop\Magistrale\Tirocinio\AIforBioinformatics\src\surv_path\checkpoints\outputs\CpG_Sites_Cross_Attention_6a186809-3422-41d0-83d2-867145830936_SurvPath_CpG_2545321_3.pt", map_location=torch.device("cuda"))
+#data = torch.load(r"C:\Users\lucai\Desktop\Magistrale\Tirocinio\AIforBioinformatics\src\methway_os\checkpoints\outputs\RNA_Seq_Cross_Attention_6a186809-3422-41d0-83d2-867145830936_SurvPath_CpG_2545321_3.pt", map_location=torch.device("cuda"))
+#data = torch.load(r"C:\Users\lucai\Desktop\Magistrale\Tirocinio\AIforBioinformatics\src\methway_os\checkpoints\outputs\CpG_Sites_Cross_Attention_6a186809-3422-41d0-83d2-867145830936_SurvPath_CpG_2545321_3.pt", map_location=torch.device("cuda"))
 data = torch.load(r"C:\Users\lucai\Desktop\Magistrale\Tirocinio\AIforBioinformatics\src\surv_path\checkpoints\outputs\RNA_Seq_Self_Attention_6a186809-3422-41d0-83d2-867145830936_SurvPath_CpG_2545321_1.pt", map_location=torch.device("cuda"))
 
 # === Impostazioni iniziali ===

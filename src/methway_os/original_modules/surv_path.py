@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 # from x_transformers import Encoder
-from src.surv_path.original_modules.cross_attention import FeedForward, MMAttentionLayer
+from src.methway_os.original_modules.cross_attention import FeedForward, MMAttentionLayer
 
 
 def exists(val):
